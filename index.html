@@ -611,7 +611,7 @@ h2.stitle {
 
 /* ── ABOUT ── */
 .about { background:var(--bone); padding:110px 52px; }
-.about-inner { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1fr 1.2fr; gap:90px; align-items:center; }
+.about-inner { max-width:760px; margin:0 auto; display:block; }
 .about-logo { display:flex; justify-content:center; align-items:center; }
 .about-logo img { width:100%; max-width:340px; animation:breathe 7s ease-in-out infinite; }
 @keyframes breathe { 0%,100%{transform:scale(1)} 50%{transform:scale(1.03)} }
@@ -1059,9 +1059,6 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 <!-- ABOUT -->
 <section class="about" id="about">
   <div class="about-inner">
-    <div class="about-logo reveal">
-      <img id="alogo" src="" alt="AiOSAURUS">
-    </div>
     <div class="about-text">
       <div class="section-label reveal">The Origin</div>
       <h2 class="stitle reveal d1">From Extinction<br>to the Spark of<br>Intelligence.</h2>
@@ -1372,7 +1369,6 @@ document.getElementById('nlogo').src   = L2;
 document.getElementById('slogo').src   = L2;
 document.getElementById('hlogo').src   = L2;
 document.getElementById('eghost').src  = L2;
-document.getElementById('alogo').src   = L1;
 document.getElementById('sghostimg').src = L2;
 document.getElementById('clogo').src   = L2;
 document.getElementById('flogo').src   = L2;
