@@ -1,0 +1,2081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AiOSAURUS — Defining the Next Epoch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700;1,800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bone: #EBE7DD;
+  --obsidian: #0A0A0A;
+  --red: #BB2121;
+  --about-skull: url('about-skull.png');
+  --about-teeth: url('about-teeth.png');
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bone);
+  color: var(--obsidian);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ── CURSOR ── */
+#cur {
+  width: 10px; height: 10px; background: var(--obsidian);
+  border-radius: 50%; position: fixed; top: 0; left: 0;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: width .15s, height .15s, background .25s;
+}
+#cur-ring {
+  width: 38px; height: 38px;
+  border: 1px solid rgba(10,10,10,.35); border-radius: 50%;
+  position: fixed; top: 0; left: 0;
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: width .2s, height .2s, border-color .25s;
+}
+.dark-bg #cur { background: var(--bone); }
+.dark-bg #cur-ring { border-color: rgba(235,231,221,.3); }
+body.hovering #cur { width: 18px; height: 18px; }
+body.hovering #cur-ring { width: 56px; height: 56px; }
+
+/* ── SIDE LOGO ── */
+#side-logo {
+  position: fixed; right: 24px; top: 50%;
+  transform: translateY(-50%);
+  z-index: 80; pointer-events: none;
+  opacity: 0; transition: opacity .5s;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+#side-logo.visible { opacity: 1; }
+#side-logo img {
+  width: 40px; height: 40px; object-fit: contain; display: block;
+  transition: filter .4s, opacity .4s;
+}
+#side-logo.light img { filter: none; opacity: .22; }
+#side-logo.dark img  { filter: brightness(0) invert(1); opacity: .18; }
+.side-track {
+  width: 1px; height: 54px;
+  background: rgba(10,10,10,.1); position: relative; overflow: hidden;
+}
+#side-logo.dark .side-track { background: rgba(235,231,221,.1); }
+.side-fill {
+  position: absolute; top: 0; left: 0; right: 0;
+  background: var(--red); height: 0%; transition: height .08s linear;
+}
+.side-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--red);
+  animation: pdot 2.5s ease-in-out infinite;
+}
+@keyframes pdot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.3;transform:scale(.6)} }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 26px 52px;
+  display: flex; justify-content: space-between; align-items: center;
+  transition: padding .35s, background .35s, backdrop-filter .35s, border-color .35s;
+  border-bottom: 1px solid transparent;
+}
+nav.scrolled {
+  background: rgba(235,231,221,.94);
+  backdrop-filter: blur(18px);
+  padding: 15px 52px;
+  border-bottom-color: rgba(10,10,10,.07);
+}
+.nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--obsidian); }
+.nav-logo img { height:32px; width:32px; object-fit:contain; }
+.nav-wordmark { font-family:'Playfair Display',serif; font-weight:800; font-size:1rem; letter-spacing:.08em; }
+.nav-links { display:flex; gap:36px; list-style:none; align-items:center; }
+.nav-links a { text-decoration:none; color:var(--obsidian); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; font-weight:400; opacity:.6; transition:opacity .2s; }
+.nav-links a:hover { opacity:1; }
+.nav-cta {
+  background: var(--red) !important; color: var(--bone) !important;
+  padding: 0 20px !important; height: 38px; line-height: 38px;
+  align-items: center;
+  opacity: 1 !important; transition: background .2s !important;
+  font-size: .7rem !important; letter-spacing: .12em !important;
+  font-weight: 500 !important;
+}
+.nav-cta:hover { background: #8a1515 !important; }
+
+/* ── STICKY CTA STRIP ── */
+#cta-strip {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 90;
+  background: var(--red);
+  padding: 14px 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  transform: translateY(100%);
+  transition: transform .4s cubic-bezier(.16,1,.3,1);
+  border-top: 1px solid rgba(255,255,255,.1);
+}
+#cta-strip.visible { transform: translateY(0); }
+#cta-strip p {
+  font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: clamp(.85rem, 1.2vw, 1rem); color: var(--bone); opacity: .85;
+}
+#cta-strip a {
+  font-family: 'DM Sans', sans-serif; font-size: .72rem; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--obsidian); background: var(--bone);
+  padding: 0 24px; height: 40px; display: inline-flex; align-items: center;
+  text-decoration: none; white-space: nowrap; flex-shrink: 0;
+  transition: background .2s, color .2s;
+}
+#cta-strip a:hover { background: var(--obsidian); color: var(--bone); }
+#cta-strip button {
+  background: none; border: none; color: var(--bone); opacity: .5;
+  font-size: 1.1rem; padding: 4px 8px; cursor: none; margin-left: 16px;
+  transition: opacity .2s; flex-shrink: 0;
+}
+#cta-strip button:hover { opacity: 1; }
+.cta-inner { display: flex; align-items: center; gap: 0; }
+@media(max-width:600px){
+  #cta-strip { padding: 12px 18px; gap:12px; }
+  #cta-strip p { display:none; }
+}
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 52px; padding: 0 34px;
+  font-family: 'DM Sans', sans-serif; font-weight: 400;
+  font-size: .78rem; letter-spacing: .15em; text-transform: uppercase;
+  text-decoration: none; transition: background .22s, border-color .22s, color .22s, transform .2s;
+  white-space: nowrap; cursor: none;
+}
+.btn-dark  { background: var(--obsidian); color: var(--bone); border: 1px solid var(--obsidian); }
+.btn-dark:hover  { background: var(--red); border-color: var(--red); transform: translateY(-2px); }
+.btn-outline { background: transparent; color: var(--obsidian); border: 1px solid rgba(10,10,10,.25); }
+.btn-outline:hover { border-color: var(--obsidian); transform: translateY(-2px); }
+.btn-light { background: var(--bone); color: var(--obsidian); border: 1px solid var(--bone); }
+.btn-light:hover { background: var(--red); color: var(--bone); border-color: var(--red); transform: translateY(-2px); }
+.btn-outline-light { background: transparent; color: var(--bone); border: 1px solid rgba(235,231,221,.25); }
+.btn-outline-light:hover { border-color: var(--bone); transform: translateY(-2px); }
+.btn-red { background: var(--red); color: var(--bone); border: 1px solid var(--red); }
+.btn-red:hover { background: #8a1515; border-color: #8a1515; transform: translateY(-2px); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  background: var(--bone);
+  display: flex; align-items: center;
+  padding: 0 52px;
+  position: relative; overflow: hidden;
+}
+#hero-canvas {
+  position: absolute; inset: 0; pointer-events: none; z-index: 1;
+}
+
+/* ── LOGO INTRO STAGE ──
+   On load: fixed, top-center, large, full opacity — sole focus.
+   On scroll: JS drives it from top→center, large→normal, opaque→ghost.
+   Once receded (scroll > vh), it becomes position:absolute in hero flow.
+*/
+#logo-stage {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 100vh;
+  display: flex; align-items: flex-start; justify-content: center;
+  padding-top: clamp(60px, 12vh, 120px);
+  z-index: 200;
+  pointer-events: none;
+  background: var(--bone);
+  /* Fade in on load */
+  opacity: 0;
+  animation: stageIn .6s .1s forwards;
+}
+@keyframes stageIn { to { opacity: 1; } }
+
+#logo-stage img {
+  width: clamp(200px, 30vw, 380px);
+  height: clamp(200px, 30vw, 380px);
+  object-fit: contain;
+  display: block;
+  will-change: transform, opacity;
+}
+
+/* Hero background ghost — only visible once stage has receded */
+.hero-logo-center {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1; pointer-events: none;
+  width: clamp(360px, 48vw, 660px);
+  height: clamp(360px, 48vw, 660px);
+  opacity: 0; /* revealed by JS once scroll starts */
+}
+.hero-logo-center img {
+  width: 100%; height: 100%; object-fit: contain;
+  opacity: .18;
+}
+
+.hero-content {
+  position: relative; z-index: 2;
+  max-width: 800px; padding-top: 80px;
+  opacity: 0; transform: translateY(28px);
+}
+.hero-content.revealed {
+  animation: slideUp .9s forwards;
+}
+@keyframes slideUp { to { opacity:1; transform:translateY(0); } }
+
+/* Scroll hint hidden until content revealed */
+.hero-scroll.revealed { opacity: .3; }
+.eyebrow {
+  font-family: 'DM Mono', monospace; font-size: .68rem; letter-spacing: .22em;
+  text-transform: uppercase; color: var(--red);
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 24px;
+}
+.eyebrow::before { content:''; display:block; width:28px; height:1px; background:var(--red); }
+h1.hero-title {
+  font-family: 'Playfair Display', serif; font-weight: 900;
+  font-size: clamp(3.2rem,7.5vw,7rem); line-height: .93; letter-spacing: -.025em;
+  margin-bottom: 28px;
+}
+.hero-title em { font-style:italic; color:var(--red); }
+.hero-sub {
+  font-size: clamp(.9rem,1.35vw,1.1rem); line-height: 1.78;
+  max-width: 500px; opacity: .58; margin-bottom: 44px;
+}
+.hero-actions { display:flex; gap:12px; flex-wrap:wrap; }
+@media(max-width:520px){
+  .hero-actions { flex-direction:column; align-items:flex-start; }
+  .hero-actions .btn { width:100%; justify-content:center; }
+}
+.hero-scroll {
+  position: absolute; bottom: 34px; left: 52px; z-index: 2;
+  font-family: 'DM Mono', monospace; font-size: .63rem; letter-spacing: .2em;
+  text-transform: uppercase; opacity: 0; transition: opacity .6s;
+  display: flex; align-items: center; gap: 10px;
+}
+.scroll-bar { width: 36px; height: 1px; background: var(--obsidian); overflow:hidden; position:relative; }
+.scroll-bar::after {
+  content:''; position:absolute; top:0; left:-100%; width:100%; height:100%;
+  background:var(--red); animation: scrollAnim 2.4s 1.5s ease-in-out infinite;
+}
+@keyframes scrollAnim { 0%{left:-100%} 60%,100%{left:100%} }
+
+/* ── SCROLL ARROW ── */
+#scroll-arrow {
+  position: fixed; bottom: 36px; left: 50%; transform: translateX(-50%);
+  z-index: 210; display: flex; flex-direction: column; align-items: center; gap: 6px;
+  opacity: 0; transition: opacity .8s;
+  pointer-events: none;
+}
+#scroll-arrow.visible { opacity: 1; }
+#scroll-arrow.hidden  { opacity: 0; }
+.arrow-label {
+  font-family: 'DM Mono', monospace; font-size: .58rem; letter-spacing: .22em;
+  text-transform: uppercase; color: var(--obsidian); opacity: .4;
+}
+.arrow-chevrons {
+  display: flex; flex-direction: column; align-items: center;
+}
+.arrow-chevron {
+  width: 18px; height: 10px; position: relative; display: block;
+}
+.arrow-chevron::before,
+.arrow-chevron::after {
+  content: ''; position: absolute; top: 0;
+  width: 10px; height: 1.5px; background: var(--obsidian);
+  border-radius: 1px;
+}
+.arrow-chevron::before { left: 0;  transform: rotate(40deg); transform-origin: left center; }
+.arrow-chevron::after  { right: 0; transform: rotate(-40deg); transform-origin: right center; }
+.arrow-chevron:nth-child(1) { animation: chevBounce 1.8s ease-in-out infinite; }
+.arrow-chevron:nth-child(2) { animation: chevBounce 1.8s .15s ease-in-out infinite; opacity: .55; }
+.arrow-chevron:nth-child(3) { animation: chevBounce 1.8s .3s ease-in-out infinite; opacity: .22; }
+@keyframes chevBounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(5px); }
+}
+
+/* ── MARQUEE ── */
+.marquee { background: var(--red); padding: 12px 0; overflow:hidden; white-space:nowrap; }
+.marquee-inner { display:inline-block; animation: mq 22s linear infinite; }
+.marquee-inner span { font-family:'DM Mono',monospace; font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; color:var(--bone); padding:0 32px; }
+@keyframes mq { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+/* ── SECTION SHARED ── */
+.section-label {
+  font-family: 'DM Mono', monospace; font-size: .65rem; letter-spacing: .22em;
+  text-transform: uppercase; color: var(--red);
+  display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
+}
+.section-label::before { content:''; display:block; width:20px; height:1px; background:var(--red); }
+.stitle {
+  font-family: 'Playfair Display', serif; font-weight: 800;
+  font-size: clamp(1.9rem,3.8vw,3.2rem); line-height: 1.06; letter-spacing: -.02em;
+}
+.reveal { opacity:0; transform:translateY(22px); transition:opacity .75s, transform .75s; }
+.reveal.in { opacity:1; transform:translateY(0); }
+.d1 { transition-delay:.1s; } .d2 { transition-delay:.22s; } .d3 { transition-delay:.34s; }
+
+/* ── FRICTION ── */
+.friction { background:var(--obsidian); color:var(--bone); padding:110px 52px; overflow:hidden; }
+.friction-inner { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
+.friction-body { font-size:.95rem; line-height:1.8; opacity:.58; margin-bottom:36px; }
+.friction-quote { font-family:'Playfair Display',serif; font-style:italic; font-size:1.1rem; line-height:1.65; border-left:2px solid var(--red); padding-left:22px; opacity:.85; }
+.friction-grid { display:flex; flex-direction:column; gap:2px; }
+.f-item { background:rgba(235,231,221,.04); border:1px solid rgba(235,231,221,.07); padding:24px 28px; transition:background .3s, border-color .3s; }
+.f-item:hover { background:rgba(235,231,221,.07); border-color:rgba(187,33,33,.3); }
+.f-num { font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.2em; color:var(--red); margin-bottom:8px; }
+.f-item h3 { font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; margin-bottom:7px; }
+.f-item p { font-size:.86rem; line-height:1.7; opacity:.48; }
+
+/* ──────────────────────────────────────────────
+   DEMO OVERLAY
+────────────────────────────────────────────── */
+#demo-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: #0f0606;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 80px 24px 24px;
+  opacity: 0; pointer-events: none;
+  transition: opacity .45s cubic-bezier(.16,1,.3,1);
+}
+#demo-overlay.open { opacity: 1; pointer-events: auto; }
+
+/* top bar */
+#demo-topbar {
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 56px; display: flex; align-items: center;
+  padding: 0 28px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  background: rgba(15,6,6,.9); backdrop-filter: blur(14px);
+}
+.demo-close-btn {
+  display: inline-flex; align-items: center; gap: 9px;
+  color: rgba(255,255,255,.45);
+  font-family: 'DM Mono', monospace; font-size: .6rem;
+  letter-spacing: .18em; text-transform: uppercase;
+  background: none; border: none; cursor: none;
+  transition: color .2s;
+}
+.demo-close-btn:hover { color: #fff; }
+.demo-close-arrow {
+  width: 20px; height: 20px;
+  border: 1px solid rgba(255,255,255,.2); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; transition: border-color .2s, background .2s;
+}
+.demo-close-btn:hover .demo-close-arrow { border-color: #b91c1c; background: rgba(185,28,28,.18); }
+
+/* ── DEMO CARD ── */
+.d-card {
+  width: 100%; max-width: 480px;
+  background: #2d0a0a;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 16px; padding: 28px;
+  position: relative; overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.4), 0 32px 64px rgba(0,0,0,.6);
+}
+.d-card::before {
+  content: ''; position: absolute; inset: 0; border-radius: inherit;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0;
+}
+.d-card > * { position: relative; z-index: 1; }
+
+.d-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #b91c1c; color: #fff;
+  font-size: 10px; font-weight: 700; letter-spacing: .12em;
+  text-transform: uppercase; padding: 4px 10px; border-radius: 100px;
+  margin-bottom: 16px; font-family: 'DM Mono', monospace;
+}
+.d-badge::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: #fff; animation: dblink 1.2s ease-in-out infinite;
+}
+@keyframes dblink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+/* ── DEMO OVERLAY SKULL ── */
+.d-skull {
+  width: 80px;
+  opacity: 0.18;
+  display: block;
+  margin: 12px auto;
+  pointer-events: none;
+  user-select: none;
+  transition: opacity 0.3s ease;
+}
+
+/* ── SKULL SEGUE ── */
+#skull-segue {
+  position: relative;
+  height: 280px;
+  overflow: hidden;
+  background: linear-gradient(to bottom, var(--obsidian) 48%, var(--bone) 48%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+#skull3d {
+  width: 260px;
+  max-width: 90vw;
+  opacity: 0;
+  position: relative;
+  z-index: 10;
+  will-change: transform;
+  pointer-events: none;
+  user-select: none;
+  transition: opacity 0.6s ease;
+}
+#skull3d.visible { opacity: 1; }
+
+/* ── EPOCH SCROLL HINT ── */
+#epoch-scroll-hint {
+  position: fixed;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+#epoch-scroll-hint.visible { opacity: 1; }
+#epoch-scroll-hint span {
+  font-family: 'DM Mono', monospace;
+  font-size: .58rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--obsidian);
+  white-space: nowrap;
+}
+.epoch-hint-arrow {
+  width: 20px;
+  height: 20px;
+  border-right: 1.5px solid var(--obsidian);
+  border-bottom: 1.5px solid var(--obsidian);
+  transform: rotate(45deg);
+  animation: epochBounce 1.2s ease-in-out infinite;
+}
+@keyframes epochBounce {
+  0%, 100% { transform: rotate(45deg) translateY(0); }
+  50%       { transform: rotate(45deg) translateY(5px); }
+}
+
+.d-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
+.d-step-label {
+  font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500;
+  letter-spacing: .08em; text-transform: uppercase; color: #fca5a5; transition: color .4s;
+}
+.d-step-label.warning { color: #f59e0b; }
+.d-step-label.success { color: #10b981; }
+.d-workflow-tag { font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(255,255,255,.6); letter-spacing: .05em; }
+
+.d-dots { display: flex; gap: 6px; margin-bottom: 20px; }
+.d-dot { height: 3px; flex: 1; border-radius: 99px; background: rgba(255,255,255,.12); transition: background .5s; }
+.d-dot.active  { background: #ef4444; }
+.d-dot.done    { background: #7b1c1c; }
+.d-dot.warning { background: #f59e0b; }
+.d-dot.success { background: #10b981; }
+
+.d-content {
+  min-height: 170px; border-radius: 10px;
+  background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 28px 20px;
+  transition: background .5s, border-color .5s; position: relative; overflow: hidden;
+}
+.d-content.warn-bg { background: rgba(245,158,11,.08); border-color: rgba(245,158,11,.3); }
+.d-content.done-bg { background: rgba(16,185,129,.08); border-color: rgba(16,185,129,.3); }
+
+.d-icon { font-size: 36px; margin-bottom: 12px; line-height: 1; transition: transform .3s; }
+.d-title { font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 8px; letter-spacing: -.01em; }
+.d-desc { font-size: 13px; color: rgba(255,255,255,.6); line-height: 1.6; max-width: 320px; }
+.d-desc b, .d-desc strong { color: #fff; font-weight: 600; }
+
+.d-progress-wrap { width: 100%; margin-top: 16px; display: none; }
+.d-progress-wrap.visible { display: block; }
+.d-progress-track { height: 6px; background: rgba(255,255,255,.12); border-radius: 99px; overflow: hidden; }
+.d-progress-fill {
+  height: 100%; border-radius: 99px; background: #ef4444; width: 0%;
+  transition: width 2.2s cubic-bezier(.4,0,.2,1);
+}
+.d-progress-fill.go    { width: 90%; }
+.d-progress-fill.amber { background: #f59e0b; width: 90%; }
+.d-progress-fill.done  { width: 100%; background: #10b981; transition: width .6s; }
+.d-progress-label { display: flex; justify-content: space-between; margin-top: 6px; font-family: 'DM Mono', monospace; font-size: 11px; color: rgba(255,255,255,.6); }
+
+.d-fields { display: none; grid-template-columns: 1fr 1fr; gap: 6px; width: 100%; margin-top: 14px; }
+.d-fields.visible { display: grid; }
+.d-chip {
+  background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12);
+  border-radius: 6px; padding: 6px 10px; font-size: 11px;
+  color: rgba(255,255,255,.6); font-family: 'DM Mono', monospace; text-align: left;
+  transition: background .3s, border-color .3s, color .3s;
+}
+.d-chip.lit { background: rgba(16,185,129,.12); border-color: rgba(16,185,129,.4); color: #6ee7b7; }
+
+.d-sig {
+  width: 180px; height: 60px; background: rgba(255,255,255,.06); border-radius: 6px;
+  margin: 0 auto 12px; display: none; align-items: center; justify-content: center;
+  font-size: 28px; filter: blur(3px); letter-spacing: 4px; position: relative;
+}
+.d-sig.visible { display: flex; }
+.d-conf-badge {
+  position: absolute; top: -10px; right: -10px;
+  background: #f59e0b; color: #000; font-size: 10px; font-weight: 700;
+  font-family: 'DM Mono', monospace; padding: 3px 7px; border-radius: 100px;
+}
+
+.d-slack {
+  position: absolute; bottom: -80px; left: 16px; right: 16px;
+  background: #1a1a2e; border: 1px solid rgba(255,255,255,.15); border-radius: 10px;
+  padding: 12px 14px; display: flex; align-items: flex-start; gap: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.5); transition: bottom .5s cubic-bezier(.34,1.56,.64,1); z-index: 10;
+}
+.d-slack.show { bottom: 16px; }
+.d-slack-icon {
+  width: 28px; height: 28px; border-radius: 6px; flex-shrink: 0;
+  background: linear-gradient(135deg,#e01e5a,#ecb22e,#2eb67d,#36c5f0);
+  display: flex; align-items: center; justify-content: center; font-size: 14px;
+}
+.d-slack-text { font-size: 12px; color: rgba(255,255,255,.7); line-height: 1.5; }
+.d-slack-text strong { color: #fff; display: block; margin-bottom: 2px; font-size: 11px; }
+
+.d-btn-area { margin-top: 18px; }
+.d-btn {
+  width: 100%; padding: 14px 20px; border-radius: 10px; border: none;
+  font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500;
+  letter-spacing: .04em; cursor: none; transition: background .25s, transform .25s; position: relative; overflow: hidden;
+}
+.d-btn.primary { background: #b91c1c; color: #fff; }
+.d-btn.primary:hover { background: #991515; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(185,28,28,.4); }
+.d-btn.primary.pulse { animation: dpulse 2s ease-in-out infinite; }
+@keyframes dpulse { 0%,100%{box-shadow:0 0 0 0 rgba(185,28,28,.5)} 50%{box-shadow:0 0 0 8px rgba(185,28,28,0)} }
+.d-btn.amber-btn { background: #f59e0b; color: #000; }
+.d-btn.amber-btn:hover { background: #d97706; transform: translateY(-1px); }
+.d-btn.green-btn { background: #10b981; color: #fff; }
+.d-btn.green-btn:hover { background: #059669; transform: translateY(-1px); }
+.d-btn.ghost-btn { background: rgba(255,255,255,.07); color: rgba(255,255,255,.6); border: 1px solid rgba(255,255,255,.12); }
+.d-btn.ghost-btn:hover { background: rgba(255,255,255,.12); color: #fff; }
+
+.d-two-btns { display: flex; gap: 10px; }
+.d-two-btns .d-btn { flex: 1; }
+
+.d-footer { margin-top: 18px; font-family: 'DM Mono', monospace; font-size: 11px; color: rgba(255,255,255,.2); text-align: center; letter-spacing: .1em; }
+
+/* ── fade-up animation ── */
+@keyframes dfadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+.d-fade-up { animation: dfadeUp .35s forwards; }
+
+/* ── pop-in for success icon ── */
+@keyframes dPopIn { 0%{transform:scale(.5);opacity:0} 70%{transform:scale(1.15)} 100%{transform:scale(1);opacity:1} }
+.d-pop-in { animation: dPopIn .5s cubic-bezier(.34,1.56,.64,1) forwards; }
+
+/* ── Return to Main Page pop-up ── */
+#return-popup {
+  position: absolute; bottom: -220px; left: 50%; transform: translateX(-50%);
+  width: calc(100% - 48px); max-width: 480px;
+  background: #EBE7DD; border-radius: 16px;
+  padding: 28px 28px 24px;
+  box-shadow: 0 -4px 40px rgba(0,0,0,.5), 0 0 0 1px rgba(0,0,0,.12);
+  transition: bottom .55s cubic-bezier(.34,1.2,.64,1);
+  z-index: 20;
+  text-align: center;
+}
+#return-popup.show { bottom: 24px; }
+.return-popup-spark { font-size: 1.6rem; color: #BB2121; margin-bottom: 10px; animation: pdot 3s ease-in-out infinite; }
+.return-popup-title {
+  font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 800;
+  color: #0A0A0A; margin-bottom: 8px; letter-spacing: -.01em;
+}
+.return-popup-sub { font-size: .82rem; color: rgba(10,10,10,.55); line-height: 1.65; margin-bottom: 22px; }
+.return-popup-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  background: #0A0A0A; color: #EBE7DD;
+  font-family: 'DM Sans', sans-serif; font-size: .75rem; font-weight: 500;
+  letter-spacing: .14em; text-transform: uppercase;
+  border: none; padding: 0 32px; height: 48px; border-radius: 0;
+  cursor: none; transition: background .2s, transform .2s;
+  width: 100%;
+}
+.return-popup-btn:hover { background: #BB2121; transform: translateY(-2px); }
+.return-popup-dismiss {
+  display: block; margin-top: 14px; font-family: 'DM Mono', monospace;
+  font-size: .6rem; letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(10,10,10,.35); background: none; border: none; cursor: none;
+  transition: color .2s;
+}
+.return-popup-dismiss:hover { color: rgba(10,10,10,.7); }
+
+/* ── EPOCH TIMELINE ── */
+.epoch-wrap { position:relative; height:500vh; background:var(--bone); }
+.epoch-pin {
+  position: sticky; top:0; height:100vh; overflow:hidden;
+  display:flex; flex-direction:column; justify-content:center;
+  padding:0 52px;
+  background: var(--bone);
+  z-index: 2;
+}
+.epoch-ghost {
+  position:absolute; right:-60px; top:50%; transform:translateY(-50%);
+  width:52vw; max-width:680px; pointer-events:none;
+  opacity:0; transition:opacity 1.2s;
+}
+.epoch-ghost img { width:100%; height:auto; opacity:.14; }
+.epoch-ghost.show { opacity:1; }
+.epoch-hd { max-width:1100px; margin:0 auto 40px; width:100%; }
+.epoch-hd .stitle { font-size:clamp(1.8rem,3.2vw,2.8rem); }
+.epoch-track { max-width:1100px; margin:0 auto; width:100%; position:relative; }
+
+/* HORIZONTAL bar (desktop) */
+.tl-bar {
+  position:absolute; top:10px; left:10px; right:10px; height:2px;
+  background:rgba(10,10,10,.1); border-radius:2px; z-index:0;
+}
+.tl-fill {
+  position:absolute; top:0; left:0; height:100%;
+  background:var(--red); width:0%; transition:width .06s linear; border-radius:2px;
+}
+.tl-nodes { display:grid; grid-template-columns:repeat(5,1fr); position:relative; padding-top:36px; z-index:1; }
+.tl-node { position:relative; padding-right:16px; }
+.tl-dot {
+  position:absolute; top:-27px; left:0;
+  width:20px; height:20px; border-radius:50%;
+  background:var(--bone); border:2px solid rgba(10,10,10,.18);
+  transition:background .4s, border-color .4s, box-shadow .4s, transform .35s; z-index:2;
+}
+.tl-node.active .tl-dot { background:var(--red); border-color:var(--red); box-shadow:0 0 0 6px rgba(187,33,33,.16); transform:scale(1.25); }
+.tl-node.done .tl-dot { background:var(--obsidian); border-color:var(--obsidian); }
+.tl-era { font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.18em; color:var(--red); margin-bottom:8px; opacity:0; transform:translateY(8px); transition:opacity .4s, transform .4s; }
+.tl-node.active .tl-era, .tl-node.done .tl-era { opacity:1; transform:translateY(0); }
+.tl-title { font-family:'Playfair Display',serif; font-weight:700; font-size:.95rem; margin-bottom:8px; line-height:1.2; opacity:0; transform:translateY(10px); transition:opacity .4s .07s, transform .4s .07s; }
+.tl-node.active .tl-title, .tl-node.done .tl-title { opacity:1; transform:translateY(0); }
+.tl-body { font-size:.8rem; line-height:1.65; max-width:175px; opacity:0; transform:translateY(8px); transition:opacity .4s .14s, transform .4s .14s; }
+.tl-node.active .tl-body, .tl-node.done .tl-body { opacity:.52; transform:translateY(0); }
+
+.epoch-cta { max-width:1100px; margin:36px auto 0; width:100%; opacity:0; transform:translateY(10px); transition:opacity .55s, transform .55s; }
+.epoch-cta.show { opacity:1; transform:translateY(0); }
+
+/* ── SOLUTION ── */
+.solution { background:var(--obsidian); color:var(--bone); padding:110px 52px; }
+.solution-inner { max-width:1100px; margin:0 auto; }
+.sol-head { display:grid; grid-template-columns:1fr 1fr; gap:80px; margin-bottom:48px; align-items:end; }
+.sol-body { font-size:.95rem; line-height:1.8; opacity:.52; align-self:end; }
+.trinity { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; }
+.t-card { background:rgba(235,231,221,.04); border:1px solid rgba(235,231,221,.07); padding:44px 32px; position:relative; overflow:hidden; transition:transform .3s, background .3s; }
+.t-card:hover { transform:translateY(-6px); background:rgba(235,231,221,.07); }
+.t-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--red); transform:scaleX(0); transform-origin:left; transition:transform .4s; }
+.t-card:hover::before { transform:scaleX(1); }
+.t-num { font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.2em; color:var(--red); margin-bottom:24px; display:block; }
+.t-glyph { font-size:1.5rem; margin-bottom:16px; display:block; opacity:.55; }
+.t-card h3 { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:700; margin-bottom:12px; line-height:1.2; }
+.t-card p { font-size:.86rem; line-height:1.72; opacity:.5; }
+
+/* ── ABOUT ── */
+.about { background:var(--bone); padding:110px 52px; position:relative; overflow:visible; }
+.about::before,
+.about::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+/* skullbase — fixed anchor, right edge */
+.about::before {
+  width: 85%;
+  height: 52vw;
+  top: 55%;
+  left: 20%;
+  transform: scaleX(-1) translateY(-50%);
+  opacity: 0.14;
+  background-image: var(--about-skull);
+  background-position: right center;
+  background-size: contain;
+  z-index: 0;
+}
+/* skullteethlayer — same exact dimensions, jaw drops on scroll */
+.about::after {
+  width: 85%;
+  height: 52vw;
+  top: 55%;
+  left: 20%;
+  opacity: 0.11;
+  background-image: var(--about-teeth);
+  background-position: right center;
+  background-size: contain;
+  z-index: 0;
+  transform: scaleX(-1) translateY(calc(-50% + var(--jaw-y, 0px)));
+  transition: transform 0.08s linear;
+  will-change: transform;
+}
+.about-inner { max-width:760px; margin:0 auto; position:relative; z-index:1; }
+@keyframes breathe { 0%,100%{transform:scale(1)} 50%{transform:scale(1.03)} }
+.about-text p { font-size:.93rem; line-height:1.82; opacity:.58; margin-bottom:16px; }
+.about-text p:last-of-type { font-family:'Playfair Display',serif; font-style:italic; font-size:1.05rem; opacity:.85; border-left:2px solid var(--red); padding-left:18px; margin-bottom:0; }
+
+/* ── SECURITY ── */
+.security { background:var(--obsidian); color:var(--bone); padding:100px 52px; position:relative; overflow:hidden; }
+.sec-inner { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
+.sec-body { font-size:.93rem; line-height:1.8; opacity:.52; margin-top:16px; }
+.sec-list { display:flex; flex-direction:column; }
+.sec-item { display:flex; align-items:center; gap:16px; padding:18px 0; border-bottom:1px solid rgba(235,231,221,.07); font-size:.88rem; }
+.sec-check { width:24px; height:24px; border:1px solid rgba(187,33,33,.5); display:flex; align-items:center; justify-content:center; font-size:.68rem; color:var(--red); font-family:'DM Mono',monospace; flex-shrink:0; }
+.sec-ghost { position:absolute; right:-60px; top:50%; transform:translateY(-50%); width:42%; pointer-events:none; opacity:.04; filter:brightness(0) invert(1); }
+
+/* ── CLOSING ── */
+.closing {
+  background: var(--obsidian); color:var(--bone);
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  position:relative; overflow:hidden;
+}
+#closing-canvas { position:absolute; inset:0; pointer-events:none; z-index:1; }
+@media(max-width:800px){ #closing-canvas { display:none; } }
+.closing-inner { position:relative; z-index:2; text-align:center; max-width:760px; padding:80px 40px; }
+.closing-logo {
+  width:clamp(90px,12vw,140px); height:clamp(90px,12vw,140px);
+  margin:0 auto 32px;
+  opacity:0; transform:scale(.85);
+  transition:opacity 1s, transform 1s;
+}
+.closing-logo.in { opacity:1; transform:scale(1); }
+.closing-logo img { width:100%; height:100%; object-fit:contain; filter:brightness(0) invert(1); opacity:.85; animation:breathe 6s ease-in-out infinite; }
+.closing-tag { font-family:'DM Mono',monospace; font-size:.66rem; letter-spacing:.24em; text-transform:uppercase; color:var(--red); margin-bottom:18px; opacity:0; transform:translateY(10px); transition:opacity .7s .2s, transform .7s .2s; }
+.closing.in .closing-tag { opacity:1; transform:translateY(0); }
+.closing-title { font-family:'Playfair Display',serif; font-weight:800; font-size:clamp(2rem,5vw,4rem); line-height:1.08; letter-spacing:-.025em; margin-bottom:20px; opacity:0; transform:translateY(14px); transition:opacity .8s .35s, transform .8s .35s; }
+.closing.in .closing-title { opacity:1; transform:translateY(0); }
+.closing-title em { font-style:italic; color:var(--red); }
+.closing-sub { font-size:clamp(.88rem,1.3vw,1rem); line-height:1.78; max-width:520px; margin:0 auto 40px; opacity:0; transition:opacity .7s .5s; }
+.closing.in .closing-sub { opacity:.48; }
+.closing-btns { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; opacity:0; transform:translateY(8px); transition:opacity .65s .65s, transform .65s .65s; }
+.closing.in .closing-btns { opacity:1; transform:translateY(0); }
+.closing-spark { font-size:1.4rem; color:var(--red); margin-top:48px; opacity:0; transition:opacity .6s .9s; animation:none; }
+.closing.in .closing-spark { opacity:1; animation:pdot 3s ease-in-out infinite; }
+
+/* ── CONTACT ── */
+.contact { background:var(--bone); padding:100px 52px 0; }
+.contact-inner { max-width:1100px; margin:0 auto; }
+.contact-top { margin-bottom:60px; }
+.contact-title { margin:12px 0 20px; }
+.contact-intro { font-size:1rem; line-height:1.8; opacity:.6; max-width:620px; }
+
+/* Service tiers */
+.service-tiers { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; margin-bottom:80px; }
+.tier {
+  background:var(--obsidian); color:var(--bone);
+  padding:40px 32px; position:relative; overflow:hidden;
+  display:flex; flex-direction:column;
+  transition:transform .3s;
+}
+.tier:hover { transform:translateY(-4px); }
+.tier-featured { background:var(--red); }
+.tier-badge {
+  position:absolute; top:0; right:0;
+  background:var(--bone); color:var(--obsidian);
+  font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.16em;
+  text-transform:uppercase; padding:6px 14px;
+}
+.tier-tag { font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.2em; text-transform:uppercase; opacity:.5; margin-bottom:12px; }
+.tier-name { font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:700; margin-bottom:8px; }
+.tier-price { font-family:'DM Mono',monospace; font-size:.75rem; letter-spacing:.12em; opacity:.6; margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid rgba(235,231,221,.12); }
+.tier-featured .tier-price { border-bottom-color:rgba(235,231,221,.25); }
+.tier-desc { font-size:.87rem; line-height:1.7; opacity:.65; margin-bottom:20px; }
+.tier-list { list-style:none; display:flex; flex-direction:column; gap:9px; margin-bottom:32px; flex:1; }
+.tier-list li { font-size:.82rem; opacity:.6; padding-left:16px; position:relative; }
+.tier-list li::before { content:'—'; position:absolute; left:0; color:var(--red); opacity:.8; }
+.tier-featured .tier-list li::before { color:rgba(235,231,221,.6); }
+.tier-cta { align-self:flex-start; font-size:.72rem; }
+.tier .btn-outline { color:var(--bone); border-color:rgba(235,231,221,.3); }
+.tier .btn-outline:hover { border-color:var(--bone); }
+
+/* Form section */
+.contact-form-wrap {
+  background:var(--obsidian); color:var(--bone);
+  margin:0 -52px; padding:80px 52px;
+}
+.contact-form-inner { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1fr 1.4fr; gap:80px; align-items:start; }
+.contact-form-title { font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:800; margin-bottom:14px; }
+.contact-form-sub { font-size:.9rem; line-height:1.75; opacity:.55; margin-bottom:36px; }
+.c-methods-compact { display:flex; flex-direction:column; }
+.c-method-line { display:flex; align-items:flex-start; gap:14px; padding:14px 0; border-bottom:1px solid rgba(235,231,221,.07); }
+.c-method-dot { width:8px; height:8px; border-radius:50%; background:var(--red); flex-shrink:0; margin-top:5px; }
+.c-label { font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.16em; text-transform:uppercase; color:var(--red); margin-bottom:3px; }
+.c-value { font-size:.86rem; opacity:.6; }
+.contact-form { display:flex; flex-direction:column; gap:2px; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:2px; }
+.contact-form input,.contact-form textarea,.contact-form select {
+  background:rgba(235,231,221,.06); border:1px solid rgba(235,231,221,.12);
+  color:var(--bone); padding:16px 20px;
+  font-family:'DM Sans',sans-serif; font-size:.9rem; outline:none;
+  transition:border-color .2s,background .2s; resize:none;
+  appearance:none; -webkit-appearance:none;
+}
+.contact-form input::placeholder,.contact-form textarea::placeholder { color:rgba(235,231,221,.3); }
+.contact-form input:focus,.contact-form textarea:focus,.contact-form select:focus { border-color:rgba(187,33,33,.6); background:rgba(235,231,221,.09); }
+.contact-form textarea { height:130px; }
+.contact-form select { color:rgba(235,231,221,.7); background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23EBE7DD' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 18px center; padding-right:44px; }
+.contact-form select option { background:#1a1a1a; color:var(--bone); }
+.contact-submit { width:100%; justify-content:center; margin-top:4px; font-size:.82rem; letter-spacing:.16em; }
+.form-note { font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.1em; opacity:.3; padding-top:10px; color:var(--bone); }
+/* Success state */
+.form-success { display:none; text-align:center; padding:60px 40px; border:1px solid rgba(235,231,221,.12); }
+.form-success.show { display:block; }
+.success-icon { font-size:2rem; color:var(--red); margin-bottom:20px; animation:pdot 2s ease-in-out infinite; }
+.form-success h4 { font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:700; margin-bottom:12px; }
+.form-success p { font-size:.9rem; line-height:1.7; opacity:.55; }
+
+/* Mobile tiers */
+@media(max-width:800px){
+  .contact { padding:80px 22px 0; }
+  .service-tiers { grid-template-columns:1fr; }
+  .contact-form-wrap { margin:0 -22px; padding:60px 22px; }
+  .contact-form-inner { grid-template-columns:1fr; gap:44px; }
+  .form-row { grid-template-columns:1fr; }
+}
+
+/* ── FOOTER ── */
+footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; border-top:1px solid rgba(235,231,221,.05); }
+.footer-inner { max-width:1100px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:18px; }
+.footer-brand { display:flex; align-items:center; gap:12px; }
+.footer-brand img { height:28px; filter:brightness(0) invert(1); opacity:.55; }
+.footer-brand span { font-family:'Playfair Display',serif; font-size:.9rem; font-weight:700; opacity:.55; letter-spacing:.06em; }
+.footer-spark { font-size:1.6rem; color:var(--red); animation:pdot 3s ease-in-out infinite; }
+.footer-tag { font-family:'Playfair Display',serif; font-style:italic; font-size:.88rem; opacity:.32; }
+.footer-copy { font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.14em; opacity:.18; text-align:center; width:100%; margin-top:18px; padding-top:18px; border-top:1px solid rgba(235,231,221,.05); }
+.footer-copy a { color:inherit; opacity:.5; text-decoration:none; transition:opacity .2s; }
+.footer-copy a:hover { opacity:.9; }
+
+/* ── LEGAL SECTION ── */
+#legal { background:var(--obsidian); border-top:1px solid rgba(235,231,221,.06); }
+.legal-hero { padding:120px 52px 72px; border-bottom:1px solid rgba(235,231,221,.06); }
+.legal-hero-inner { max-width:1100px; margin:0 auto; }
+.legal-eyebrow { font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.22em; text-transform:uppercase; color:var(--red); margin-bottom:20px; opacity:.9; }
+.legal-hero-title { font-family:'Playfair Display',serif; font-size:clamp(2rem,4vw,3.2rem); font-weight:800; line-height:1.1; margin-bottom:20px; letter-spacing:-.01em; }
+.legal-hero-sub { font-size:.95rem; line-height:1.8; opacity:.45; max-width:520px; }
+.legal-tabs-wrap { position:sticky; top:0; z-index:50; background:rgba(10,10,10,.97); backdrop-filter:blur(18px); border-bottom:1px solid rgba(235,231,221,.06); padding:0 52px; }
+.legal-tabs { display:flex; max-width:1100px; margin:0 auto; }
+.legal-tab { font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.16em; text-transform:uppercase; padding:18px 24px; background:transparent; color:rgba(235,231,221,.35); border:none; border-bottom:2px solid transparent; cursor:none; transition:color .2s,border-color .2s; }
+.legal-tab:hover { color:rgba(235,231,221,.75); }
+.legal-tab.active { color:var(--bone); border-bottom-color:var(--red); }
+.legal-content { max-width:1100px; margin:0 auto; padding:72px 52px 120px; }
+.legal-panel { display:none; animation:lFade .3s; }
+.legal-panel.active { display:block; }
+@keyframes lFade { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.legal-panel h2 { font-family:'Playfair Display',serif; font-size:clamp(1.4rem,3vw,2rem); font-weight:800; margin-bottom:8px; letter-spacing:-.01em; }
+.legal-meta { font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.14em; opacity:.25; margin-bottom:56px; padding-bottom:32px; border-bottom:1px solid rgba(235,231,221,.07); }
+.legal-panel h3 { font-family:'Playfair Display',serif; font-size:1.05rem; font-weight:700; margin:44px 0 12px; color:var(--bone); letter-spacing:.01em; }
+.legal-panel h3:first-of-type { margin-top:0; }
+.legal-panel p { font-size:.92rem; line-height:1.9; color:rgba(235,231,221,.55); margin-bottom:14px; max-width:720px; }
+.legal-panel ul { list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:18px; padding-left:0; max-width:720px; }
+.legal-panel ul li { font-size:.9rem; line-height:1.8; color:rgba(235,231,221,.55); padding-left:22px; position:relative; }
+.legal-panel ul li::before { content:'—'; position:absolute; left:0; color:var(--red); opacity:.7; }
+.legal-divider { width:40px; height:1px; background:var(--red); opacity:.4; margin:36px 0; }
+.legal-strong { color:rgba(235,231,221,.8); font-weight:500; }
+
+/* ── MOBILE ── */
+@media(max-width:800px){
+  nav { padding:18px 22px; }
+  nav.scrolled { padding:12px 22px; }
+  .nav-links { display:none; }
+  .hero, .friction, .solution, .about, .security, .contact, .closing { padding-left:22px; padding-right:22px; }
+  .hero-content { padding-top: 140px; }
+  .about::before, .about::after { width:270%; height:150vw; left:-160%; right:auto; top:50%; }
+  .friction-inner,.sol-head,.about-inner,.sec-inner { grid-template-columns:1fr; gap:44px; }
+  .trinity { grid-template-columns:1fr; }
+  .form-row { grid-template-columns:1fr; }
+  /* Mobile timeline — single card at a time */
+  .epoch-wrap { height:350vh; }
+  .epoch-pin { padding:22px 22px 100px !important; justify-content:center !important; overflow:hidden; }
+  .epoch-hd { margin-bottom:28px; }
+  .tl-bar { display:none; }
+  /* Mobile progress dots row */
+  .tl-progress-dots { display:flex; gap:8px; margin-bottom:32px; }
+  .tl-progress-dot { width:8px; height:8px; border-radius:50%; background:rgba(10,10,10,.15); transition:background .3s, transform .3s; }
+  .tl-progress-dot.active { background:var(--red); transform:scale(1.3); }
+  .tl-progress-dot.done { background:var(--obsidian); }
+  /* Hide all nodes, show only active */
+  .tl-nodes { display:block !important; grid-template-columns:unset !important; padding-top:0; position:relative; min-height:220px; }
+  .tl-node {
+    position:absolute; top:0; left:0; right:0;
+    padding:0; opacity:0;
+    transform:translateY(20px);
+    transition:opacity .5s, transform .5s;
+    pointer-events:none;
+  }
+  .tl-node.active {
+    opacity:1; transform:translateY(0); pointer-events:auto;
+    position:relative;
+  }
+  .tl-node.done { opacity:0; transform:translateY(-20px); position:absolute; }
+  .tl-dot { display:none; }
+  .tl-era { opacity:1 !important; transform:none !important; }
+  .tl-title { opacity:1 !important; transform:none !important; font-size:1.6rem; margin-bottom:14px; }
+  .tl-body { opacity:1 !important; transform:none !important; max-width:100%; font-size:.95rem; line-height:1.75; }
+  #side-logo { display:none; }
+  footer { padding:36px 22px 24px; }
+  .legal-hero { padding:80px 22px 52px; }
+  .legal-tabs-wrap { padding:0 22px; overflow-x:auto; }
+  .legal-tabs { min-width:max-content; }
+  .legal-content { padding:52px 22px 80px; }
+  .footer-inner { flex-direction:column; align-items:flex-start; gap:14px; }
+}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-ring"></div>
+
+<!-- SIDE LOGO -->
+<div id="side-logo">
+  <img id="slogo" src="" alt="">
+  <div class="side-track"><div class="side-fill" id="sfill"></div></div>
+  <div class="side-dot"></div>
+</div>
+
+<!-- STICKY CTA STRIP -->
+<div id="cta-strip">
+  <p>Ready to define your next epoch?</p>
+  <div class="cta-inner">
+    <a href="#contact">Begin Your Evolution →</a>
+    <button onclick="document.getElementById('cta-strip').classList.remove('visible');document.getElementById('cta-strip').style.display='none'">✕</button>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#home" class="nav-logo">
+    <img id="nlogo" src="" alt="AiOSAURUS">
+    <span class="nav-wordmark">AiOSAURUS</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#mission">The Mission</a></li>
+    <li><a href="#epoch">The Evolution</a></li>
+    <li><a href="#solution">The Laboratory</a></li>
+    <li><a href="#security">Security</a></li>
+    <li><a href="#contact" class="nav-cta">Contact Us</a></li>
+  </ul>
+</nav>
+
+<!-- LOGO INTRO STAGE — fixed, full screen, scroll-driven -->
+<div id="logo-stage">
+  <img id="stage-logo" src="" alt="AiOSAURUS">
+</div>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-logo-center">
+    <img id="hlogo" src="" alt="">
+  </div>
+  <div class="hero-content">
+    <div class="eyebrow">Agentic AI Orchestration</div>
+    <h1 class="hero-title">Intelligence<br>that <em>Endures.</em></h1>
+    <p class="hero-sub">We build the intelligent, data-secure connective tissue that powers autonomous workflows — grounded in truth, built for the next epoch.</p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn btn-dark">Begin Your Evolution</a>
+      <a href="#epoch" class="btn btn-outline">Trace the Epochs</a>
+    </div>
+  </div>
+  <div class="hero-scroll"><div class="scroll-bar"></div><span>Scroll to Evolve</span></div>
+  <!-- SCROLL ARROW -->
+  <div id="scroll-arrow">
+    <div class="arrow-chevrons">
+      <span class="arrow-chevron"></span>
+      <span class="arrow-chevron"></span>
+      <span class="arrow-chevron"></span>
+    </div>
+    <span class="arrow-label">Scroll</span>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee">
+  <div class="marquee-inner">
+    <span>Grounded Data</span><span>✦</span><span>Specialized Skills</span><span>✦</span><span>Autonomous Execution</span><span>✦</span><span>Zero Hallucination</span><span>✦</span><span>Operational Harmony</span><span>✦</span><span>Defining the Next Epoch</span><span>✦</span>
+    <span>Grounded Data</span><span>✦</span><span>Specialized Skills</span><span>✦</span><span>Autonomous Execution</span><span>✦</span><span>Zero Hallucination</span><span>✦</span><span>Operational Harmony</span><span>✦</span><span>Defining the Next Epoch</span><span>✦</span>
+  </div>
+</div>
+
+<!-- FRICTION / MISSION -->
+<section class="friction" id="mission">
+  <div class="friction-inner">
+    <div>
+      <div class="section-label reveal">The Problem</div>
+      <h2 class="stitle reveal d1">The Era of Fragile Automation is Over.</h2>
+      <p class="friction-body reveal d2">Traditional automation is a relic. It breaks under pressure and ignores context. Your team shouldn't be the glue holding disconnected tools together. Stop acting like a processor — start acting like an architect.</p>
+      <blockquote class="friction-quote reveal d3">Extinction isn't a choice;<br>it's a failure to adapt.</blockquote>
+    </div>
+    <div class="friction-grid reveal d1">
+      <div class="f-item">
+        <div class="f-num">01</div>
+        <h3>Siloed Data</h3>
+        <p>Intelligence trapped in isolation. Institutional knowledge locked away, invisible to the workflows that need it most.</p>
+      </div>
+      <div class="f-item">
+        <div class="f-num">02</div>
+        <h3>Fragile Workflows</h3>
+        <p>Systems that shatter under change. Legacy automation built for a static world — unable to adapt when complexity grows.</p>
+      </div>
+      <div class="f-item">
+        <div class="f-num">03</div>
+        <h3>The Human Bridge</h3>
+        <p>Employees acting as manual connective tissue. Human potential buried under the weight of repetitive orchestration.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKULL SEGUE — parallax divider between mission and epochs -->
+<div id="skull-segue">
+  <img id="skull3d" src="" alt="" aria-hidden="true" />
+</div>
+
+<!-- EPOCH SCROLL HINT -->
+<div id="epoch-scroll-hint">
+  <span>Scroll for next epoch</span>
+  <div class="epoch-hint-arrow"></div>
+</div>
+
+<!-- EPOCH TIMELINE -->
+<section class="epoch-wrap" id="epoch">
+  <div class="epoch-pin" id="epoch-pin">
+    <div class="epoch-ghost" id="epoch-ghost">
+      <img id="eghost" src="" alt="">
+    </div>
+    <div class="epoch-hd">
+      <div class="section-label">The Evolution</div>
+      <h2 class="stitle">Five Epochs.<br>One Direction.</h2>
+    </div>
+    <div class="epoch-track">
+      <div class="tl-bar"><div class="tl-fill" id="tl-fill"></div></div>
+      <div class="tl-progress-dots" id="tl-dots">
+        <div class="tl-progress-dot"></div>
+        <div class="tl-progress-dot"></div>
+        <div class="tl-progress-dot"></div>
+        <div class="tl-progress-dot"></div>
+        <div class="tl-progress-dot"></div>
+      </div>
+      <div class="tl-nodes" id="tl-nodes">
+        <div class="tl-node" data-i="0">
+          <div class="tl-dot"></div>
+          <div class="tl-era">Epoch I</div>
+          <div class="tl-title">The Fossil Record</div>
+          <div class="tl-body">Your organization's data — the compressed intelligence of every decision ever made — lying dormant, unactivated.</div>
+        </div>
+        <div class="tl-node" data-i="1">
+          <div class="tl-dot"></div>
+          <div class="tl-era">Epoch II</div>
+          <div class="tl-title">Excavation</div>
+          <div class="tl-body">AiOSAURUS unearths the signal from the noise. We map, classify, and protect your proprietary data architecture.</div>
+        </div>
+        <div class="tl-node" data-i="2">
+          <div class="tl-dot"></div>
+          <div class="tl-era">Epoch III</div>
+          <div class="tl-title">Agent Awakening</div>
+          <div class="tl-body">Specialized agents are deployed — each seated in your verified data, each equipped with precision skills to reason and act.</div>
+        </div>
+        <div class="tl-node" data-i="3">
+          <div class="tl-dot"></div>
+          <div class="tl-era">Epoch IV</div>
+          <div class="tl-title">Orchestration</div>
+          <div class="tl-body">The agents coordinate. Workflows execute autonomously, end-to-end. The human bridge dissolves into strategy.</div>
+        </div>
+        <div class="tl-node" data-i="4">
+          <div class="tl-dot"></div>
+          <div class="tl-era">Epoch V</div>
+          <div class="tl-title">Operational Harmony</div>
+          <div class="tl-body">A self-optimizing organization. Friction handled by code. Strategy handled by humans. The next epoch, realized.</div>
+        </div>
+      </div>
+    </div>
+    <div class="epoch-cta" id="epoch-cta">
+      <a href="#" id="open-demo-btn" class="btn btn-dark">See the Architecture</a>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section class="solution" id="solution">
+  <div class="solution-inner">
+    <div class="sol-head">
+      <div>
+        <div class="section-label reveal">The Solution</div>
+        <h2 class="stitle reveal d1">Agentic<br>Connective<br>Tissue.</h2>
+      </div>
+      <p class="sol-body reveal d2">We don't just automate — we orchestrate. Our workflows are grounded in your data. Not synthetic. Not assumed. Protected, understood, and activated at the speed of intelligence.</p>
+    </div>
+    <div class="trinity">
+      <div class="t-card reveal">
+        <span class="t-num">01 / Seated Data</span>
+        <span class="t-glyph">◈</span>
+        <h3>Grounded in Truth</h3>
+        <p>Every agent is anchored in your proprietary, verified data. Your AI is only as strong as its foundation — ours is bedrock.</p>
+      </div>
+      <div class="t-card reveal d1">
+        <span class="t-num">02 / Specialized Skills</span>
+        <span class="t-glyph">◎</span>
+        <h3>Agents That Think</h3>
+        <p>Reasoning, Forecasting, Pattern Recognition. Agents that don't just execute — they deliberate within your operational parameters.</p>
+      </div>
+      <div class="t-card reveal d2">
+        <span class="t-num">03 / Harmony</span>
+        <span class="t-glyph">◉</span>
+        <h3>The End State</h3>
+        <p>Friction handled by code. Strategy handled by humans. Intelligence as invisible infrastructure — always present, never intrusive.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-inner">
+    <div class="about-text">
+      <div class="section-label reveal">The Origin</div>
+      <h2 class="stitle reveal d1">From Extinction<br>to the Spark of<br>Intelligence.</h2>
+      <p class="reveal d2">Nature is a brutal teacher. The dinosaur didn't vanish because it was weak — it vanished because it lacked the connective tissue to sense the change before it arrived.</p>
+      <p class="reveal d2">Modern organizations face their own asteroid moment. Data is everywhere, yet intelligence is fragmented. Systems are brittle. Human potential is buried under manual orchestration.</p>
+      <p class="reveal d3">We build the intelligence that survives the shift — anchoring agentic workflows in the fossils of your own data, protecting that pulse with ironclad security, so your company doesn't just endure. It evolves.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECURITY -->
+<section class="security" id="security">
+  <img class="sec-ghost" id="sghostimg" src="" alt="">
+  <div class="sec-inner">
+    <div>
+      <div class="section-label reveal">Security & Trust</div>
+      <h2 class="stitle reveal d1">Privacy is Our<br>Primal Instinct.</h2>
+      <p class="sec-body reveal d2">We operate on a Zero-Knowledge architecture. Your data never leaves your perimeter. We build the agents — you own the intelligence. Data sovereignty is non-negotiable.</p>
+    </div>
+    <div class="sec-list reveal d1">
+      <div class="sec-item"><div class="sec-check">✓</div><span>SOC2 Compliant Architecture</span></div>
+      <div class="sec-item"><div class="sec-check">✓</div><span>GDPR / HIPAA Ready</span></div>
+      <div class="sec-item"><div class="sec-check">✓</div><span>End-to-End Encryption</span></div>
+      <div class="sec-item"><div class="sec-check">✓</div><span>Zero-Knowledge Data Architecture</span></div>
+      <div class="sec-item"><div class="sec-check">✓</div><span>On-Premise Deployment Available</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="contact-inner">
+
+    <!-- Top: full-width headline -->
+    <div class="contact-top reveal">
+      <div class="section-label">Retain Our Services</div>
+      <h2 class="stitle contact-title">Ready to orchestrate<br>your next epoch?</h2>
+      <p class="contact-intro">Most engagements begin with a free 30-minute discovery call. We map your workflow gaps, identify quick wins, and scope a custom AI orchestration strategy — no obligation, no boilerplate decks.</p>
+    </div>
+
+    <!-- Three service tiers -->
+    <div class="service-tiers reveal d1">
+      <div class="tier">
+        <div class="tier-tag">Starter</div>
+        <div class="tier-name">Workflow Audit</div>
+        <div class="tier-price">Free</div>
+        <div class="tier-desc">30-min discovery session. We identify your three most fragmented workflows and deliver a written diagnosis with clear next steps.</div>
+        <ul class="tier-list">
+          <li>Workflow friction mapping</li>
+          <li>Written diagnosis report</li>
+          <li>Prioritized recommendations</li>
+          <li>No commitment required</li>
+        </ul>
+        <a href="#contact-form" class="btn btn-outline tier-cta">Book Discovery Call</a>
+      </div>
+      <div class="tier tier-featured">
+        <div class="tier-badge">Most Popular</div>
+        <div class="tier-tag">Core</div>
+        <div class="tier-name">Agent Deployment</div>
+        <div class="tier-price">Custom Scope</div>
+        <div class="tier-desc">We design, build, and deploy specialized AI agents grounded in your proprietary data — from first prototype to production.</div>
+        <ul class="tier-list">
+          <li>Data architecture review</li>
+          <li>Custom agent design</li>
+          <li>Full deployment & testing</li>
+          <li>30-day post-launch support</li>
+        </ul>
+        <a href="#contact-form" class="btn btn-light tier-cta">Start a Project</a>
+      </div>
+      <div class="tier">
+        <div class="tier-tag">Enterprise</div>
+        <div class="tier-name">Platform Integration</div>
+        <div class="tier-price">Retainer</div>
+        <div class="tier-desc">End-to-end orchestration infrastructure. Multi-agent systems, ongoing optimization, and dedicated support across your entire operation.</div>
+        <ul class="tier-list">
+          <li>Multi-agent orchestration</li>
+          <li>Ongoing optimization</li>
+          <li>Dedicated support team</li>
+          <li>Monthly performance reviews</li>
+        </ul>
+        <a href="#contact-form" class="btn btn-outline tier-cta">Discuss Retainer</a>
+      </div>
+    </div>
+
+    <!-- Contact form -->
+    <div class="contact-form-wrap" id="contact-form">
+      <div class="contact-form-inner">
+        <div class="contact-form-left reveal">
+          <h3 class="contact-form-title">Begin the Excavation</h3>
+          <p class="contact-form-sub">Fill in what you know. We'll handle the rest. A real human responds within one business day.</p>
+          <div class="c-methods-compact">
+            <div class="c-method-line">
+              <span class="c-method-dot"></span>
+              <div>
+                <div class="c-label">Email</div>
+                <div class="c-value"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="630b060f0f0c23020a0c1002161116104d000c0e">[email&#160;protected]</a></div>
+              </div>
+            </div>
+            <div class="c-method-line">
+              <span class="c-method-dot"></span>
+              <div>
+                <div class="c-label">Response Time</div>
+                <div class="c-value">Within 1 business day</div>
+              </div>
+            </div>
+            <div class="c-method-line">
+              <span class="c-method-dot"></span>
+              <div>
+                <div class="c-label">Availability</div>
+                <div class="c-value">Remote-first. Global.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="reveal d1">
+          <form class="contact-form" id="main-form" onsubmit="handleContact(event)">
+            <div class="form-row">
+              <input type="text" name="name" placeholder="Your Name" required>
+              <input type="text" name="organization" placeholder="Organization">
+            </div>
+            <input type="email" name="email" placeholder="Email Address" required>
+            <select name="service">
+              <option value="" disabled selected>Service Interest</option>
+              <option>Free Workflow Audit (30-min call)</option>
+              <option>Agent Design &amp; Deployment</option>
+              <option>Data Architecture Review</option>
+              <option>Full Platform Integration / Retainer</option>
+              <option>Not sure — let's talk</option>
+            </select>
+            <textarea name="message" placeholder="Briefly describe your most painful workflow — what breaks, what costs time, what your team wishes was automated."></textarea>
+            <button type="submit" class="btn btn-red contact-submit" id="submit-btn">Commence Excavation →</button>
+            <p class="form-note">No pitch decks. No automated replies. Just a real conversation about your next epoch.</p>
+          </form>
+          <div class="form-success" id="form-success">
+            <div class="success-icon">✦</div>
+            <h4>Excavation commenced.</h4>
+            <p>We've received your message. Expect a human response within one business day. In the meantime — the next epoch is already in motion.</p>
+          </div>
+          <div class="form-success" id="form-error">
+            <div class="success-icon" style="color:var(--red)">✕</div>
+            <h4>Something went wrong.</h4>
+            <p>We couldn't send your message. Please try again or reach us directly at <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="462e232a2a2906272f293527333433356825292b">[email&#160;protected]</a></strong>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section class="closing" id="closing">
+  <canvas id="closing-canvas"></canvas>
+  <div class="closing-inner">
+    <div class="closing-logo" id="clogo-wrap">
+      <img id="clogo" src="" alt="AiOSAURUS">
+    </div>
+    <div class="closing-tag">The Next Epoch Awaits</div>
+    <h2 class="closing-title">The power of tomorrow,<br><em>for the heart of today.</em></h2>
+    <p class="closing-sub">Your asteroid moment is approaching. The organizations that survive won't be the strongest — they'll be the most connected.</p>
+    <div class="closing-btns">
+      <a href="#contact" class="btn btn-light">Begin Your Evolution</a>
+      <a href="#home" class="btn btn-outline-light" id="back-top2">↑ Return to the Beginning</a>
+    </div>
+    <div class="closing-spark">✦</div>
+  </div>
+</section>
+
+<!-- ══ LEGAL SECTION ══ -->
+<section id="legal">
+  <div class="legal-hero">
+    <div class="legal-hero-inner">
+      <div class="legal-eyebrow">Legal &amp; Compliance</div>
+      <h2 class="legal-hero-title">Transparency<br><em>by design.</em></h2>
+      <p class="legal-hero-sub">We operate with the same precision we build with. Read our policies below — no jargon, no burying the important parts.</p>
+    </div>
+  </div>
+
+  <div class="legal-tabs-wrap">
+    <div class="legal-tabs">
+      <button class="legal-tab active" onclick="showLegal('privacy',this)">Privacy Policy</button>
+      <button class="legal-tab" onclick="showLegal('terms',this)">Terms of Service</button>
+      <button class="legal-tab" onclick="showLegal('cookies',this)">Cookie Policy</button>
+      <button class="legal-tab" onclick="showLegal('disclaimer',this)">Disclaimer</button>
+    </div>
+  </div>
+
+  <div class="legal-content">
+
+    <!-- Privacy Policy -->
+    <div class="legal-panel active" id="legal-privacy">
+      <h2>Privacy Policy</h2>
+      <p class="legal-meta">Last updated: January 2025 &nbsp;·&nbsp; AiOSAURUS Inc.</p>
+      <h3>1. Information We Collect</h3>
+      <p>We collect information you provide directly to us, such as when you fill out a contact form, request a consultation, or communicate with our team. This may include your name, email address, company name, job title, and details about your business workflows.</p>
+      <p>We may also collect limited technical data automatically — including IP address, browser type, and pages visited — solely to ensure the security and performance of our site.</p>
+      <div class="legal-divider"></div>
+      <h3>2. How We Use Your Information</h3>
+      <ul>
+        <li>To respond to your inquiries and schedule consultations</li>
+        <li>To deliver and improve our agentic AI services</li>
+        <li>To comply with legal obligations and protect our rights</li>
+        <li>To send service-related communications you have requested</li>
+      </ul>
+      <div class="legal-divider"></div>
+      <h3>3. Data Sovereignty</h3>
+      <p>AiOSAURUS operates on a Zero-Knowledge architecture. Client proprietary data processed through our agentic workflows never leaves the client's designated perimeter. We do not store, train on, or monetize your operational data.</p>
+      <div class="legal-divider"></div>
+      <h3>4. Sharing of Information</h3>
+      <p>We do not sell, rent, or trade your personal information to third parties. We may share information with trusted service providers who assist in operating our website and conducting our business, under strict confidentiality agreements.</p>
+      <div class="legal-divider"></div>
+      <h3>5. Your Rights</h3>
+      <p>Depending on your jurisdiction, you may have the right to access, correct, or delete your personal data. To exercise these rights, contact us at <span class="legal-strong"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="94e4e6fde2f5f7edd4f5fdfbe7f5e1e6e1e7baf7f5">[email&#160;protected]</a></span>.</p>
+      <div class="legal-divider"></div>
+      <h3>6. Contact</h3>
+      <p>For any privacy-related questions, please reach out to our team at <span class="legal-strong"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d7a7a5bea1b6b4ae97b6beb8a4b6a2a5a2a4f9b4b6">[email&#160;protected]</a></span>.</p>
+    </div>
+
+    <!-- Terms of Service -->
+    <div class="legal-panel" id="legal-terms">
+      <h2>Terms of Service</h2>
+      <p class="legal-meta">Last updated: January 2025 &nbsp;·&nbsp; AiOSAURUS Inc.</p>
+      <h3>1. Acceptance of Terms</h3>
+      <p>By accessing or using the AiOSAURUS website or engaging our services, you agree to be bound by these Terms of Service. If you do not agree, please discontinue use immediately.</p>
+      <div class="legal-divider"></div>
+      <h3>2. Services</h3>
+      <p>AiOSAURUS provides agentic AI orchestration, workflow automation, and data architecture consulting services. The specific scope, deliverables, and terms of any engagement are defined in individual service agreements executed between AiOSAURUS and the client.</p>
+      <div class="legal-divider"></div>
+      <h3>3. Intellectual Property</h3>
+      <p>All content on this website — including text, graphics, logos, and design — is the property of AiOSAURUS Inc. and is protected by applicable intellectual property laws. Client data and proprietary client information remain the exclusive property of the client at all times.</p>
+      <div class="legal-divider"></div>
+      <h3>4. Limitation of Liability</h3>
+      <p>To the maximum extent permitted by law, AiOSAURUS shall not be liable for any indirect, incidental, special, or consequential damages arising from the use of our services or website. Our total liability shall not exceed the amount paid by the client for the specific service giving rise to the claim.</p>
+      <div class="legal-divider"></div>
+      <h3>5. Governing Law</h3>
+      <p>These Terms are governed by the laws of the Province of Ontario, Canada, without regard to conflict of law principles. Any disputes shall be resolved in the courts of Ontario.</p>
+      <div class="legal-divider"></div>
+      <h3>6. Changes to Terms</h3>
+      <p>We reserve the right to modify these Terms at any time. Continued use of our website or services after changes constitutes acceptance of the revised Terms.</p>
+    </div>
+
+    <!-- Cookie Policy -->
+    <div class="legal-panel" id="legal-cookies">
+      <h2>Cookie Policy</h2>
+      <p class="legal-meta">Last updated: January 2025 &nbsp;·&nbsp; AiOSAURUS Inc.</p>
+      <h3>What Are Cookies</h3>
+      <p>Cookies are small text files placed on your device when you visit a website. They help the site function correctly and allow us to understand how visitors interact with our content.</p>
+      <div class="legal-divider"></div>
+      <h3>Cookies We Use</h3>
+      <ul>
+        <li><span class="legal-strong">Essential Cookies:</span> Required for the site to function. These cannot be disabled.</li>
+        <li><span class="legal-strong">Performance Cookies:</span> Anonymous analytics to understand page performance and visitor behaviour. No personally identifiable information is collected.</li>
+        <li><span class="legal-strong">Preference Cookies:</span> Remember your settings and preferences for a better experience on return visits.</li>
+      </ul>
+      <div class="legal-divider"></div>
+      <h3>What We Do Not Do</h3>
+      <p>We do not use cookies for advertising, retargeting, or selling your data to third parties. We do not deploy third-party advertising cookies of any kind.</p>
+      <div class="legal-divider"></div>
+      <h3>Managing Cookies</h3>
+      <p>You can control cookies through your browser settings. Disabling certain cookies may affect site functionality. For more information, refer to your browser's help documentation.</p>
+      <div class="legal-divider"></div>
+      <h3>Contact</h3>
+      <p>Questions about our cookie practices? Email us at <span class="legal-strong"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="daaaa8b3acbbb9a39abbb3b5a9bbafa8afa9f4b9bb">[email&#160;protected]</a></span>.</p>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="legal-panel" id="legal-disclaimer">
+      <h2>Disclaimer</h2>
+      <p class="legal-meta">Last updated: January 2025 &nbsp;·&nbsp; AiOSAURUS Inc.</p>
+      <h3>General Information Only</h3>
+      <p>The content on this website is provided for general informational purposes only. It does not constitute professional, legal, financial, or technical advice. Outcomes described are illustrative and will vary based on each client's unique circumstances, data maturity, and operational environment.</p>
+      <div class="legal-divider"></div>
+      <h3>No Guarantee of Results</h3>
+      <p>While we strive to deliver exceptional outcomes for every client engagement, AiOSAURUS does not guarantee specific results. The effectiveness of agentic AI workflows depends on a range of factors including data quality, organizational readiness, and implementation depth.</p>
+      <div class="legal-divider"></div>
+      <h3>Third-Party Links</h3>
+      <p>Our website may contain links to third-party websites for reference purposes. AiOSAURUS has no control over the content of those sites and accepts no responsibility for them or for any loss or damage that may arise from your use of them.</p>
+      <div class="legal-divider"></div>
+      <h3>AI-Generated Content</h3>
+      <p>Some content on this site may be assisted by AI tools. All published content is reviewed and approved by the AiOSAURUS team. We are committed to accuracy, but recommend independent verification for any material business decisions.</p>
+      <div class="legal-divider"></div>
+      <h3>Accuracy of Information</h3>
+      <p>We make every effort to keep information on this site current and accurate. However, we make no warranties regarding completeness, accuracy, or fitness for a particular purpose. Information may change without notice.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <img id="flogo" src="" alt="AiOSAURUS">
+      <span>AiOSAURUS</span>
+    </div>
+    <div class="footer-spark">✦</div>
+    <p class="footer-tag">The power of tomorrow, for the heart of today.</p>
+    <p class="footer-copy">© 2025 AiOSAURUS. Defining the Next Epoch. All rights reserved. &nbsp;·&nbsp; <a href="#legal">Legal</a></p>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ── LOGOS ──
+const L2 = 'mainlogo.png';
+document.getElementById('stage-logo').src = L2;
+document.getElementById('nlogo').src   = L2;
+document.getElementById('slogo').src   = L2;
+document.getElementById('hlogo').src   = L2;
+document.getElementById('eghost').src  = L2;
+document.getElementById('sghostimg').src = L2;
+document.getElementById('clogo').src   = L2;
+document.getElementById('flogo').src   = L2;
+// ── SKULL IMAGES ──
+const SKULL3D_SRC = 'skull3d.png';
+const TERMINATOR_SRC = 'terminator.png';
+document.getElementById('skull3d').src = SKULL3D_SRC;
+const dSkullImg = document.getElementById('d-skull-img');
+if (dSkullImg) dSkullImg.src = TERMINATOR_SRC;
+
+// ── CURSOR ──
+const cur = document.getElementById('cur');
+const ring = document.getElementById('cur-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function loop(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop);})();
+document.querySelectorAll('a,button,.t-card,.f-item,.tl-node,.c-method').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('hovering'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('hovering'));
+});
+
+// ── DARK DETECT ──
+const darkEls = document.querySelectorAll('.friction,.solution,.security,.closing,footer');
+function isDark(){
+  let d=false;
+  darkEls.forEach(s=>{const r=s.getBoundingClientRect();if(r.top<window.innerHeight*.6&&r.bottom>window.innerHeight*.4)d=true;});
+  return d;
+}
+
+// ── NAV + SIDE ──
+const nav = document.getElementById('nav');
+const sideLogo = document.getElementById('side-logo');
+const sfill = document.getElementById('sfill');
+const ctaStrip = document.getElementById('cta-strip');
+let ctaDismissed = false;
+// ── SCROLL-DRIVEN LOGO ──
+const logoStage    = document.getElementById('logo-stage');
+const stageImg     = document.getElementById('stage-logo');
+const heroContent  = document.querySelector('.hero-content');
+const heroScroll   = document.querySelector('.hero-scroll');
+const scrollArrow  = document.getElementById('scroll-arrow');
+const heroBgLogo   = document.querySelector('.hero-logo-center');
+const VH           = window.innerHeight;
+let contentRevealed = false;
+
+function updateLogoScroll(sy) {
+  // Everything done within first 25% of viewport — one quick flick
+  const SCROLL_RANGE = VH * 0.25;
+  const p = Math.min(1, sy / SCROLL_RANGE);
+
+  if (p < 1) {
+    logoStage.style.display = 'flex';
+
+    // Stage logo: no movement, no scale — just burns out fast
+    // Gone by 55% of scroll range so it never touches text
+    const stageP  = Math.min(1, p / 0.55);
+    const opacity = 1 - ease(stageP); // 1 → 0, quick
+    stageImg.style.transform = 'none';
+    stageImg.style.opacity   = Math.max(0, opacity);
+
+    // Background clears at same pace as logo
+    const bgAlpha = 1 - ease(stageP);
+    logoStage.style.background = `rgba(235,231,221,${bgAlpha})`;
+
+    // Large ghost crossfades in as stage burns out — starts at 30% scroll
+    const ghostP = Math.max(0, Math.min(1, (p - 0.3) / 0.7));
+    heroBgLogo.style.opacity = ease(ghostP);
+
+  } else {
+    logoStage.style.display  = 'none';
+    heroBgLogo.style.opacity = 1;
+
+    if (!contentRevealed) {
+      contentRevealed = true;
+      heroContent.classList.add('revealed');
+      setTimeout(() => heroScroll.classList.add('revealed'), 900);
+      setTimeout(() => scrollArrow.classList.add('visible'), 1200);
+    }
+  }
+}
+
+function clamp(min, val, max) { return Math.min(max, Math.max(min, val)); }
+function ease(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; } // easeInOut
+
+// Show scroll arrow shortly after page load (after stageIn animation)
+setTimeout(() => { if(window.scrollY < 60) scrollArrow.classList.add('visible'); }, 1000);
+
+// Run once on load in case page is already scrolled
+updateLogoScroll(window.scrollY);
+
+// ── MAIN SCROLL HANDLER ──
+let epochMetricsCached = false;
+function onScroll(){
+  if(!epochMetricsCached){ cacheEpochMetrics(); epochMetricsCached=true; }
+  const sy=window.scrollY, total=document.body.scrollHeight-window.innerHeight;
+  nav.classList.toggle('scrolled',sy>50);
+  if(!ctaDismissed) ctaStrip.classList.toggle('visible', sy > window.innerHeight * .6);
+  sfill.style.height=Math.min(100,(sy/total)*100)+'%';
+  sideLogo.classList.toggle('visible',sy>180);
+  // Hide scroll arrow once user starts scrolling
+  scrollArrow.classList.toggle('hidden', sy > 60);
+  const dark=isDark();
+  document.body.classList.toggle('dark-bg',dark);
+  sideLogo.classList.toggle('dark',dark);
+  sideLogo.classList.toggle('light',!dark);
+  updateLogoScroll(sy);
+  updateEpoch();
+  // Skull parallax
+  if(skull3dEl && skullSegue){
+    const rect = skullSegue.getBoundingClientRect();
+    const center = rect.top + rect.height / 2 - window.innerHeight / 2;
+    skull3dEl.style.transform = `translateY(${center * 0.2}px)`;
+  }
+  // Jaw open — triggers as section enters viewport, completes as it exits
+  if(aboutEl && aboutHeight > 0){
+    const rect = aboutEl.getBoundingClientRect();
+    const p = Math.min(1, Math.max(0, (window.innerHeight - rect.top) / (window.innerHeight + aboutHeight)));
+    aboutEl.style.setProperty('--jaw-y', `${p * 65}px`);
+  }
+}
+window.addEventListener('scroll',onScroll,{passive:true});
+
+// ── SKULL SEGUE PARALLAX ──
+const skullSegue = document.getElementById('skull-segue');
+const skull3dEl  = document.getElementById('skull3d');
+
+// IntersectionObserver: fade skull in when it enters viewport
+if (skullSegue && skull3dEl) {
+  const skullObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        skull3dEl.classList.add('visible');
+      } else {
+        skull3dEl.classList.remove('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+  skullObserver.observe(skullSegue);
+}
+
+// ── HERO PARTICLES ──
+const hc=document.getElementById('hero-canvas'), hx=hc.getContext('2d');
+let HW,HH,HP=[],HM={x:-9e9,y:-9e9};
+function hResize(){HW=hc.width=hc.offsetWidth;HH=hc.height=hc.offsetHeight;}
+hResize();
+// Debounced resize — consolidates all resize work into one handler
+let resizeTimer = null;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    hResize();      // hero canvas dimensions
+    cResize();      // closing canvas dimensions
+    cacheEpochMetrics(); // epoch scroll metrics
+    hInit();        // rebuild particles only after resize settles
+  }, 150);
+});
+document.querySelector('.hero').addEventListener('mousemove',e=>{const r=hc.getBoundingClientRect();HM.x=e.clientX-r.left;HM.y=e.clientY-r.top;});
+document.querySelector('.hero').addEventListener('mouseleave',()=>{HM.x=-9e9;HM.y=-9e9;});
+function hInit(){
+  const n=Math.min(Math.floor(HW*HH/5500),160); HP=[];
+  for(let i=0;i<n;i++) HP.push({x:Math.random()*HW,y:Math.random()*HH,ox:0,oy:0,vx:0,vy:0,sz:Math.random()*2.1+.5,a:Math.random()*.22+.05,ang:Math.random()*Math.PI*2,dr:Math.random()*.006-.003,sp:Math.random()*.28+.07,red:Math.random()<.09});
+  HP.forEach(p=>{p.ox=p.x;p.oy=p.y;});
+}
+hInit();
+function hDist(x1,y1,x2,y2){return Math.sqrt((x1-x2)**2+(y1-y2)**2);}
+let hRunning = false;
+function hAnim(){
+  if(!hRunning) return;
+  hx.clearRect(0,0,HW,HH);
+  for(let i=0;i<HP.length;i++){for(let j=i+1;j<HP.length;j++){const d=hDist(HP[i].x,HP[i].y,HP[j].x,HP[j].y);if(d<88){hx.beginPath();hx.moveTo(HP[i].x,HP[i].y);hx.lineTo(HP[j].x,HP[j].y);hx.globalAlpha=(1-d/88)*.065;hx.strokeStyle='#0A0A0A';hx.lineWidth=.5;hx.stroke();hx.globalAlpha=1;}}}
+  HP.forEach(p=>{
+    p.ang+=p.dr; p.ox+=Math.cos(p.ang)*p.sp; p.oy+=Math.sin(p.ang)*p.sp;
+    const dx=p.ox-HM.x,dy=p.oy-HM.y,d=hDist(p.ox,p.oy,HM.x,HM.y),rep=115;
+    if(d<rep){const f=(rep-d)/rep;p.vx+=dx/d*f*3.2;p.vy+=dy/d*f*3.2;}
+    p.vx*=.88;p.vy*=.88;p.x=p.ox+p.vx;p.y=p.oy+p.vy;
+    if(p.ox<0)p.ox=HW;if(p.ox>HW)p.ox=0;if(p.oy<0)p.oy=HH;if(p.oy>HH)p.oy=0;
+    hx.beginPath();hx.arc(p.x,p.y,p.sz,0,Math.PI*2);
+    hx.globalAlpha=p.a*(p.red?1.9:1);hx.fillStyle=p.red?'#BB2121':'#0A0A0A';hx.fill();hx.globalAlpha=1;
+  });
+  requestAnimationFrame(hAnim);
+}
+// Only run hero particles when hero is visible
+new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){ hRunning=true; hAnim(); }
+    else { hRunning=false; }
+  });
+},{threshold:0}).observe(hc);
+
+
+// ── EPOCH TIMELINE ──
+const epochWrap = document.getElementById('epoch');
+const epochGhost = document.getElementById('epoch-ghost');
+const tlFill = document.getElementById('tl-fill');
+const tlNodes = document.querySelectorAll('.tl-node');
+const epochCta = document.getElementById('epoch-cta');
+const tlDots = document.querySelectorAll('.tl-progress-dot');
+const N = tlNodes.length; // 5
+const epochScrollHint = document.getElementById('epoch-scroll-hint');
+
+// Cache epoch top offset once DOM is ready (absolute page position)
+let epochTop = 0, epochScrollable = 0;
+let aboutEl = document.querySelector('.about');
+let aboutHeight = 0;
+function cacheEpochMetrics(){
+  // offsetTop gives position relative to document — reliable
+  let el = epochWrap, top = 0;
+  while(el){ top += el.offsetTop; el = el.offsetParent; }
+  epochTop = top;
+  epochScrollable = Math.max(1, epochWrap.offsetHeight - window.innerHeight);
+  // Cache about section height only (position read live via getBoundingClientRect)
+  if(aboutEl) aboutHeight = aboutEl.offsetHeight;
+}
+window.addEventListener('load', cacheEpochMetrics);
+
+function updateEpoch(){
+  // p = 0 when epoch section top reaches viewport top
+  // p = 1 when we've scrolled through the full scrollable height
+  const scrolled = Math.max(0, window.scrollY - epochTop);
+  const p = Math.min(1, scrolled / epochScrollable);
+
+  epochGhost.classList.toggle('show', p > .03);
+  tlFill.style.width = (p * 100) + '%';
+
+  // Which node index should be active? 0..N-1
+  // Divide progress evenly: node i owns the band [i/N, (i+1)/N)
+  const activeIndex = Math.min(N - 1, Math.floor(p * N));
+
+  tlNodes.forEach((node, i) => {
+    node.classList.toggle('active', i === activeIndex);
+    node.classList.toggle('done',   i < activeIndex);
+    if(tlDots[i]){
+      tlDots[i].classList.toggle('active', i === activeIndex);
+      tlDots[i].classList.toggle('done',   i < activeIndex);
+    }
+  });
+
+  epochCta.classList.toggle('show', p > .85);
+
+  // Show scroll hint on epochs 1–4, hide on epoch 5 and outside section
+  const inSection = p > 0.03 && p < 1;
+  const notLastEpoch = activeIndex < N - 1;
+  epochScrollHint.classList.toggle('visible', inSection && notLastEpoch);
+}
+
+// ── SCROLL REVEAL ──
+const revEls = document.querySelectorAll('.reveal');
+const ro = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');});
+},{threshold:.1});
+revEls.forEach(r=>ro.observe(r));
+
+// ── CLOSING PARTICLES ──
+const cc=document.getElementById('closing-canvas'), cx=cc.getContext('2d');
+let CW,CH,CP=[],CM={x:-9e9,y:-9e9};
+function cResize(){CW=cc.width=cc.offsetWidth;CH=cc.height=cc.offsetHeight;}
+cResize();
+document.querySelector('.closing').addEventListener('mousemove',e=>{const r=cc.getBoundingClientRect();CM.x=e.clientX-r.left;CM.y=e.clientY-r.top;});
+document.querySelector('.closing').addEventListener('mouseleave',()=>{CM.x=-9e9;CM.y=-9e9;});
+let cStarted=false;
+let cRunning=false;
+function cInit(){
+  cResize();
+  const n=Math.min(Math.floor(CW*CH/6000),130); CP=[];
+  for(let i=0;i<n;i++) CP.push({x:Math.random()*CW,y:Math.random()*CH,ox:0,oy:0,vx:0,vy:0,sz:Math.random()*1.9+.4,a:Math.random()*.16+.04,ang:Math.random()*Math.PI*2,dr:Math.random()*.005-.0025,sp:Math.random()*.22+.06,red:Math.random()<.12});
+  CP.forEach(p=>{p.ox=p.x;p.oy=p.y;});
+  if(!cStarted){cStarted=true;cRunning=true;cAnim();}
+}
+function cAnim(){
+  if(!cRunning) return;
+  cx.clearRect(0,0,CW,CH);
+  for(let i=0;i<CP.length;i++){for(let j=i+1;j<CP.length;j++){const dx=CP[i].x-CP[j].x,dy=CP[i].y-CP[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<80){cx.beginPath();cx.moveTo(CP[i].x,CP[i].y);cx.lineTo(CP[j].x,CP[j].y);cx.globalAlpha=(1-d/80)*.055;cx.strokeStyle='#EBE7DD';cx.lineWidth=.5;cx.stroke();cx.globalAlpha=1;}}}
+  CP.forEach(p=>{
+    p.ang+=p.dr;p.ox+=Math.cos(p.ang)*p.sp;p.oy+=Math.sin(p.ang)*p.sp;
+    const dx=p.ox-CM.x,dy=p.oy-CM.y,d=Math.sqrt(dx*dx+dy*dy),rep=100;
+    if(d<rep&&d>0){const f=(rep-d)/rep;p.vx+=dx/d*f*2.8;p.vy+=dy/d*f*2.8;}
+    p.vx*=.88;p.vy*=.88;p.x=p.ox+p.vx;p.y=p.oy+p.vy;
+    if(p.ox<0)p.ox=CW;if(p.ox>CW)p.ox=0;if(p.oy<0)p.oy=CH;if(p.oy>CH)p.oy=0;
+    cx.beginPath();cx.arc(p.x,p.y,p.sz,0,Math.PI*2);
+    cx.globalAlpha=p.a*(p.red?2:1);cx.fillStyle=p.red?'#BB2121':'#EBE7DD';cx.fill();cx.globalAlpha=1;
+  });
+  requestAnimationFrame(cAnim);
+}
+
+// Closing section observer
+const closingEl = document.querySelector('.closing');
+const clogoWrap = document.getElementById('clogo-wrap');
+new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      closingEl.classList.add('in');
+      clogoWrap.classList.add('in');
+      cRunning=true;
+      cInit();
+    } else {
+      cRunning=false;
+    }
+  });
+},{threshold:.15}).observe(closingEl);
+
+// Back to top
+['back-top2'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el) el.addEventListener('click',e=>{e.preventDefault();window.scrollTo({top:0,behavior:'smooth'});});
+});
+
+// Open demo button — wired here so openDemo is guaranteed defined in second script
+const openDemoBtn = document.getElementById('open-demo-btn');
+if(openDemoBtn) openDemoBtn.addEventListener('click', e => {
+  e.preventDefault();
+  if(typeof openDemo === 'function') openDemo();
+});
+
+// Contact form
+function fadeForm(form, panel){
+  form.style.transition = 'opacity .4s';
+  form.style.opacity = '0';
+  setTimeout(() => { form.style.display = 'none'; panel.classList.add('show'); }, 400);
+}
+function resetBtn(btn){
+  btn.textContent = 'Commence Excavation →';
+  btn.disabled = false;
+  btn.style.opacity = '1';
+}
+async function handleContact(e){
+  e.preventDefault();
+  const form = e.target;
+  const btn = document.getElementById('submit-btn');
+  const success = document.getElementById('form-success');
+  const error = document.getElementById('form-error');
+
+  btn.textContent = 'Sending…';
+  btn.disabled = true;
+  btn.style.opacity = '.6';
+
+  try {
+    const res = await fetch('https://formspree.io/f/mwvwlpzv', {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' }
+    });
+    if (res.ok) {
+      fadeForm(form, success);
+    } else {
+      resetBtn(btn); fadeForm(form, error);
+    }
+  } catch (err) {
+    resetBtn(btn); fadeForm(form, error);
+  }
+}
+
+// Init scroll state
+onScroll();
+
+// ── Legal tabs ──
+function showLegal(id, btn) {
+  document.querySelectorAll('.legal-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.legal-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('legal-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// Support deep-link via hash e.g. index.html#legal-cookies
+const lhash = window.location.hash.replace('#legal-','');
+if(['privacy','terms','cookies','disclaimer'].includes(lhash)){
+  const lbtn = document.querySelector(`.legal-tab[onclick*="${lhash}"]`);
+  if(lbtn) showLegal(lhash, lbtn);
+}
+</script>
+
+
+<!-- ══════════════════════════════════════════
+     DEMO OVERLAY
+══════════════════════════════════════════ -->
+<div id="demo-overlay">
+
+  <!-- top bar -->
+  <div id="demo-topbar">
+    <button class="demo-close-btn" onclick="closeDemo()">
+      <span class="demo-close-arrow">←</span>
+      Back to AiOSAURUS
+    </button>
+  </div>
+
+  <!-- demo badge -->
+  <div class="d-badge">Live Demo</div>
+
+  <!-- demo skull -->
+  <img class="d-skull" id="d-skull-img" src="" alt="" aria-hidden="true" />
+
+  <!-- card -->
+  <div class="d-card">
+
+    <div class="d-header">
+      <span class="d-step-label" id="d-step-label">Step 1 — Intake</span>
+      <span class="d-workflow-tag">HITL Workflow</span>
+    </div>
+
+    <div class="d-dots">
+      <div class="d-dot active" id="dd1"></div>
+      <div class="d-dot" id="dd2"></div>
+      <div class="d-dot" id="dd3"></div>
+      <div class="d-dot" id="dd4"></div>
+    </div>
+
+    <div class="d-content" id="d-content">
+
+      <div class="d-sig" id="d-sig">
+        <span style="opacity:.4">✍ ~ ~</span>
+        <div class="d-conf-badge">⚠ 47%</div>
+      </div>
+
+      <div class="d-icon" id="d-icon">📄</div>
+      <div class="d-title" id="d-title">New Service Application</div>
+      <p class="d-desc" id="d-desc">System triggered. Document received via API. Orchestrator is ready to assign agents.</p>
+
+      <div class="d-progress-wrap" id="d-progress-wrap">
+        <div class="d-progress-track">
+          <div class="d-progress-fill" id="d-progress-fill"></div>
+        </div>
+        <div class="d-progress-label">
+          <span id="d-progress-text">Extracting…</span>
+          <span id="d-progress-pct">0%</span>
+        </div>
+      </div>
+
+      <div class="d-fields" id="d-fields">
+        <div class="d-chip" id="df1">Full Name</div>
+        <div class="d-chip" id="df2">Account #</div>
+        <div class="d-chip" id="df3">Address</div>
+        <div class="d-chip" id="df4">Date</div>
+        <div class="d-chip" id="df5">Policy ID</div>
+        <div class="d-chip" id="df6">Signature</div>
+      </div>
+
+      <div class="d-slack" id="d-slack">
+        <div class="d-slack-icon">💬</div>
+        <div class="d-slack-text">
+          <strong>#ops-alerts · just now</strong>
+          Action Required: Manual verification needed for blurry signature on Application #7823.
+        </div>
+      </div>
+
+    </div><!-- /d-content -->
+
+    <div class="d-btn-area" id="d-btn-area">
+      <button class="d-btn primary pulse" onclick="dAdvance()">Begin Processing →</button>
+    </div>
+
+  </div><!-- /d-card -->
+
+  <div class="d-footer">Human-in-the-Loop · AI Orchestration Demo</div>
+
+  <!-- Return to main page pop-up -->
+  <div id="return-popup">
+    <div class="return-popup-spark">✦</div>
+    <div class="return-popup-title">Demo Complete</div>
+    <p class="return-popup-sub">You've seen the architecture in action.<br>Ready to build this for your organization?</p>
+    <button class="return-popup-btn" onclick="closeDemo()">← Return to Main Page</button>
+    <button class="return-popup-dismiss" onclick="dismissReturnPopup()">Stay &amp; Reset Demo</button>
+  </div>
+
+</div><!-- /demo-overlay -->
+
+<script>
+// ── Demo DOM cache ──
+const dOverlay  = document.getElementById('demo-overlay');
+const dReturnPop = document.getElementById('return-popup');
+const dLabel    = document.getElementById('d-step-label');
+const dIcon     = document.getElementById('d-icon');
+const dTitle    = document.getElementById('d-title');
+const dDesc     = document.getElementById('d-desc');
+const dContent  = document.getElementById('d-content');
+const dProgWrap = document.getElementById('d-progress-wrap');
+const dFill     = document.getElementById('d-progress-fill');
+const dProgTxt  = document.getElementById('d-progress-text');
+const dProgPct  = document.getElementById('d-progress-pct');
+const dFields   = document.getElementById('d-fields');
+const dSig      = document.getElementById('d-sig');
+const dSlack    = document.getElementById('d-slack');
+const dBtnArea  = document.getElementById('d-btn-area');
+
+// ── Overlay open/close ──
+function openDemo() {
+  dOverlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  dReset();
+}
+function closeDemo() {
+  dOverlay.classList.remove('open');
+  document.body.style.overflow = '';
+  dismissReturnPopup();
+}
+function dismissReturnPopup() {
+  dReturnPop.classList.remove('show');
+  dReset();
+}
+
+// ── Demo logic ──
+let dStep = 1;
+const D_FIELDS = ['df1','df2','df3','df4','df5'];
+let dFieldTimer = null;
+
+function dSetDots(active) {
+  for (let i = 1; i <= 4; i++) {
+    const d = document.getElementById('dd'+i);
+    d.className = 'd-dot';
+    if (i < active)  d.classList.add('done');
+    if (i === active) d.classList.add('active');
+  }
+}
+
+function dAnimateIn(el) {
+  el.classList.remove('d-fade-up');
+  void el.offsetWidth;
+  el.classList.add('d-fade-up');
+}
+
+function dAdvance() {
+  dStep++;
+
+  const label    = dLabel;
+  const icon     = dIcon;
+  const title    = dTitle;
+  const desc     = dDesc;
+  const content  = dContent;
+  const progWrap = dProgWrap;
+  const fill     = dFill;
+  const progTxt  = dProgTxt;
+  const progPct  = dProgPct;
+  const fields   = dFields;
+  const sig      = dSig;
+  const slack    = dSlack;
+  const btnArea  = dBtnArea;
+
+  content.className = 'd-content';
+  label.className   = 'd-step-label';
+  fill.className    = 'd-progress-fill';
+  sig.classList.remove('visible');
+  fields.classList.remove('visible');
+  progWrap.classList.remove('visible');
+  slack.classList.remove('show');
+  D_FIELDS.concat('df6').forEach(id => { document.getElementById(id).className = 'd-chip'; });
+  if (dFieldTimer) { clearTimeout(dFieldTimer); dFieldTimer = null; }
+  dAnimateIn(content);
+
+  // ── Step 2 ──
+  if (dStep === 2) {
+    dSetDots(2);
+    label.textContent = 'Step 2 — Analysis';
+    icon.textContent  = '⚙️';
+    title.textContent = 'AI Agent Processing…';
+    desc.innerHTML    = 'Extracting <b>24 data points</b> from the document. Agents running in parallel.';
+    progWrap.classList.add('visible');
+    fields.classList.add('visible');
+    requestAnimationFrame(() => {
+      fill.classList.add('go');
+      progPct.textContent = '90%';
+      progTxt.textContent = 'Extracting…';
+    });
+    const delays = [200, 500, 800, 1100, 1400];
+    D_FIELDS.forEach((id, i) => {
+      dFieldTimer = setTimeout(() => { document.getElementById(id).classList.add('lit'); }, delays[i]);
+    });
+    btnArea.innerHTML = `<button class="d-btn primary" id="d-main-btn" onclick="dAdvance()" style="opacity:.5;pointer-events:none;">Continue →</button>`;
+    setTimeout(() => {
+      const b = document.getElementById('d-main-btn');
+      if (b) { b.style.opacity='1'; b.style.pointerEvents='auto'; }
+      progTxt.textContent = 'Paused at 90%';
+      fill.classList.add('amber');
+    }, 2500);
+  }
+
+  // ── Step 3 ──
+  else if (dStep === 3) {
+    dSetDots(3);
+    label.classList.add('warning');
+    label.textContent = 'Step 3 — Confidence Wall';
+    icon.textContent  = '⚠️';
+    title.textContent = 'Anomaly Detected';
+    desc.innerHTML    = '<b>Signature confidence: 47%</b> — below threshold. Orchestrator paused workflow to prevent downstream error.';
+    content.classList.add('warn-bg');
+    sig.classList.add('visible');
+    progWrap.classList.add('visible');
+    fill.className = 'd-progress-fill amber';
+    progPct.textContent = '90%';
+    progTxt.textContent = 'Paused — awaiting human input';
+    setTimeout(() => slack.classList.add('show'), 600);
+    btnArea.innerHTML = `<button class="d-btn amber-btn" onclick="dAdvance()">✓ Approve Signature (Human-in-Loop)</button>`;
+  }
+
+  // ── Step 4 ──
+  else if (dStep === 4) {
+    dSetDots(4);
+    const dd4 = document.getElementById('dd4');
+    if(dd4) dd4.className = 'd-dot success';
+    label.classList.add('success');
+    label.textContent = 'Step 4 — Complete';
+    icon.className    = 'd-icon d-pop-in';
+    icon.textContent  = '✅';
+    title.textContent = 'Workflow Resumed';
+    desc.innerHTML    = 'Human verified. Pipeline resumed. <b>Data synced to CRM.</b> SLA maintained.';
+    content.classList.add('done-bg');
+    progWrap.classList.add('visible');
+    fill.className = 'd-progress-fill done';
+    progPct.textContent = '100%';
+    progTxt.textContent = 'Complete';
+    btnArea.innerHTML = `
+      <div class="d-two-btns">
+        <button class="d-btn ghost-btn" onclick="dReset()">↩ Reset</button>
+        <button class="d-btn green-btn" onclick="closeDemo()">Return to Site →</button>
+      </div>`;
+    // trigger the return popup
+    setTimeout(() => { dReturnPop.classList.add('show'); }, 900);
+  }
+  else { dReset(); }
+}
+
+function dReset() {
+  dStep = 1;
+  dSetDots(1);
+  dContent.className  = 'd-content';
+  dLabel.className    = 'd-step-label';
+  dLabel.textContent  = 'Step 1 — Intake';
+  dIcon.className     = 'd-icon';
+  dIcon.textContent   = '📄';
+  dTitle.textC
