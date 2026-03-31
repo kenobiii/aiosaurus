@@ -1771,21 +1771,23 @@ new IntersectionObserver(entries=>{
 });
 
 // Open demo button — opens iframe overlay with aiosaurus-demo.html
-const openDemoBtn = document.getElementById('open-demo-btn');
-const iframeOverlay = document.getElementById('iframe-overlay');
-const demoIframe = document.getElementById('demo-iframe');
-const iframeCloseBtn = document.getElementById('iframe-close-btn');
-if(openDemoBtn) openDemoBtn.addEventListener('click', e => {
-  e.preventDefault();
-  if(demoIframe.src !== window.location.origin + '/aiosaurus-demo.html') {
-    demoIframe.src = 'aiosaurus-demo.html';
-  }
-  iframeOverlay.classList.add('open');
-  document.body.style.overflow = 'hidden';
-});
-if(iframeCloseBtn) iframeCloseBtn.addEventListener('click', () => {
-  iframeOverlay.classList.remove('open');
-  document.body.style.overflow = '';
+document.addEventListener('DOMContentLoaded', () => {
+  const openDemoBtn = document.getElementById('open-demo-btn');
+  const iframeOverlay = document.getElementById('iframe-overlay');
+  const demoIframe = document.getElementById('demo-iframe');
+  const iframeCloseBtn = document.getElementById('iframe-close-btn');
+  if(openDemoBtn) openDemoBtn.addEventListener('click', e => {
+    e.preventDefault();
+    if(demoIframe && demoIframe.src !== window.location.origin + '/aiosaurus-demo.html') {
+      demoIframe.src = 'aiosaurus-demo.html';
+    }
+    if(iframeOverlay) iframeOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  });
+  if(iframeCloseBtn) iframeCloseBtn.addEventListener('click', () => {
+    if(iframeOverlay) iframeOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+  });
 });
 
 // Contact form
