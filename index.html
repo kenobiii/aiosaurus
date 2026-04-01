@@ -7,6 +7,14 @@
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" href="favicon-32x32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-NGX6V15B84"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-NGX6V15B84');
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700;1,800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
@@ -720,7 +728,7 @@ h1.hero-title {
 .t-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--red); transform:scaleX(0); transform-origin:left; transition:transform .4s; }
 .t-card:hover::before { transform:scaleX(1); }
 .t-num { font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.2em; color:var(--red); margin-bottom:24px; display:block; }
-.t-glyph { font-size:1.5rem; margin-bottom:16px; display:block; opacity:.55; }
+.t-glyph { margin-bottom:20px; display:block; color:var(--bone); }
 .t-card h3 { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:700; margin-bottom:12px; line-height:1.2; }
 .t-card p { font-size:.86rem; line-height:1.72; opacity:.5; }
 
@@ -1149,19 +1157,72 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
     <div class="trinity">
       <div class="t-card reveal">
         <span class="t-num">01 / Seated Data</span>
-        <span class="t-glyph">◈</span>
+        <!-- Grounded Truth: data crystal on a grid base — foundation, bedrock -->
+        <span class="t-glyph">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <!-- Grid base -->
+            <line x1="4" y1="28" x2="32" y2="28" stroke="currentColor" stroke-width="1.2" stroke-opacity="0.35"/>
+            <line x1="8" y1="28" x2="14" y2="34" stroke="currentColor" stroke-width="1.2" stroke-opacity="0.35"/>
+            <line x1="28" y1="28" x2="22" y2="34" stroke="currentColor" stroke-width="1.2" stroke-opacity="0.35"/>
+            <line x1="14" y1="34" x2="22" y2="34" stroke="currentColor" stroke-width="1.2" stroke-opacity="0.35"/>
+            <!-- Crystal pillar -->
+            <polygon points="18,4 24,14 18,18 12,14" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/>
+            <polygon points="18,18 24,14 24,26 18,28" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/>
+            <polygon points="18,18 12,14 12,26 18,28" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linejoin="round"/>
+            <!-- Red core glow dot -->
+            <circle cx="18" cy="16" r="1.8" fill="#BB2121"/>
+          </svg>
+        </span>
         <h3>Grounded in Truth</h3>
         <p>Every agent is anchored in your proprietary, verified data. Your AI is only as strong as its foundation — ours is bedrock.</p>
       </div>
       <div class="t-card reveal d1">
         <span class="t-num">02 / Specialized Skills</span>
-        <span class="t-glyph">◎</span>
+        <!-- Agents That Think: neural nodes in a circle — reasoning, deliberation -->
+        <span class="t-glyph">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <!-- Outer orbit ring -->
+            <circle cx="18" cy="18" r="15" stroke="currentColor" stroke-width="1.2" stroke-opacity="0.3" stroke-dasharray="3 3"/>
+            <!-- Node connections -->
+            <line x1="18" y1="8"  x2="26" y2="14" stroke="currentColor" stroke-width="1.1" stroke-opacity="0.45"/>
+            <line x1="18" y1="8"  x2="10" y2="14" stroke="currentColor" stroke-width="1.1" stroke-opacity="0.45"/>
+            <line x1="26" y1="14" x2="26" y2="22" stroke="currentColor" stroke-width="1.1" stroke-opacity="0.45"/>
+            <line x1="10" y1="14" x2="10" y2="22" stroke="currentColor" stroke-width="1.1" stroke-opacity="0.45"/>
+            <line x1="26" y1="22" x2="18" y2="28" stroke="currentColor" stroke-width="1.1" stroke-opacity="0.45"/>
+            <line x1="10" y1="22" x2="18" y2="28" stroke="currentColor" stroke-width="1.1" stroke-opacity="0.45"/>
+            <line x1="26" y1="14" x2="18" y2="18" stroke="currentColor" stroke-width="1.1" stroke-opacity="0.45"/>
+            <line x1="10" y1="14" x2="18" y2="18" stroke="currentColor" stroke-width="1.1" stroke-opacity="0.45"/>
+            <!-- Outer nodes -->
+            <circle cx="18" cy="8"  r="2" fill="currentColor" fill-opacity="0.6"/>
+            <circle cx="26" cy="14" r="2" fill="currentColor" fill-opacity="0.6"/>
+            <circle cx="26" cy="22" r="2" fill="currentColor" fill-opacity="0.6"/>
+            <circle cx="18" cy="28" r="2" fill="currentColor" fill-opacity="0.6"/>
+            <circle cx="10" cy="22" r="2" fill="currentColor" fill-opacity="0.6"/>
+            <circle cx="10" cy="14" r="2" fill="currentColor" fill-opacity="0.6"/>
+            <!-- Red centre node -->
+            <circle cx="18" cy="18" r="2.8" fill="#BB2121"/>
+          </svg>
+        </span>
         <h3>Agents That Think</h3>
         <p>Reasoning, Forecasting, Pattern Recognition. Agents that don't just execute — they deliberate within your operational parameters.</p>
       </div>
       <div class="t-card reveal d2">
         <span class="t-num">03 / Harmony</span>
-        <span class="t-glyph">◉</span>
+        <!-- The End State: converging paths rising to a single point — harmony, ascent -->
+        <span class="t-glyph">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <!-- Three roots converging upward -->
+            <path d="M8 32 C8 26 14 24 18 18" stroke="currentColor" stroke-width="1.4" stroke-opacity="0.45" stroke-linecap="round" fill="none"/>
+            <path d="M28 32 C28 26 22 24 18 18" stroke="currentColor" stroke-width="1.4" stroke-opacity="0.45" stroke-linecap="round" fill="none"/>
+            <path d="M18 32 L18 18" stroke="currentColor" stroke-width="1.4" stroke-opacity="0.45" stroke-linecap="round" fill="none"/>
+            <!-- Rising arrow shaft -->
+            <line x1="18" y1="18" x2="18" y2="6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <!-- Arrow head -->
+            <polyline points="13,11 18,5 23,11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <!-- Red convergence node -->
+            <circle cx="18" cy="18" r="2" fill="#BB2121"/>
+          </svg>
+        </span>
         <h3>The End State</h3>
         <p>Friction handled by code. Strategy handled by humans. Intelligence as invisible infrastructure — always present, never intrusive.</p>
       </div>
