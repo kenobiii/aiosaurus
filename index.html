@@ -16,7 +16,7 @@
   --about-teeth: url('about-teeth.png');
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: hidden; max-width: 100%; }
 body {
   background: var(--bone);
   color: var(--obsidian);
@@ -908,9 +908,9 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
   .nav-links { display:none; }
   .hero, .friction, .solution, .about, .security, .contact, .closing { padding-left:22px; padding-right:22px; }
   .hero-content { padding-top: 140px; }
-  /* Skull segue — smaller on mobile so it's never clipped */
-  #skull-segue { height: 240px; overflow: visible; }
-  #skull3d { width: 180px; max-width: 60vw; }
+  /* Skull segue — larger on mobile, overflow visible so it's never clipped */
+  #skull-segue { height: 280px; overflow: visible; }
+  #skull3d { width: 280px; max-width: 75vw; }
   .about::before, .about::after { width:270%; height:150vw; left:-160%; right:auto; top:50%; }
   .friction-inner,.sol-head,.about-inner,.sec-inner { grid-template-columns:1fr; gap:44px; }
   .trinity { grid-template-columns:1fr; }
@@ -1258,7 +1258,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
               <span class="c-method-dot"></span>
               <div>
                 <div class="c-label">Email</div>
-                <div class="c-value"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="630b060f0f0c23020a0c1002161116104d000c0e">[email&#160;protected]</a></div>
+                <div class="c-value">hello@aiosaurus.ca</div>
               </div>
             </div>
             <div class="c-method-line">
@@ -1304,7 +1304,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
           <div class="form-success" id="form-error">
             <div class="success-icon" style="color:var(--red)">✕</div>
             <h4>Something went wrong.</h4>
-            <p>We couldn't send your message. Please try again or reach us directly at <strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="462e232a2a2906272f293527333433356825292b">[email&#160;protected]</a></strong>.</p>
+            <p>We couldn't send your message. Please try again or reach us directly at <strong>hello@aiosaurus.ca</strong>.</p>
           </div>
         </div>
       </div>
@@ -1375,10 +1375,10 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
       <p>We do not sell, rent, or trade your personal information to third parties. We may share information with trusted service providers who assist in operating our website and conducting our business, under strict confidentiality agreements.</p>
       <div class="legal-divider"></div>
       <h3>5. Your Rights</h3>
-      <p>Depending on your jurisdiction, you may have the right to access, correct, or delete your personal data. To exercise these rights, contact us at <span class="legal-strong"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="94e4e6fde2f5f7edd4f5fdfbe7f5e1e6e1e7baf7f5">[email&#160;protected]</a></span>.</p>
+      <p>Depending on your jurisdiction, you may have the right to access, correct, or delete your personal data. To exercise these rights, please <a href="#contact" class="legal-strong">contact us</a>.</p>
       <div class="legal-divider"></div>
       <h3>6. Contact</h3>
-      <p>For any privacy-related questions, please reach out to our team at <span class="legal-strong"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d7a7a5bea1b6b4ae97b6beb8a4b6a2a5a2a4f9b4b6">[email&#160;protected]</a></span>.</p>
+      <p>For any privacy-related questions, please <a href="#contact" class="legal-strong">contact us</a>.</p>
     </div>
 
     <!-- Terms of Service -->
@@ -1425,7 +1425,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
       <p>You can control cookies through your browser settings. Disabling certain cookies may affect site functionality. For more information, refer to your browser's help documentation.</p>
       <div class="legal-divider"></div>
       <h3>Contact</h3>
-      <p>Questions about our cookie practices? Email us at <span class="legal-strong"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="daaaa8b3acbbb9a39abbb3b5a9bbafa8afa9f4b9bb">[email&#160;protected]</a></span>.</p>
+      <p>Questions about our cookie practices? Please <a href="#contact" class="legal-strong">contact us</a>.</p>
     </div>
 
     <!-- Disclaimer -->
