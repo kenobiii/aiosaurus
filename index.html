@@ -943,19 +943,17 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
   .tl-dots-row { display:none; }
   .tl-nodes { display:flex !important; flex-direction:column !important; grid-template-columns:unset !important; padding-top:0; gap:0; }
   .tl-node {
-    opacity:0;
-    transform:translateY(14px);
-    transition:opacity .4s, transform .4s;
+    opacity:1 !important;
+    transform:none !important;
     padding:28px 0;
     border-bottom:1px solid rgba(10,10,10,.08);
   }
   .tl-node:last-child { border-bottom:none; }
-  .tl-node.active, .tl-node.done { opacity:1 !important; transform:translateY(0) !important; }
   .tl-era { opacity:1 !important; transform:none !important; font-size:.65rem; margin-bottom:8px; }
   .tl-title { opacity:1 !important; transform:none !important; font-size:1.4rem; margin-bottom:10px; }
   .tl-body { opacity:1 !important; transform:none !important; max-width:100%; font-size:.9rem; line-height:1.75; }
   .epoch-cta { opacity:1 !important; transform:none !important; margin-top:32px; }
-  #epoch-next-btn { font-family:'DM Mono',monospace; font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; background:var(--obsidian); color:var(--bone); border:none; padding:14px 28px; margin-top:24px; cursor:pointer; }
+  #epoch-next-btn, #epoch-next-label { display:none !important; }
   #epoch-scroll-hint { display:none !important; }
   #side-logo { display:none; }
   footer { padding:36px 22px 24px; }
@@ -1699,33 +1697,6 @@ function updateEpoch(){
 }
 
 // ── MOBILE EPOCH — tap-driven carousel ──
-(function(){
-  if(window.innerWidth > 800) return;
-  const nextBtn  = document.getElementById('epoch-next-btn');
-  const label    = document.getElementById('epoch-next-label');
-  const numerals = ['I','II','III','IV','V'];
-  let mobileIndex = 0;
-
-  function setMobileEpoch(i){
-    mobileIndex = i;
-    tlNodes.forEach((node, idx) => {
-      node.classList.toggle('active', idx === i);
-      node.classList.toggle('done',   idx < i);
-    });
-    if(label) label.textContent = 'Epoch ' + numerals[Math.min(i + 1, 4)];
-    if(nextBtn) nextBtn.textContent = i >= N - 1 ? '↩ Start Over' : 'Next Epoch →';
-  }
-
-  // Show mobile controls (CSS hides them on desktop via #epoch-next-btn { display:none })
-  if(nextBtn){ nextBtn.style.display = 'block'; }
-  if(label){ label.style.display = 'block'; }
-  setMobileEpoch(0);
-
-  if(nextBtn) nextBtn.addEventListener('click', () => {
-    setMobileEpoch(mobileIndex >= N - 1 ? 0 : mobileIndex + 1);
-  });
-})();
-
 // ── SCROLL REVEAL ──
 const revEls = document.querySelectorAll('.reveal');
 const ro = new IntersectionObserver(entries=>{
