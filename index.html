@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AiOSAURUS — Defining the Next Epoch</title>
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" href="favicon-32x32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700;1,800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
@@ -653,11 +656,9 @@ h1.hero-title {
 /* ── EPOCH TIMELINE ── */
 .epoch-wrap { position:relative; height:500vh; background:var(--bone); }
 .epoch-pin {
-  position: sticky; top:0; height:100vh; overflow:hidden;
+  position:sticky; top:0; height:100vh; overflow:hidden;
   display:flex; flex-direction:column; justify-content:center;
-  padding:0 52px;
-  background: var(--bone);
-  z-index: 2;
+  padding:0 52px; background:var(--bone); z-index:2;
 }
 .epoch-ghost {
   position:absolute; right:-60px; top:50%; transform:translateY(-50%);
@@ -668,27 +669,33 @@ h1.hero-title {
 .epoch-ghost.show { opacity:1; }
 .epoch-hd { max-width:1100px; margin:0 auto 40px; width:100%; }
 .epoch-hd .stitle { font-size:clamp(1.8rem,3.2vw,2.8rem); }
-.epoch-track { max-width:1100px; margin:0 auto; width:100%; position:relative; }
 
-/* HORIZONTAL bar (desktop) */
-.tl-bar {
-  position:absolute; top:10px; left:10px; right:10px; height:2px;
-  background:rgba(10,10,10,.1); border-radius:2px; z-index:0;
-}
+/* Track: padding-top = half dot height so dot row centers on bar */
+.epoch-track { max-width:1100px; margin:0 auto; width:100%; position:relative; padding-top:10px; }
+
+/* Bar — normal flow, sits at y=10px inside track */
+.tl-bar { position:relative; height:2px; background:rgba(10,10,10,.1); border-radius:2px; }
 .tl-fill {
   position:absolute; top:0; left:0; height:100%;
   background:var(--red); width:0%; transition:width .06s linear; border-radius:2px;
 }
-.tl-nodes { display:grid; grid-template-columns:repeat(5,1fr); position:relative; padding-top:36px; z-index:1; }
-.tl-node { position:relative; padding-right:16px; }
-.tl-dot {
-  position:absolute; top:-27px; left:0;
-  width:20px; height:20px; border-radius:50%;
-  background:var(--bone); border:2px solid rgba(10,10,10,.18);
-  transition:background .4s, border-color .4s, box-shadow .4s, transform .35s; z-index:2;
+
+/* Dot row — absolute, top:0 = y=0 in track; 20px dots center at y=10 = on bar */
+.tl-dots-row {
+  display:flex; justify-content:space-between;
+  position:absolute; top:0; left:0; right:0; z-index:2; pointer-events:none;
 }
-.tl-node.active .tl-dot { background:var(--red); border-color:var(--red); box-shadow:0 0 0 6px rgba(187,33,33,.16); transform:scale(1.25); }
-.tl-node.done .tl-dot { background:var(--obsidian); border-color:var(--obsidian); }
+.tl-dot-item {
+  width:20px; height:20px; border-radius:50%; flex-shrink:0;
+  background:var(--bone); border:2px solid rgba(10,10,10,.18);
+  transition:background .4s, border-color .4s, box-shadow .4s, transform .35s;
+}
+.tl-dot-item.active { background:var(--red); border-color:var(--red); box-shadow:0 0 0 6px rgba(187,33,33,.16); transform:scale(1.25); }
+.tl-dot-item.done { background:var(--obsidian); border-color:var(--obsidian); }
+
+/* Content grid — sits below bar */
+.tl-nodes { display:grid; grid-template-columns:repeat(5,1fr); padding-top:28px; }
+.tl-node { padding-right:16px; }
 .tl-era { font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.18em; color:var(--red); margin-bottom:8px; opacity:0; transform:translateY(8px); transition:opacity .4s, transform .4s; }
 .tl-node.active .tl-era, .tl-node.done .tl-era { opacity:1; transform:translateY(0); }
 .tl-title { font-family:'Playfair Display',serif; font-weight:700; font-size:.95rem; margin-bottom:8px; line-height:1.2; opacity:0; transform:translateY(10px); transition:opacity .4s .07s, transform .4s .07s; }
@@ -698,6 +705,9 @@ h1.hero-title {
 
 .epoch-cta { max-width:1100px; margin:36px auto 0; width:100%; opacity:0; transform:translateY(10px); transition:opacity .55s, transform .55s; }
 .epoch-cta.show { opacity:1; transform:translateY(0); }
+
+/* Always hidden on desktop */
+#epoch-next-btn, #epoch-next-label { display:none; }
 
 /* ── SOLUTION ── */
 .solution { background:var(--obsidian); color:var(--bone); padding:110px 52px; }
@@ -903,6 +913,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 
 /* ── MOBILE ── */
 @media(max-width:800px){
+  #cur, #cur-ring { display:none; }
   nav { padding:18px 22px; }
   nav.scrolled { padding:12px 22px; }
   .nav-links { display:none; }
@@ -915,7 +926,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
   .friction-inner,.sol-head,.about-inner,.sec-inner { grid-template-columns:1fr; gap:44px; }
   .trinity { grid-template-columns:1fr; }
   .form-row { grid-template-columns:1fr; }
-  /* ── MOBILE EPOCH — accordion ── */
+  /* ── MOBILE EPOCH — stacked cards ── */
   .epoch-wrap { height:auto !important; }
   .epoch-pin {
     position:static !important;
@@ -925,66 +936,26 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
     overflow:visible !important;
     pointer-events:auto !important;
   }
-  .epoch-snap-track { display:none !important; }
   .epoch-ghost { display:none; }
-  .epoch-hd { margin-bottom:20px; }
+  .epoch-hd { margin-bottom:24px; }
   .epoch-hd .stitle { font-size:1.65rem; }
   .tl-bar { display:none; }
-  .tl-progress-dots { display:flex; gap:8px; margin-bottom:20px; }
-  .tl-progress-dot { width:8px; height:8px; border-radius:50%; background:rgba(10,10,10,.15); transition:background .3s, transform .3s; }
-  .tl-progress-dot.active { background:var(--red); transform:scale(1.3); }
-  .tl-progress-dot.done { background:var(--obsidian); }
-  /* Accordion: all nodes visible as rows */
+  .tl-dots-row { display:none; }
   .tl-nodes { display:flex !important; flex-direction:column !important; grid-template-columns:unset !important; padding-top:0; gap:0; }
   .tl-node {
-    position:static !important;
-    opacity:1 !important;
-    transform:none !important;
-    pointer-events:auto !important;
-    border-bottom:1px solid rgba(10,10,10,.1);
-    overflow:hidden;
-    transition:background .2s;
+    opacity:0;
+    transform:translateY(14px);
+    transition:opacity .4s, transform .4s;
+    padding:28px 0;
+    border-bottom:1px solid rgba(10,10,10,.08);
   }
   .tl-node:last-child { border-bottom:none; }
-  /* Accordion header row — always visible */
-  .tl-node-header {
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:16px 0;
-    cursor:pointer;
-    gap:12px;
-    user-select:none;
-  }
-  .tl-node-header-left { display:flex; flex-direction:column; gap:3px; }
-  .tl-node-chevron {
-    font-size:.8rem;
-    color:var(--red);
-    flex-shrink:0;
-    transition:transform .3s;
-    font-family:'DM Mono',monospace;
-  }
-  .tl-node.acc-open .tl-node-chevron { transform:rotate(180deg); }
-  /* Accordion body — collapsed by default */
-  .tl-node-body {
-    max-height:0;
-    overflow:hidden;
-    transition:max-height .35s ease, padding .35s ease;
-    padding:0;
-  }
-  .tl-node.acc-open .tl-node-body {
-    max-height:200px;
-    padding:0 0 16px;
-  }
-  .tl-dot { display:none; }
-  .tl-era { opacity:1 !important; transform:none !important; font-size:.62rem; letter-spacing:.14em; }
-  .tl-title { opacity:1 !important; transform:none !important; font-size:1.05rem; font-weight:700; }
-  .tl-body { opacity:1 !important; transform:none !important; max-width:100%; font-size:.88rem; line-height:1.75; }
-  .tl-node.active > .tl-node-header .tl-era { color:var(--red); }
-  .tl-node.active > .tl-node-header .tl-title { color:var(--obsidian); }
-  .epoch-cta { opacity:1 !important; transform:none !important; margin-top:28px; }
-  #epoch-next-btn { display:none !important; }
-  #epoch-next-label { display:none !important; }
+  .tl-node.active, .tl-node.done { opacity:1 !important; transform:translateY(0) !important; }
+  .tl-era { opacity:1 !important; transform:none !important; font-size:.65rem; margin-bottom:8px; }
+  .tl-title { opacity:1 !important; transform:none !important; font-size:1.4rem; margin-bottom:10px; }
+  .tl-body { opacity:1 !important; transform:none !important; max-width:100%; font-size:.9rem; line-height:1.75; }
+  .epoch-cta { opacity:1 !important; transform:none !important; margin-top:32px; }
+  #epoch-next-btn { font-family:'DM Mono',monospace; font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; background:var(--obsidian); color:var(--bone); border:none; padding:14px 28px; margin-top:24px; cursor:pointer; }
   #epoch-scroll-hint { display:none !important; }
   #side-logo { display:none; }
   footer { padding:36px 22px 24px; }
@@ -1114,14 +1085,6 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 
 <!-- EPOCH TIMELINE -->
 <section class="epoch-wrap" id="epoch">
-  <!-- 5 invisible scroll-snap targets — one per epoch (mobile only) -->
-  <div class="epoch-snap-track" id="epoch-snap-track">
-    <div class="epoch-snap-slide" data-snap="0"></div>
-    <div class="epoch-snap-slide" data-snap="1"></div>
-    <div class="epoch-snap-slide" data-snap="2"></div>
-    <div class="epoch-snap-slide" data-snap="3"></div>
-    <div class="epoch-snap-slide" data-snap="4"></div>
-  </div>
   <div class="epoch-pin" id="epoch-pin">
     <div class="epoch-ghost" id="epoch-ghost">
       <img id="eghost" src="" alt="">
@@ -1132,49 +1095,43 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
     </div>
     <div class="epoch-track">
       <div class="tl-bar"><div class="tl-fill" id="tl-fill"></div></div>
-      <div class="tl-progress-dots" id="tl-dots">
-        <div class="tl-progress-dot"></div>
-        <div class="tl-progress-dot"></div>
-        <div class="tl-progress-dot"></div>
-        <div class="tl-progress-dot"></div>
-        <div class="tl-progress-dot"></div>
+      <div class="tl-dots-row" id="tl-dots-row">
+        <div class="tl-dot-item" data-i="0"></div>
+        <div class="tl-dot-item" data-i="1"></div>
+        <div class="tl-dot-item" data-i="2"></div>
+        <div class="tl-dot-item" data-i="3"></div>
+        <div class="tl-dot-item" data-i="4"></div>
       </div>
       <div class="tl-nodes" id="tl-nodes">
         <div class="tl-node" data-i="0">
-          <div class="tl-dot"></div>
           <div class="tl-era">Epoch I</div>
           <div class="tl-title">The Fossil Record</div>
           <div class="tl-body">Your organization's data — the compressed intelligence of every decision ever made — lying dormant, unactivated.</div>
         </div>
         <div class="tl-node" data-i="1">
-          <div class="tl-dot"></div>
           <div class="tl-era">Epoch II</div>
           <div class="tl-title">Excavation</div>
           <div class="tl-body">AiOSAURUS unearths the signal from the noise. We map, classify, and protect your proprietary data architecture.</div>
         </div>
         <div class="tl-node" data-i="2">
-          <div class="tl-dot"></div>
           <div class="tl-era">Epoch III</div>
           <div class="tl-title">Agent Awakening</div>
           <div class="tl-body">Specialized agents are deployed — each seated in your verified data, each equipped with precision skills to reason and act.</div>
         </div>
         <div class="tl-node" data-i="3">
-          <div class="tl-dot"></div>
           <div class="tl-era">Epoch IV</div>
           <div class="tl-title">Orchestration</div>
           <div class="tl-body">The agents coordinate. Workflows execute autonomously, end-to-end. The human bridge dissolves into strategy.</div>
         </div>
         <div class="tl-node" data-i="4">
-          <div class="tl-dot"></div>
           <div class="tl-era">Epoch V</div>
           <div class="tl-title">Operational Harmony</div>
           <div class="tl-body">A self-optimizing organization. Friction handled by code. Strategy handled by humans. The next epoch, realized.</div>
         </div>
       </div>
     </div>
-    <!-- Mobile tap button — hidden on desktop via JS -->
-    <span id="epoch-next-label" class="hidden" style="font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--red);display:block;margin-bottom:8px"></span>
-    <button id="epoch-next-btn" class="hidden">Next Epoch →</button>
+    <span id="epoch-next-label"></span>
+    <button id="epoch-next-btn">Next Epoch →</button>
     <div class="epoch-cta" id="epoch-cta">
       <a href="#" id="open-demo-btn" class="btn btn-dark">See the Architecture</a>
     </div>
@@ -1610,9 +1567,7 @@ setTimeout(() => { if(window.scrollY < 60) scrollArrow.classList.add('visible');
 updateLogoScroll(window.scrollY);
 
 // ── MAIN SCROLL HANDLER ──
-let epochMetricsCached = false;
 function onScroll(){
-  if(!epochMetricsCached){ cacheEpochMetrics(); epochMetricsCached=true; }
   const sy=window.scrollY, total=document.body.scrollHeight-window.innerHeight;
   nav.classList.toggle('scrolled',sy>50);
   if(!ctaDismissed) ctaStrip.classList.toggle('visible', sy > window.innerHeight * .6);
@@ -1666,7 +1621,6 @@ window.addEventListener('resize', () => {
   resizeTimer = setTimeout(() => {
     hResize();      // hero canvas dimensions
     cResize();      // closing canvas dimensions
-    cacheEpochMetrics(); // epoch scroll metrics
     hInit();        // rebuild particles only after resize settles
   }, 150);
 });
@@ -1705,116 +1659,51 @@ new IntersectionObserver(entries=>{
 
 
 // ── EPOCH TIMELINE ──
-const epochWrap = document.getElementById('epoch');
-const epochGhost = document.getElementById('epoch-ghost');
-const tlFill = document.getElementById('tl-fill');
-const tlNodes = document.querySelectorAll('.tl-node');
-const epochCta = document.getElementById('epoch-cta');
-const tlDots = document.querySelectorAll('.tl-progress-dot');
+const epochWrap      = document.getElementById('epoch');
+const epochGhost     = document.getElementById('epoch-ghost');
+const tlFill         = document.getElementById('tl-fill');
+const tlNodes        = document.querySelectorAll('.tl-node');
+const tlDotItems     = document.querySelectorAll('.tl-dot-item');
+const epochCta       = document.getElementById('epoch-cta');
+const epochScrollHint = document.getElementById('epoch-scroll-hint');
 const N = tlNodes.length; // 5
 
-// Mobile epoch — accordion
-if(window.innerWidth <= 800){
-  tlNodes.forEach((node, i)=>{
-    // Wrap existing content in accordion structure
-    const era   = node.querySelector('.tl-era');
-    const title = node.querySelector('.tl-title');
-    const body  = node.querySelector('.tl-body');
-    if(!era || !title || !body) return;
-
-    // Build header
-    const header = document.createElement('div');
-    header.className = 'tl-node-header';
-    header.innerHTML = `
-      <div class="tl-node-header-left">
-        <span class="tl-era">${era.textContent}</span>
-        <span class="tl-title">${title.textContent}</span>
-      </div>
-      <span class="tl-node-chevron">▾</span>`;
-
-    // Build body wrapper
-    const bodyWrap = document.createElement('div');
-    bodyWrap.className = 'tl-node-body';
-    bodyWrap.innerHTML = `<p class="tl-body">${body.textContent}</p>`;
-
-    // Clear node and append
-    node.innerHTML = '';
-    node.appendChild(header);
-    node.appendChild(bodyWrap);
-
-    // Open first by default
-    if(i === 0){
-      node.classList.add('acc-open','active');
-      tlDots[0] && tlDots[0].classList.add('active');
-    }
-
-    // Toggle on tap
-    header.addEventListener('click', ()=>{
-      const isOpen = node.classList.contains('acc-open');
-      // Close all
-      tlNodes.forEach((n,idx)=>{
-        n.classList.remove('acc-open','active');
-        tlDots[idx] && tlDots[idx].classList.remove('active');
-      });
-      // Open tapped if it was closed
-      if(!isOpen){
-        node.classList.add('acc-open','active');
-        tlDots[i] && tlDots[i].classList.add('active');
-      }
-    });
-  });
-}
-const epochScrollHint = document.getElementById('epoch-scroll-hint');
-
-// Cache epoch top offset once DOM is ready (absolute page position)
-let epochTop = 0, epochScrollable = 0;
-let aboutEl = document.querySelector('.about');
-let aboutHeight = 0;
-function cacheEpochMetrics(){
-  // offsetTop gives position relative to document — reliable
-  let el = epochWrap, top = 0;
-  while(el){ top += el.offsetTop; el = el.offsetParent; }
-  epochTop = top;
-  epochScrollable = Math.max(1, epochWrap.offsetHeight - window.innerHeight);
-  // Cache about section height only (position read live via getBoundingClientRect)
-  if(aboutEl) aboutHeight = aboutEl.offsetHeight;
-}
-window.addEventListener('load', cacheEpochMetrics);
-
 function updateEpoch(){
-  // p = 0 when epoch section top reaches viewport top
-  // p = 1 when we've scrolled through the full scrollable height
-  const scrolled = Math.max(0, window.scrollY - epochTop);
-  const p = Math.min(1, scrolled / epochScrollable);
+  if(window.innerWidth <= 800) return; // mobile handled separately
+  const rect       = epochWrap.getBoundingClientRect();
+  const scrollable = Math.max(1, epochWrap.offsetHeight - window.innerHeight);
+  const scrolled   = Math.max(0, -rect.top);
+  const p          = Math.min(1, scrolled / scrollable);
 
   epochGhost.classList.toggle('show', p > .03);
   tlFill.style.width = (p * 100) + '%';
 
-  // Which node index should be active? 0..N-1
-  // Divide progress evenly: node i owns the band [i/N, (i+1)/N)
   const activeIndex = Math.min(N - 1, Math.floor(p * N));
 
   tlNodes.forEach((node, i) => {
     node.classList.toggle('active', i === activeIndex);
     node.classList.toggle('done',   i < activeIndex);
-    if(tlDots[i]){
-      tlDots[i].classList.toggle('active', i === activeIndex);
-      tlDots[i].classList.toggle('done',   i < activeIndex);
-    }
+  });
+  tlDotItems.forEach((dot, i) => {
+    dot.classList.toggle('active', i === activeIndex);
+    dot.classList.toggle('done',   i < activeIndex);
   });
 
   epochCta.classList.toggle('show', p > .85);
 
-  // Show scroll hint on epochs 1–4, hide on epoch 5 and outside section
-  const inSection = p > 0.03 && p < 1;
-  const notLastEpoch = activeIndex < N - 1;
-  epochScrollHint.classList.toggle('visible', inSection && notLastEpoch);
+  if(epochScrollHint){
+    const inSection  = p > 0.03 && p < 1;
+    const notLast    = activeIndex < N - 1;
+    epochScrollHint.classList.toggle('visible', inSection && notLast);
+  }
 }
 
 // ── MOBILE EPOCH — tap-driven carousel ──
 (function(){
-  const isMobile = () => window.innerWidth <= 800;
-  const nextBtn = document.getElementById('epoch-next-btn');
+  if(window.innerWidth > 800) return;
+  const nextBtn  = document.getElementById('epoch-next-btn');
+  const label    = document.getElementById('epoch-next-label');
+  const numerals = ['I','II','III','IV','V'];
   let mobileIndex = 0;
 
   function setMobileEpoch(i){
@@ -1823,45 +1712,17 @@ function updateEpoch(){
       node.classList.toggle('active', idx === i);
       node.classList.toggle('done',   idx < i);
     });
-    if(tlDots) tlDots.forEach((dot, idx) => {
-      dot.classList.toggle('active', idx === i);
-      dot.classList.toggle('done',   idx < i);
-    });
-    // Update epoch label above button
-    const label = document.getElementById('epoch-next-label');
-    if(label) label.textContent = 'Epoch ' + ['I','II','III','IV','V'][Math.min(i+1,4)];
-    // Update button label
-    if(i >= N - 1){
-      nextBtn.textContent = '↩ Start Over';
-      if(label) label.textContent = 'Epoch I';
-    } else {
-      nextBtn.textContent = 'Next Epoch →';
-    }
+    if(label) label.textContent = 'Epoch ' + numerals[Math.min(i + 1, 4)];
+    if(nextBtn) nextBtn.textContent = i >= N - 1 ? '↩ Start Over' : 'Next Epoch →';
   }
 
-  function initMobile(){
-    if(!isMobile()) return;
-    nextBtn.classList.remove('hidden');
-    const label = document.getElementById('epoch-next-label');
-    if(label) label.classList.remove('hidden');
-    setMobileEpoch(0);
-  }
+  // Show mobile controls (CSS hides them on desktop via #epoch-next-btn { display:none })
+  if(nextBtn){ nextBtn.style.display = 'block'; }
+  if(label){ label.style.display = 'block'; }
+  setMobileEpoch(0);
 
-  nextBtn.addEventListener('click', () => {
-    if(!isMobile()) return;
-    const next = mobileIndex >= N - 1 ? 0 : mobileIndex + 1;
-    setMobileEpoch(next);
-  });
-
-  // Init on load and resize
-  window.addEventListener('load', initMobile);
-  window.addEventListener('resize', () => {
-    if(isMobile()){
-      nextBtn.classList.remove('hidden');
-      setMobileEpoch(mobileIndex);
-    } else {
-      nextBtn.classList.add('hidden');
-    }
+  if(nextBtn) nextBtn.addEventListener('click', () => {
+    setMobileEpoch(mobileIndex >= N - 1 ? 0 : mobileIndex + 1);
   });
 })();
 
