@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AiOSAURUS — Defining the Next Epoch</title>
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" href="favicon-32x32.png" type="image/png" sizes="32x32">
@@ -17,7 +17,8 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700;1,800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet"></noscript>
 <style>
 :root {
   --bone: #EBE7DD;
@@ -200,9 +201,9 @@ nav.scrolled {
   z-index: 200;
   pointer-events: none;
   background: var(--bone);
-  /* Fade in on load */
   opacity: 0;
   animation: stageIn .6s .1s forwards;
+  will-change: opacity, transform;
 }
 @keyframes stageIn { to { opacity: 1; } }
 
@@ -667,6 +668,7 @@ h1.hero-title {
   position:sticky; top:0; height:100vh; overflow:hidden;
   display:flex; flex-direction:column; justify-content:center;
   padding:0 52px; background:var(--bone); z-index:2;
+  will-change:transform;
 }
 .epoch-ghost {
   position:absolute; right:-60px; top:50%; transform:translateY(-50%);
@@ -776,7 +778,7 @@ h1.hero-title {
   min-height:100vh; display:flex; align-items:center; justify-content:center;
   position:relative; overflow:hidden;
 }
-#closing-canvas { position:absolute; inset:0; pointer-events:none; z-index:1; }
+#closing-canvas { position:absolute; inset:0; pointer-events:none; z-index:1; will-change:transform; }
 @media(max-width:800px){ #closing-canvas { display:none; } }
 .closing-inner { position:relative; z-index:2; text-align:center; max-width:760px; padding:80px 40px; }
 .closing-logo {
@@ -922,6 +924,8 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 /* ── MOBILE ── */
 @media(max-width:800px){
   #cur, #cur-ring { display:none; }
+  body { cursor:auto; }
+  a, button, [role="button"] { cursor:pointer; touch-action:manipulation; }
   nav { padding:18px 22px; }
   nav.scrolled { padding:12px 22px; }
   .nav-links { display:none; }
@@ -1548,13 +1552,15 @@ if (dSkullImg) dSkullImg.src = TERMINATOR_SRC;
 // ── CURSOR ──
 const cur = document.getElementById('cur');
 const ring = document.getElementById('cur-ring');
-let mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
-(function loop(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop);})();
-document.querySelectorAll('a,button,.t-card,.f-item,.tl-node,.c-method').forEach(el=>{
-  el.addEventListener('mouseenter',()=>document.body.classList.add('hovering'));
-  el.addEventListener('mouseleave',()=>document.body.classList.remove('hovering'));
-});
+if(!window.matchMedia('(hover:none)').matches){
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+  (function loop(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(loop);})();
+  document.querySelectorAll('a,button,.t-card,.f-item,.tl-node,.c-method').forEach(el=>{
+    el.addEventListener('mouseenter',()=>document.body.classList.add('hovering'));
+    el.addEventListener('mouseleave',()=>document.body.classList.remove('hovering'));
+  });
+}
 
 // ── DARK DETECT ──
 const darkEls = document.querySelectorAll('.friction,.solution,.security,.closing,footer');
