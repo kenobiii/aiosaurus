@@ -19,13 +19,13 @@
   --about-teeth: url('about-teeth.png');
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; overflow-x: hidden; max-width: 100%; }
+html { scroll-behavior: smooth; overflow-x: clip; max-width: 100%; }
 body {
   background: var(--bone);
   color: var(--obsidian);
   font-family: 'DM Sans', sans-serif;
   font-weight: 300;
-  overflow-x: hidden;
+  overflow-x: clip;
   cursor: none;
 }
 
@@ -654,7 +654,7 @@ h1.hero-title {
 .return-popup-dismiss:hover { color: rgba(10,10,10,.7); }
 
 /* ── EPOCH TIMELINE ── */
-.epoch-wrap { position:relative; height:280vh; background:var(--bone); }
+.epoch-wrap { position:relative; height:350vh; background:var(--bone); }
 .epoch-pin {
   position:sticky; top:0; height:100vh; overflow:hidden;
   display:flex; flex-direction:column; justify-content:center;
