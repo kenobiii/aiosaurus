@@ -654,7 +654,7 @@ h1.hero-title {
 .return-popup-dismiss:hover { color: rgba(10,10,10,.7); }
 
 /* ── EPOCH TIMELINE ── */
-.epoch-wrap { position:relative; height:500vh; background:var(--bone); }
+.epoch-wrap { position:relative; height:280vh; background:var(--bone); }
 .epoch-pin {
   position:sticky; top:0; height:100vh; overflow:hidden;
   display:flex; flex-direction:column; justify-content:center;
@@ -1816,8 +1816,9 @@ async function handleContact(e){
   }
 }
 
-// Init scroll state
+// Init scroll state — call once sync, then again after full layout
 onScroll();
+window.addEventListener('load', () => { onScroll(); });
 
 // ── Legal tabs ──
 function showLegal(id, btn) {
