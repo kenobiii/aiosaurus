@@ -915,50 +915,44 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
   .friction-inner,.sol-head,.about-inner,.sec-inner { grid-template-columns:1fr; gap:44px; }
   .trinity { grid-template-columns:1fr; }
   .form-row { grid-template-columns:1fr; }
-  /* ── MOBILE EPOCH — tap-driven, no scroll tunnel ── */
+  /* ── MOBILE EPOCH — stacked cards ── */
   .epoch-wrap { height:auto !important; }
   .epoch-pin {
     position:static !important;
     height:auto !important;
-    padding:60px 22px 48px !important;
+    padding:52px 22px 52px !important;
     justify-content:flex-start !important;
     overflow:visible !important;
+    pointer-events:auto !important;
   }
+  .epoch-snap-track { display:none !important; }
   .epoch-ghost { display:none; }
   .epoch-hd { margin-bottom:24px; }
+  .epoch-hd .stitle { font-size:1.65rem; }
   .tl-bar { display:none; }
-  .tl-progress-dots { display:flex; gap:8px; margin-bottom:28px; }
+  .tl-progress-dots { display:flex; gap:8px; margin-bottom:0; }
   .tl-progress-dot { width:8px; height:8px; border-radius:50%; background:rgba(10,10,10,.15); transition:background .3s, transform .3s; }
   .tl-progress-dot.active { background:var(--red); transform:scale(1.3); }
   .tl-progress-dot.done { background:var(--obsidian); }
-  .tl-nodes { display:block !important; grid-template-columns:unset !important; padding-top:0; position:relative; min-height:160px; }
+  .tl-nodes { display:flex !important; flex-direction:column !important; grid-template-columns:unset !important; padding-top:0; gap:0; }
   .tl-node {
-    position:absolute; top:0; left:0; right:0;
-    padding:0; opacity:0;
-    transform:translateY(16px);
+    position:static !important;
+    opacity:0;
+    transform:translateY(14px);
     transition:opacity .4s, transform .4s;
-    pointer-events:none;
+    pointer-events:auto !important;
+    padding:28px 0;
+    border-bottom:1px solid rgba(10,10,10,.08);
   }
-  .tl-node.active { opacity:1; transform:translateY(0); pointer-events:auto; position:relative; }
-  .tl-node.done { opacity:0; transform:translateY(-16px); position:absolute; }
+  .tl-node:last-child { border-bottom:none; }
+  .tl-node.active, .tl-node.done { opacity:1 !important; transform:translateY(0) !important; }
   .tl-dot { display:none; }
-  .tl-era { opacity:1 !important; transform:none !important; }
-  .tl-title { opacity:1 !important; transform:none !important; font-size:1.55rem; margin-bottom:12px; }
-  .tl-body { opacity:1 !important; transform:none !important; max-width:100%; font-size:.92rem; line-height:1.75; }
-  /* Tap next button */
-  #epoch-next-btn {
-    display:flex; align-items:center; gap:10px;
-    margin-top:28px;
-    background:none; border:1px solid rgba(10,10,10,.2);
-    padding:12px 20px; cursor:pointer;
-    font-family:'DM Mono',monospace; font-size:.72rem;
-    letter-spacing:.18em; text-transform:uppercase;
-    color:var(--obsidian); transition:background .2s, border-color .2s;
-  }
-  #epoch-next-btn:hover { background:rgba(10,10,10,.05); border-color:rgba(10,10,10,.4); }
-  #epoch-next-btn.hidden { display:none; }
-  /* CTA always visible on mobile */
-  .epoch-cta { opacity:1 !important; transform:none !important; margin-top:24px; }
+  .tl-era { opacity:1 !important; transform:none !important; font-size:.65rem; margin-bottom:8px; }
+  .tl-title { opacity:1 !important; transform:none !important; font-size:1.4rem; margin-bottom:10px; }
+  .tl-body { opacity:1 !important; transform:none !important; max-width:100%; font-size:.9rem; line-height:1.75; }
+  .epoch-cta { opacity:1 !important; transform:none !important; margin-top:32px; }
+  #epoch-next-btn { display:none !important; }
+  #epoch-next-label { display:none !important; }
   #epoch-scroll-hint { display:none !important; }
   #side-logo { display:none; }
   footer { padding:36px 22px 24px; }
@@ -1088,6 +1082,14 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 
 <!-- EPOCH TIMELINE -->
 <section class="epoch-wrap" id="epoch">
+  <!-- 5 invisible scroll-snap targets — one per epoch (mobile only) -->
+  <div class="epoch-snap-track" id="epoch-snap-track">
+    <div class="epoch-snap-slide" data-snap="0"></div>
+    <div class="epoch-snap-slide" data-snap="1"></div>
+    <div class="epoch-snap-slide" data-snap="2"></div>
+    <div class="epoch-snap-slide" data-snap="3"></div>
+    <div class="epoch-snap-slide" data-snap="4"></div>
+  </div>
   <div class="epoch-pin" id="epoch-pin">
     <div class="epoch-ghost" id="epoch-ghost">
       <img id="eghost" src="" alt="">
@@ -1598,7 +1600,7 @@ function onScroll(){
   sideLogo.classList.toggle('dark',dark);
   sideLogo.classList.toggle('light',!dark);
   updateLogoScroll(sy);
-  if(window.innerWidth > 800) updateEpoch();
+  updateEpoch();
   // Skull parallax
   if(skull3dEl && skullSegue){
     const rect = skullSegue.getBoundingClientRect();
@@ -1685,6 +1687,27 @@ const tlNodes = document.querySelectorAll('.tl-node');
 const epochCta = document.getElementById('epoch-cta');
 const tlDots = document.querySelectorAll('.tl-progress-dot');
 const N = tlNodes.length; // 5
+
+// Mobile epoch — IntersectionObserver activates dots as cards scroll into view
+if(window.innerWidth <= 800){
+  const mobileEpochObs = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        const i = parseInt(entry.target.dataset.i);
+        if(isNaN(i)) return;
+        tlNodes.forEach((n,idx)=>{
+          n.classList.toggle('active', idx===i);
+          n.classList.toggle('done', idx<i);
+        });
+        tlDots.forEach((d,idx)=>{
+          d.classList.toggle('active', idx===i);
+          d.classList.toggle('done', idx<i);
+        });
+      }
+    });
+  },{threshold:0.5});
+  tlNodes.forEach(n=>mobileEpochObs.observe(n));
+}
 const epochScrollHint = document.getElementById('epoch-scroll-hint');
 
 // Cache epoch top offset once DOM is ready (absolute page position)
@@ -2190,4 +2213,19 @@ function dReset() {
   dSlack.classList.remove('show');
   dBtnArea.innerHTML  = `<button class="d-btn primary-btn" onclick="dNext()">Begin →</button>`;
   dProgWrap.classList.remove('visible');
-  fill.className = 'd-prog
+  fill.className = 'd-progress-fill';
+  progPct.textContent = '0%';
+  progTxt.textContent = 'Initialising';
+}
+</script>
+
+<!-- IFRAME DEMO OVERLAY -->
+<div id="iframe-overlay">
+  <div id="iframe-topbar">
+    <button id="iframe-close-btn">← Back to AiOSAURUS</button>
+  </div>
+  <iframe id="demo-iframe" src="" frameborder="0" allowfullscreen></iframe>
+</div>
+
+</body>
+</html>
