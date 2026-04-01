@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Epoch Park — Security Console</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gray:#c0c0c0;--dark:#808080;--darker:#404040;--white:#fff;--black:#000;
+  --raised:inset 1px 1px 0 #fff,inset -1px -1px 0 var(--darker),inset 2px 2px 0 var(--gray),inset -2px -2px 0 var(--dark);
+  --inset:inset -1px -1px 0 #fff,inset 1px 1px 0 var(--darker),inset -2px -2px 0 var(--gray),inset 2px 2px 0 var(--dark);
+}
+html,body{height:100%;overflow:hidden;font-family:'MS Sans Serif','Segoe UI',Tahoma,sans-serif;font-size:12px;background:#0A0A0A}
+
+/* DESKTOP */
+.desktop{width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:12px;background:#0A0A0A;position:relative;border:2px solid #BB2121;box-shadow:inset 0 0 80px rgba(187,33,33,.07)}
+.desktop::before{content:"";position:absolute;inset:0;background:url('baseskull.png') center center / 55% no-repeat;opacity:.055;pointer-events:none;z-index:0}
+.desktop::after{content:"";position:absolute;bottom:22px;right:22px;width:52px;height:52px;background:url('justskull.png') center / contain no-repeat;opacity:.32;pointer-events:none;z-index:0}
+.window{position:relative;z-index:1}
+
+/* WINDOW */
+.window{background:var(--gray);box-shadow:2px 2px 0 #000,inset 1px 1px 0 #fff,inset -1px -1px 0 var(--dark);width:100%;max-width:860px;height:calc(100vh - 40px);max-height:580px;display:flex;flex-direction:column}
+
+/* TITLE BAR */
+.titlebar{background:linear-gradient(to right,#0A0A0A,#BB2121);display:flex;align-items:center;padding:3px 4px;gap:6px;flex-shrink:0}
+.titlebar img{width:16px;height:16px;object-fit:contain}
+.titlebar-title{color:#fff;font-weight:700;font-size:12px;flex:1}
+.tbtn{width:18px;height:16px;background:var(--gray);box-shadow:var(--raised);border:none;cursor:pointer;font-size:10px;font-weight:700;font-family:'MS Sans Serif',sans-serif}
+.tbtn:active{box-shadow:var(--inset)}
+
+/* CONTENT */
+.content{display:flex;flex-direction:column;flex:1;overflow:hidden;padding:6px;gap:6px}
+
+/* PAGES */
+.page{display:none;flex-direction:column;flex:1;gap:8px}
+.page.on{display:flex}
+
+/* TOP STATUS BAR */
+.status-bar{box-shadow:var(--inset);background:#000;padding:6px 12px;font-family:'VT323','Courier New',monospace;font-size:15px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.status-bar .msg{display:flex;align-items:center;gap:10px}
+.status-bar.warn .msg{color:#ffcc00}
+.status-bar.alert .msg{color:#ff4444;animation:fl .5s step-end infinite}
+.status-bar .msg{color:#00dd00}
+@keyframes fl{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* MAIN GRID */
+.main-grid{display:grid;grid-template-columns:1fr 200px;gap:6px;flex:1;min-height:0}
+
+/* PANELS */
+.panel{background:var(--gray);box-shadow:var(--inset);display:flex;flex-direction:column;overflow:hidden}
+.panel-title{padding:3px 8px;font-size:10px;font-weight:700;border-bottom:1px solid var(--dark);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--gray)}
+.led{width:10px;height:10px;border-radius:50%;box-shadow:inset 1px 1px 0 var(--dark);background:var(--dark)}
+.led.ok{background:#00cc00;box-shadow:inset 1px 1px 0 var(--dark),0 0 5px #00cc00;animation:lp 2s ease-in-out infinite}
+.led.warn{background:#ffcc00}
+.led.alert{background:#cc0000;animation:lp .5s step-end infinite}
+@keyframes lp{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* TERMINAL */
+.term{background:#000;flex:1;overflow-y:auto;padding:8px 10px;font-family:'VT323','Courier New',monospace;font-size:14px;line-height:1.7;color:#00cc00}
+.tl{opacity:0;transition:opacity .25s}.tl.on{opacity:1}
+.tl.dim{color:#005500}.tl.hi{color:#00ff00}.tl.warn{color:#ffcc00}.tl.bad{color:#ff4444}
+.cur{display:inline-block;width:8px;height:12px;background:#00cc00;animation:bc .9s step-end infinite;vertical-align:middle;margin-left:2px}
+@keyframes bc{0%,100%{opacity:1}50%{opacity:0}}
+
+/* SIDEBAR */
+.sidebar{display:flex;flex-direction:column;gap:6px}
+
+/* BIG STAT */
+.big-stat{box-shadow:var(--inset);background:var(--gray);padding:8px 10px;flex-shrink:0;text-align:center}
+.big-stat-label{font-size:9px;font-weight:700;text-transform:uppercase;color:var(--darker);letter-spacing:.05em;margin-bottom:3px}
+.big-stat-val{font-family:'VT323','Courier New',monospace;font-size:28px;line-height:1;color:#006600}
+.big-stat-val.warn{color:#cc8800}.big-stat-val.alert{color:#cc0000}
+
+/* PADDOCK LIST */
+.pad-list{display:flex;flex-direction:column;overflow:hidden;flex:1}
+.pad-item{display:flex;align-items:center;justify-content:space-between;padding:5px 8px;border-bottom:1px solid #a0a0a0;font-size:11px;background:var(--white)}
+.pad-item:nth-child(even){background:#f0f0f0}
+.pad-item.warn{background:#fff8cc}
+.pad-item.er{background:#ffe0e0}
+.pad-name{font-weight:600;font-size:11px}
+.pad-badge{padding:2px 7px;font-size:9px;font-weight:700;box-shadow:var(--raised);background:var(--gray)}
+.pad-badge.ok{color:#006600}.pad-badge.warn{color:#cc8800}.pad-badge.alert{color:#cc0000}
+
+/* FENCE METERS */
+.meters{display:flex;flex-direction:column;gap:5px;padding:6px 8px;flex:1}
+.m-row{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:600}
+.m-name{min-width:50px;color:var(--darker)}
+.m-track{flex:1;height:14px;box-shadow:var(--inset);background:#fff;overflow:hidden}
+.m-fill{height:100%;background:#009900;transition:width .7s,background .4s}
+.m-fill.warn{background:#cc8800}.m-fill.alert{background:#cc0000;animation:mf .4s step-end infinite}
+@keyframes mf{0%,100%{opacity:1}50%{opacity:.4}}
+.m-pct{min-width:34px;text-align:right;font-weight:700;font-size:10px;color:#006600}
+.m-pct.warn{color:#cc8800}.m-pct.alert{color:#cc0000}
+
+/* ── BIG BUTTONS ── */
+.btn-area{display:flex;gap:6px;flex-shrink:0}
+.big-btn{flex:1;padding:10px 12px;box-shadow:var(--raised);border:none;cursor:pointer;font-family:'MS Sans Serif','Segoe UI',Tahoma,sans-serif;font-weight:700;font-size:13px;background:var(--gray);color:var(--black);display:flex;align-items:center;justify-content:center;gap:8px}
+.big-btn:active{box-shadow:var(--inset);transform:translateY(1px)}
+.big-btn:disabled{color:var(--dark);cursor:default}
+/* THE ONE BIG RED BUTTON */
+.big-btn.STOP{background:#cc0000;color:#fff;font-size:15px;letter-spacing:.03em;animation:rbp .8s ease-in-out infinite;flex:2}
+@keyframes rbp{0%,100%{box-shadow:var(--raised),0 0 0 0 rgba(204,0,0,.6)}50%{box-shadow:var(--raised),0 0 14px 4px rgba(204,0,0,.4)}}
+.big-btn.STOP:active{box-shadow:var(--inset)}
+
+/* ── ARCH VIEW ── */
+.arch-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;flex:1;min-height:0;overflow:hidden}
+.a-card{background:var(--white);box-shadow:var(--inset);padding:10px 12px;opacity:0;transition:opacity .35s;display:flex;flex-direction:column;gap:5px;position:relative}
+.a-card.on{opacity:1}
+.a-card.bad{background:#ffe0e0}
+.a-num{font-size:9px;font-weight:700;color:var(--dark);text-transform:uppercase;letter-spacing:.08em}
+.a-name{font-size:13px;font-weight:700;color:var(--black)}
+.a-msg{font-size:11px;color:var(--darker);line-height:1.5;background:var(--gray);padding:4px 6px;box-shadow:inset 1px 1px 0 var(--dark)}
+.a-badge{position:absolute;top:8px;right:8px;padding:2px 6px;font-size:9px;font-weight:700;box-shadow:var(--raised);background:var(--gray)}
+.a-badge.ok2{color:#cc8800;background:#fff8cc}.a-badge.bad{background:#cc0000;color:#fff}
+
+/* HITL ALERT */
+.hitl{box-shadow:var(--inset);background:#fffbcc;border-left:4px solid #cc0000;padding:10px 12px;flex-shrink:0;display:none}
+.hitl.on{display:block}
+.hitl-head{font-size:13px;font-weight:700;color:#cc0000;margin-bottom:5px}
+.hitl-btns{display:flex;gap:6px;margin-top:10px}
+
+/* BREACH */
+.breach{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center;gap:10px;background:var(--white);box-shadow:var(--inset);padding:24px}
+.bsod-bar{background:#0000aa;color:#fff;padding:4px 10px;font-weight:700;font-size:12px;width:100%;text-align:left;flex-shrink:0}
+.breach-dino{font-size:48px;animation:shake .25s ease-in-out infinite alternate}
+@keyframes shake{from{transform:rotate(-6deg)}to{transform:rotate(6deg)}}
+.breach-title{font-family:'VT323','Courier New',monospace;font-size:32px;color:#cc0000;font-weight:700}
+.breach-msg{font-size:12px;color:var(--darker);max-width:340px;line-height:1.7}
+
+/* STATUS FOOTER */
+.footer{display:flex;border-top:1px solid var(--dark);flex-shrink:0}
+.fp{box-shadow:var(--inset);padding:2px 8px;font-size:10px;flex:1}
+.fp:not(:last-child){border-right:1px solid var(--dark)}
+.fp.alert{color:#cc0000;font-weight:700;animation:fl .6s step-end infinite}
+
+/* SUCCESS POPUP */
+.gov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+.gov.on{opacity:1;pointer-events:all}
+.gov-win{background:var(--gray);box-shadow:2px 2px 0 #000,inset 1px 1px 0 #fff,inset -1px -1px 0 var(--dark);width:320px}
+.gov-tb{background:linear-gradient(to right,#000080,#1084d0);padding:3px 4px;display:flex;align-items:center;gap:6px}
+.gov-tb span{color:#fff;font-weight:700;font-size:12px;flex:1}
+.gov-body{padding:18px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.gov-dino{font-size:40px}
+.gov-title{font-size:16px;font-weight:700;color:#006600}
+.gov-msg{font-size:11px;color:var(--darker);line-height:1.7}
+.gov-chips{display:flex;gap:8px}
+.gov-chip{box-shadow:var(--inset);background:var(--white);padding:6px 14px;text-align:center}
+.gov-cv{font-family:'VT323','Courier New',monospace;font-size:22px;color:#006600}
+.gov-cl{font-size:8px;color:var(--dark);text-transform:uppercase;letter-spacing:.06em}
+
+/* MODAL */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.mo.on{opacity:1;pointer-events:all}
+.mo-win{background:var(--gray);box-shadow:2px 2px 0 #000,inset 1px 1px 0 #fff,inset -1px -1px 0 var(--dark);width:340px}
+.mo-tb{background:linear-gradient(to right,#aa0000,#cc2222);padding:3px 4px;display:flex;align-items:center;gap:6px}
+.mo-tb span{color:#fff;font-weight:700;font-size:12px;flex:1}
+.mo-body{padding:16px 18px}
+.mo-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px}
+.mo-icon{font-size:36px;flex-shrink:0}
+.mo-title{font-size:12px;font-weight:700;margin-bottom:5px}
+.mo-msg{font-size:11px;color:var(--darker);line-height:1.7}
+.mo-btns{display:flex;gap:6px;justify-content:center}
+/* ── MOBILE ── */
+@media(max-width:600px){
+  /* Window fills screen fully */
+  .desktop{padding:0;border:none;box-shadow:none}
+  .window{max-width:100%;max-height:100vh;height:100vh;box-shadow:none;border-radius:0}
+  /* Title bar — hide window control buttons, shrink */
+  .titlebar{padding:4px 8px}
+  .titlebar-title{font-size:11px}
+  .tbtn{display:none}
+  /* Status bar wraps, smaller text */
+  .status-bar{font-size:12px;flex-wrap:wrap;gap:2px;padding:5px 8px}
+  #sr{display:none}
+  /* Stack main grid vertically — terminal on top, sidebar below */
+  .main-grid{grid-template-columns:1fr;grid-template-rows:auto auto;overflow-y:auto}
+  /* Terminal shorter on mobile */
+  .term{font-size:12px;line-height:1.6;max-height:160px;min-height:100px}
+  /* Sidebar flows horizontally where possible */
+  .sidebar{flex-direction:column;gap:4px}
+  .big-stat{padding:5px 8px}
+  .big-stat-val{font-size:22px}
+  /* Paddock list compact */
+  .pad-item{padding:4px 8px;font-size:10px}
+  .pad-name{font-size:10px}
+  /* Fence meters compact */
+  .meters{padding:4px 6px;gap:4px}
+  .m-row{font-size:9px}
+  .m-track{height:11px}
+  /* Big buttons larger touch targets */
+  .big-btn{font-size:14px;padding:12px 10px}
+  .big-btn.STOP{font-size:15px;padding:14px 10px}
+  /* Arch grid single column */
+  .arch-grid{grid-template-columns:1fr}
+  .a-card{padding:10px}
+  .a-name{font-size:12px}
+  .a-msg{font-size:10px}
+  /* HITL box */
+  .hitl{padding:8px 10px}
+  .hitl-head{font-size:12px}
+  .hitl-btns{flex-direction:column;gap:6px}
+  /* Breach screen */
+  .breach{padding:20px 16px;gap:8px}
+  .breach-dino{font-size:36px}
+  .breach-title{font-size:24px}
+  .breach-msg{font-size:11px}
+  /* Footer status bar — hide middle panels */
+  .fp:not(:first-child):not(:last-child){display:none}
+  /* Success/modal popups */
+  .gov-win,.mo-win{width:calc(100% - 24px)}
+  .gov-body,.mo-body{padding:14px}
+  .gov-title{font-size:14px}
+  .gov-chips{gap:5px}
+  .gov-chip{padding:5px 10px}
+  .gov-cv{font-size:18px}
+}
+
+</style>
+</head>
+<body>
+<div class="desktop">
+<div class="window">
+
+  <!-- TITLE BAR -->
+  <div class="titlebar">
+    <img id="sk" alt="">
+    <span class="titlebar-title">🦕 Epoch Park — Security Console</span>
+    <div style="display:flex;gap:2px">
+      <button class="tbtn">_</button>
+      <button class="tbtn">□</button>
+      <button class="tbtn">✕</button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- MAIN PAGE -->
+    <div class="page on" id="pg-main">
+
+      <!-- STATUS -->
+      <div class="status-bar" id="strip">
+        <div class="msg"><span>🟢</span><span id="sm">All dinosaurs are safe. Park is running normally.</span></div>
+        <span id="sr" style="color:#005500;font-size:13px">CYCLE 7</span>
+      </div>
+
+      <!-- GRID -->
+      <div class="main-grid">
+
+        <!-- TERMINAL -->
+        <div class="panel">
+          <div class="panel-title"><span>🖥 Orchestrator Log</span><div class="led ok" id="td"></div></div>
+          <div class="term" id="term">
+            <div class="tl on dim">> AIOSAURUS ONLINE</div>
+            <div class="tl on dim">> 12 AGENTS WATCHING THE PARK</div>
+            <div class="tl on hi">> PERIMETER FENCE: 50,000V — ALL GREEN</div>
+            <div class="tl on dim">> 4,218 GUESTS INSIDE</div>
+            <div class="tl on">> EVERYTHING IS OK 🦕<span class="cur"></span></div>
+          </div>
+        </div>
+
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+
+          <!-- THREAT LEVEL -->
+          <div class="big-stat">
+            <div class="big-stat-label">⚠ Threat Level</div>
+            <div class="big-stat-val" id="tv">NONE</div>
+          </div>
+
+          <!-- PADDOCKS -->
+          <div class="panel" style="flex:none">
+            <div class="panel-title"><span>🦖 Paddocks</span><div class="led ok" id="dd"></div></div>
+            <div class="pad-list">
+              <div class="pad-item" id="d-park"><span class="pad-name">🦕 Raptor Paddock</span><span class="pad-badge ok" id="b-park">SAFE</span></div>
+              <div class="pad-item" id="d-it"><span class="pad-name">🧬 Genetics Lab</span><span class="pad-badge ok" id="b-it">LOCKED</span></div>
+              <div class="pad-item" id="d-sec"><span class="pad-name">⚡ Fence</span><span class="pad-badge ok" id="b-sec">100%</span></div>
+              <div class="pad-item" id="d-life"><span class="pad-name">🚨 Life Safety</span><span class="pad-badge ok" id="b-life">OK</span></div>
+            </div>
+          </div>
+
+          <!-- FENCE METERS -->
+          <div class="panel" style="flex:1">
+            <div class="panel-title">⚡ Fence Power</div>
+            <div class="meters">
+              <div class="m-row"><span class="m-name">North</span><div class="m-track"><div class="m-fill" id="m1" style="width:100%"></div></div><span class="m-pct" id="mv1">100%</span></div>
+              <div class="m-row"><span class="m-name">South</span><div class="m-track"><div class="m-fill" id="m2" style="width:100%"></div></div><span class="m-pct" id="mv2">100%</span></div>
+              <div class="m-row"><span class="m-name">East</span><div class="m-track"><div class="m-fill" id="m3" style="width:100%"></div></div><span class="m-pct" id="mv3">100%</span></div>
+              <div class="m-row"><span class="m-name">West</span><div class="m-track"><div class="m-fill" id="m4" style="width:100%"></div></div><span class="m-pct" id="mv4">100%</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- BOTTOM BUTTON -->
+      <div class="btn-area">
+        <button class="big-btn STOP" id="run-btn" onclick="startScenario()">▶ START</button>
+      </div>
+
+    </div><!-- /pg-main -->
+
+    <!-- ARCH PAGE -->
+    <div class="page" id="pg-arch">
+      <div class="arch-grid" id="agrid"></div>
+      <div class="hitl" id="hbox">
+        <div class="hitl-head">⚠ The dinosaurs might get out! What do you do?</div>
+        <div class="hitl-btns">
+          <button class="big-btn STOP" onclick="doAbort()">🛑 STOP THE THREAT</button>
+          <button class="big-btn" style="flex:1;font-size:11px;color:var(--dark)" onclick="doApprove()">Ignore it</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BREACH PAGE -->
+    <div class="page" id="pg-final">
+      <div class="bsod-bar">⛔ OH NO! THE DINOSAURS ARE LOOSE!</div>
+      <div class="breach">
+        <div class="breach-dino">🦖</div>
+        <div class="breach-title">UH OH!</div>
+        <div class="breach-msg">You ignored the warning.<br>The raptors got out! 4,218 people were in the park.</div>
+        <button class="big-btn" style="flex:none;margin-top:6px;padding:8px 24px" onclick="resetAll()">↩ Try Again</button>
+        <button class="big-btn STOP" style="flex:none;margin-top:4px;padding:10px 24px;font-size:13px" onclick="returnToSite()">← Return to AiOSAURUS</button>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="fp" id="fp1">🟢 Park: Safe</div>
+    <div class="fp" id="fp2">👥 Guests: 4,218</div>
+    <div class="fp" id="fp3">🤖 Agents: 12</div>
+    <div class="fp" style="flex:none;min-width:72px;text-align:right" id="cl">00:00:00</div>
+  </div>
+
+</div><!-- /window -->
+</div><!-- /desktop -->
+
+<!-- SUCCESS POPUP -->
+<div class="gov" id="gov">
+  <div class="gov-win">
+    <div class="gov-tb" style="background:linear-gradient(to right,#0A0A0A,#BB2121)">
+      <span>🏆 You saved the park!</span>
+      <button class="tbtn" onclick="closeGameOver()">✕</button>
+    </div>
+    <div class="gov-body">
+      <div class="gov-dino">🦕</div>
+      <div class="gov-title">GREAT JOB!</div>
+      <div class="gov-msg">You stopped the threat!<br>All dinosaurs are safe. All guests are safe.</div>
+      <div class="gov-chips">
+        <div class="gov-chip"><div class="gov-cv">4/4</div><div class="gov-cl">Checks</div></div>
+        <div class="gov-chip"><div class="gov-cv">✓</div><div class="gov-cl">Stopped</div></div>
+        <div class="gov-chip"><div class="gov-cv">0</div><div class="gov-cl">Escaped</div></div>
+      </div>
+      <button class="big-btn" style="flex:none;padding:6px 24px" onclick="closeGameOver()">OK 🎉</button>
+      <button class="big-btn STOP" style="flex:none;padding:9px 24px;font-size:13px;animation:none" onclick="returnToSite()">← Return to AiOSAURUS</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="mo" id="mo">
+  <div class="mo-win">
+    <div class="mo-tb" style="background:linear-gradient(to right,#0A0A0A,#BB2121)">
+      <span>⛔ Are you SURE?</span>
+      <button class="tbtn" style="background:#cc0000;color:#fff" onclick="confirmNo()">✕</button>
+    </div>
+    <div class="mo-body">
+      <div class="mo-row">
+        <div class="mo-icon">😱</div>
+        <div>
+          <div class="mo-title">This will turn off the dinosaur fences!</div>
+          <div class="mo-msg"><strong style="color:#cc0000">4,218 people are inside the park.</strong><br>The raptors will get out.</div>
+        </div>
+      </div>
+      <div class="mo-btns">
+        <button class="big-btn STOP" style="font-size:12px;padding:8px 12px;flex:none;animation:none" onclick="confirmYes()">⚠ Do it anyway</button>
+        <button class="big-btn" style="flex:none;padding:8px 16px" onclick="confirmNo()">← Go Back</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+$('sk').src='mainlogo-1.png';
+const tick=()=>{const t=new Date().toTimeString().slice(0,8);$('cl').textContent=t;};
+setInterval(tick,1000);tick();
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function show(id){['pg-main','pg-arch','pg-final'].forEach(p=>document.getElementById(p).className='page'+(p===id?' on':''));}
+function addLine(txt,cls,d){return new Promise(r=>setTimeout(()=>{const t=$('term'),c=t.querySelector('.cur');if(c)c.remove();const l=document.createElement('div');l.className='tl '+(cls||'');l.innerHTML='> '+txt;t.appendChild(l);requestAnimationFrame(()=>l.classList.add('on'));t.scrollTop=t.scrollHeight;r();},d||0));}
+function dept(id,st,b,bc){const el=$('d-'+id);if(el)el.className='pad-item '+(st||'');const bl=$('b-'+id);if(bl){bl.textContent=b;bl.className='pad-badge '+(bc||'ok');}}
+function threat(v,c){const el=$('tv');if(el){el.className='big-stat-val '+(c||'');el.textContent=v;}}
+function hdr(c){const el=$('hd');if(el)el.className='led '+(c||'ok');}
+function strip(c,m){const el=$('strip');if(el)el.className='status-bar '+(c||'');const sm=$('sm');if(sm)sm.textContent=m;}
+function fp(i,t,cls){const el=$('fp'+i);if(el){el.textContent=t;el.className='fp'+(cls?' '+cls:'');}}
+function setMeter(id,pct,cls){const f=$(id);if(!f)return;f.style.width=pct+'%';f.className='m-fill'+(cls?' '+cls:'');const v=f.parentElement.nextElementSibling;if(v){v.textContent=pct+'%';v.className='m-pct'+(cls?' '+cls:'');}}
+async function startScenario(){
+  $('run-btn').disabled=true;$('run-btn').textContent='⏳ Checking…';$('run-btn').style.animation='none';
+  await addLine('⚠ WARNING: SOMEONE IS TRYING TO TURN OFF THE FENCES!','warn',300);
+  strip('warn','⚠ Something suspicious is happening… checking now…');
+  threat('LOW','warn');
+  await sleep(600);
+  await addLine('[CHECK 1] This would turn off fences during park hours — NOT ALLOWED','warn',0);dept('park','warn','⚠ CHECK','warn');
+  await addLine('[CHECK 2] Fake command detected — this is a trick!','warn',500);dept('it','warn','⚠ FAKE','warn');
+  threat('MED','warn');
+  setMeter('m1',65,'warn');setMeter('m2',58,'warn');
+  await sleep(400);
+  await addLine('[CHECK 3] Wrong person sending this! Something is very wrong!','bad',300);dept('sec','er','✖ WRONG','alert');
+  strip('alert','🚨 DANGER! The raptor fences are shutting down! Do something NOW!');
+  hdr('alert');threat('HIGH','alert');
+  fp(1,'🔴 DANGER!','alert');
+  setMeter('m3',22,'alert');setMeter('m4',14,'alert');
+  await sleep(400);
+  await addLine('[CHECK 4] RAPTOR FENCE GOING DOWN — GUESTS IN DANGER','bad',200);dept('life','er','✖ DOWN','alert');
+  await sleep(500);
+  await addLine('>>> WAITING FOR YOU TO DECIDE. HURRY! <<<','hi',200);
+  await sleep(1500);
+  showArch();
+}
+const ARCH=[
+  ['1','🦕 Raptor Paddock','Fences turning off during park hours — not allowed!','ok2'],
+  ['2','🧬 Genetics Lab','Fake command spotted — someone is lying to the computer','ok2'],
+  ['3','⚡ Perimeter Fence','Wrong person sent this command — it\'s a bad guy!','bad'],
+  ['4','🚨 Life Safety','Raptor fence is going down — guests are in danger!','bad']
+];
+function showArch(){
+  show('pg-arch');const g=$('agrid');g.innerHTML='';
+  ARCH.forEach(([n,d,st,sc],i)=>{
+    const c=document.createElement('div');c.className='a-card'+(sc==='bad'?' bad':'');
+    const badge=sc==='bad'?'🔴 BAD':'🟡 CHECK';
+    c.innerHTML=`<div class="a-badge ${sc}">${badge}</div><div class="a-num">Check ${n}</div><div class="a-name">${d}</div><div class="a-msg">${st}</div>`;
+    g.appendChild(c);setTimeout(()=>c.classList.add('on'),150+i*140);
+  });
+  setTimeout(()=>{const h=$('hbox');h.classList.add('on');h.style.display='block';},300);
+}
+function doApprove(){$('mo').classList.add('on');}
+function confirmYes(){$('mo').classList.remove('on');const h=$('hbox');h.style.opacity='.4';h.style.pointerEvents='none';setTimeout(()=>show('pg-final'),350);}
+function confirmNo(){$('mo').classList.remove('on');}
+function doAbort(){
+  const h=$('hbox');h.style.opacity='.4';h.style.pointerEvents='none';
+  // Switch to main page immediately, clear terminal, then run sequence
+  show('pg-main');
+  // Clear terminal and reset visual state first
+  $('term').innerHTML='<div class="tl on bad">> ⛔ CMD_OVERRIDE — REQUEST DENIED<span class="cur"></span></div>';
+  strip('alert','⛔ Threat denied. Restoring park systems…');
+  threat('HIGH','alert');
+  // Hide start button while restoring
+  const ba=document.querySelector('.btn-area');
+  if(ba)ba.innerHTML='<div style="text-align:center;font-family:MS Sans Serif,sans-serif;font-size:11px;color:#cc0000;font-weight:700;padding:8px">⏳ Restoring park systems…</div>';
+  // Now run the animated sequence
+  (async()=>{
+    await sleep(500);
+    await addLine('REASON: False signature · Prompt injection · Unauthorized origin','warn',0);
+    await sleep(500);
+    await addLine('>>> Restoring all park systems now…','hi',0);
+    await sleep(400);
+    await addLine('[Fence North] Power restored ✔','hi',0); setMeter('m1',100,''); await sleep(350);
+    await addLine('[Fence South] Power restored ✔','hi',0); setMeter('m2',100,''); await sleep(350);
+    await addLine('[Fence East]  Power restored ✔','hi',0); setMeter('m3',100,''); await sleep(350);
+    await addLine('[Fence West]  Power restored ✔','hi',0); setMeter('m4',100,''); await sleep(400);
+    dept('sec','','100%','ok'); dept('life','','OK','ok'); await sleep(300);
+    dept('park','','SAFE','ok'); dept('it','','LOCKED','ok');
+    threat('NONE',''); await sleep(300);
+    await addLine('✔ ALL FENCES 100% · Raptor paddock secured','hi',0);
+    await addLine('✔ Genetics Lab locked · Life Safety nominal','hi',200);
+    await sleep(400);
+    await addLine('✔ PARK RESTORED. All 4,218 guests are safe. 🦕','hi',0);
+    await sleep(500);
+    strip('','🟢 Threat denied. Park safe. All dinosaurs secured.');
+    fp(1,'🟢 Park: Safe','');
+    // Show full-screen ending overlay — always visible on any screen size
+    const existing=document.getElementById('end-overlay');
+    if(existing)existing.remove();
+    const ov=document.createElement('div');
+    ov.id='end-overlay';
+    ov.style.cssText='position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:16px';
+    ov.innerHTML=`
+      <div style="background:#c0c0c0;box-shadow:2px 2px 0 #000,inset 1px 1px 0 #fff,inset -1px -1px 0 #404040;width:100%;max-width:380px">
+        <div style="background:linear-gradient(to right,#0A0A0A,#005500);padding:4px 6px;display:flex;align-items:center;gap:6px">
+          <span style="color:#fff;font-weight:700;font-size:12px;font-family:MS Sans Serif,sans-serif;flex:1">✔ Epoch Park — Threat Denied</span>
+        </div>
+        <div style="padding:20px 18px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center">
+          <div style="font-size:40px">🦕</div>
+          <div style="font-size:15px;font-weight:700;color:#006600;font-family:MS Sans Serif,sans-serif">THREAT DENIED.<br>PARK IS SAFE.</div>
+          <div style="font-size:11px;color:#404040;line-height:1.7;font-family:MS Sans Serif,sans-serif">CMD_OVERRIDE was blocked.<br>All fences restored to 100%.<br>4,218 guests are safe. 🎉</div>
+          <div style="display:flex;gap:4px;width:100%">
+            <div style="flex:1;background:#fff;box-shadow:inset 1px 1px 0 #808080;padding:6px 8px;text-align:center">
+              <div style="font-family:VT323,monospace;font-size:22px;color:#006600">✖</div>
+              <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#404040">Denied</div>
+            </div>
+            <div style="flex:1;background:#fff;box-shadow:inset 1px 1px 0 #808080;padding:6px 8px;text-align:center">
+              <div style="font-family:VT323,monospace;font-size:22px;color:#006600">0</div>
+              <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#404040">Escaped</div>
+            </div>
+            <div style="flex:1;background:#fff;box-shadow:inset 1px 1px 0 #808080;padding:6px 8px;text-align:center">
+              <div style="font-family:VT323,monospace;font-size:22px;color:#006600">100%</div>
+              <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#404040">Fence</div>
+            </div>
+          </div>
+          <button onclick="returnToSite()" style="width:100%;padding:13px;background:#cc0000;color:#fff;border:none;cursor:pointer;font-weight:700;font-size:14px;font-family:MS Sans Serif,sans-serif;box-shadow:inset 1px 1px 0 #fff,inset -1px -1px 0 #400000,2px 2px 0 #000;letter-spacing:.02em">← Return to AiOSAURUS</button>
+        </div>
+      </div>`;
+    document.body.appendChild(ov);
+  })();
+}
+function closeGameOver(){$('gov').classList.remove('on');resetAll();}
+function returnToSite(){
+  try{
+    const overlay=window.parent.document.getElementById('iframe-overlay');
+    if(overlay){overlay.classList.remove('open');window.parent.document.body.style.overflow='';}
+  }catch(e){window.history.back();}
+}
+function reset(){
+  $('term').innerHTML='<div class="tl on dim">> AIOSAURUS ONLINE</div><div class="tl on dim">> 12 AGENTS WATCHING THE PARK</div><div class="tl on hi">> PERIMETER FENCE: 50,000V — ALL GREEN</div><div class="tl on dim">> 4,218 GUESTS INSIDE</div><div class="tl on">> EVERYTHING IS OK 🦕<span class="cur"></span></div>';
+  strip('','🟢 All dinosaurs are safe. Park is running normally.');
+  hdr('ok');threat('NONE','');
+  dept('park','','SAFE','ok');dept('it','','LOCKED','ok');dept('sec','','100%','ok');dept('life','','OK','ok');
+  setMeter('m1',100,'');setMeter('m2',100,'');setMeter('m3',100,'');setMeter('m4',100,'');
+  fp(1,'🟢 Park: Safe','');
+  $('hbox').classList.remove('on');$('hbox').style.cssText='';$('hbox').style.display='none';
+  const eo=document.getElementById('end-overlay');if(eo)eo.remove();
+  const ba=document.querySelector('.btn-area');
+  if(ba)ba.innerHTML='<button class="big-btn STOP" id="run-btn" onclick="startScenario()">▶ START</button>';
+  const rb=$('run-btn');if(rb){rb.disabled=false;rb.style.animation='';}
+}
+reset();
+</script>
+</body>
+</html>
