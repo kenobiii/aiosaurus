@@ -143,9 +143,12 @@ nav.scrolled {
   transition: background .2s, color .2s;
 }
 #cta-strip a:hover { background: var(--obsidian); color: var(--bone); }
+/* Close button sized to 44x44 minimum per WCAG 2.5.5 touch targets */
 #cta-strip button {
   background: none; border: none; color: var(--bone); opacity: .5;
-  font-size: 1.1rem; padding: 4px 8px; cursor: none; margin-left: 16px;
+  font-size: 1.1rem; cursor: none; margin-left: 16px;
+  min-width: 44px; min-height: 44px;
+  display: inline-flex; align-items: center; justify-content: center;
   transition: opacity .2s; flex-shrink: 0;
 }
 #cta-strip button:hover { opacity: 1; }
@@ -456,10 +459,13 @@ h1.hero-title {
 }
 
 /* ── SKULL SEGUE ── */
+/* NOTE: overflow must stay `visible` so the parallax skull (420px tall)
+   isn't clipped by the 340px container on first scroll. Mobile override
+   at the responsive breakpoint uses the same pattern. */
 #skull-segue {
   position: relative;
   height: 340px;
-  overflow: hidden;
+  overflow: visible;
   background: linear-gradient(to bottom, var(--obsidian) 48%, var(--bone) 48%);
   display: flex;
   align-items: center;
@@ -975,6 +981,34 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
   .legal-content { padding:52px 22px 80px; }
   .footer-inner { flex-direction:column; align-items:flex-start; gap:14px; }
 }
+
+/* ── A11Y: FOCUS-VISIBLE (keyboard users) ── */
+/* Custom cursor hides the default pointer, so keyboard users otherwise have
+   no visual indication of focus. Red ring matches the brand blood accent. */
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--blood, #bb2121);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ── A11Y: REDUCED MOTION ── */
+/* Disable parallax transforms, long fades, and canvas-driven motion for
+   users who opt out. Canvas loops still run but animations are toned down. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  #skull3d { transform: none !important; }
+  .epoch-hint-arrow { animation: none !important; }
+}
 </style>
 </head>
 <body>
@@ -982,8 +1016,8 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 <div id="cur"></div>
 <div id="cur-ring"></div>
 
-<!-- SIDE LOGO -->
-<div id="side-logo">
+<!-- SIDE LOGO (decorative scroll indicator — hidden from screen readers) -->
+<div id="side-logo" aria-hidden="true">
   <img id="slogo" src="" alt="">
   <div class="side-track"><div class="side-fill" id="sfill"></div></div>
   <div class="side-dot"></div>
@@ -1632,27 +1666,38 @@ setTimeout(() => { if(window.scrollY < 60) scrollArrow.classList.add('visible');
 updateLogoScroll(window.scrollY);
 
 // ── MAIN SCROLL HANDLER ──
-function onScroll(){
-  const sy=window.scrollY, total=document.body.scrollHeight-window.innerHeight;
-  nav.classList.toggle('scrolled',sy>50);
-  if(!ctaDismissed) ctaStrip.classList.toggle('visible', sy > window.innerHeight * .6);
-  sfill.style.height=Math.min(100,(sy/total)*100)+'%';
-  sideLogo.classList.toggle('visible',sy>180);
-  // Hide scroll arrow once user starts scrolling
-  scrollArrow.classList.toggle('hidden', sy > 60);
-  const dark=isDark();
-  document.body.classList.toggle('dark-bg',dark);
-  sideLogo.classList.toggle('dark',dark);
-  sideLogo.classList.toggle('light',!dark);
-  updateLogoScroll(sy);
-  updateEpoch();
-  // Skull parallax
-  if(skull3dEl && skullSegue){
-    const rect = skullSegue.getBoundingClientRect();
-    const center = rect.top + rect.height / 2 - window.innerHeight / 2;
-    skull3dEl.style.transform = `translateY(${center * 0.2}px)`;
-  }
+// Cached scrollable height — only recomputes on resize (see resize handler below).
+// Computed once on init; recomputed inside the debounced resize listener.
+let cachedScrollMax = Math.max(1, document.body.scrollHeight - window.innerHeight);
 
+// rAF-gated scroll handler: collapses multiple fast scroll events into one
+// layout/paint pass per frame. Prevents jank on weaker devices.
+let scrollTicking = false;
+function onScroll(){
+  if (scrollTicking) return;
+  scrollTicking = true;
+  requestAnimationFrame(() => {
+    const sy = window.scrollY;
+    nav.classList.toggle('scrolled', sy > 50);
+    if (!ctaDismissed) ctaStrip.classList.toggle('visible', sy > window.innerHeight * .6);
+    sfill.style.height = Math.min(100, (sy / cachedScrollMax) * 100) + '%';
+    sideLogo.classList.toggle('visible', sy > 180);
+    // Hide scroll arrow once user starts scrolling
+    scrollArrow.classList.toggle('hidden', sy > 60);
+    const dark = isDark();
+    document.body.classList.toggle('dark-bg', dark);
+    sideLogo.classList.toggle('dark', dark);
+    sideLogo.classList.toggle('light', !dark);
+    updateLogoScroll(sy);
+    updateEpoch();
+    // Skull parallax
+    if (skull3dEl && skullSegue){
+      const rect = skullSegue.getBoundingClientRect();
+      const center = rect.top + rect.height / 2 - window.innerHeight / 2;
+      skull3dEl.style.transform = `translateY(${center * 0.2}px)`;
+    }
+    scrollTicking = false;
+  });
 }
 window.addEventListener('scroll',onScroll,{passive:true});
 
@@ -1684,6 +1729,7 @@ let resizeTimer = null;
 window.addEventListener('resize', () => {
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(() => {
+    cachedScrollMax = Math.max(1, document.body.scrollHeight - window.innerHeight);
     hResize();      // hero canvas dimensions
     cResize();      // closing canvas dimensions
     hInit();        // rebuild particles only after resize settles
