@@ -459,14 +459,17 @@ h1.hero-title {
 }
 
 /* ── SKULL SEGUE ── */
-/* NOTE: overflow must stay `visible` so the parallax skull (420px tall)
-   isn't clipped by the 340px container on first scroll. Mobile override
-   at the responsive breakpoint uses the same pattern. */
+/* Unified obsidian frame — the skull reads as a whole element sitting in
+   darkness rather than being bisected by a gradient line. Section break
+   (to bone epoch section) happens cleanly below the skull, not through it.
+   overflow:visible lets the skull breathe past the container edges into
+   the adjacent obsidian mission section above (which is the same color,
+   so there is no visible seam). */
 #skull-segue {
   position: relative;
-  height: 340px;
+  height: 420px;
   overflow: visible;
-  background: linear-gradient(to bottom, var(--obsidian) 48%, var(--bone) 48%);
+  background: var(--obsidian);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1690,11 +1693,12 @@ function onScroll(){
     sideLogo.classList.toggle('light', !dark);
     updateLogoScroll(sy);
     updateEpoch();
-    // Skull parallax
+    // Skull parallax — coefficient 0.12 keeps skull inside its obsidian
+    // frame during scroll (was 0.2, which pushed the jaw into the next section)
     if (skull3dEl && skullSegue){
       const rect = skullSegue.getBoundingClientRect();
       const center = rect.top + rect.height / 2 - window.innerHeight / 2;
-      skull3dEl.style.transform = `translateY(${center * 0.2}px)`;
+      skull3dEl.style.transform = `translateY(${center * 0.12}px)`;
     }
     scrollTicking = false;
   });
