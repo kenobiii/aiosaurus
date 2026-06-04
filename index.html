@@ -241,6 +241,20 @@ nav.scrolled {
   will-change: transform, opacity;
 }
 
+/* SCOPE: #stage-inner + wordmark/tagline — brand lockup on the intro stage.
+   Stacks beneath the logo; fades out with it via updateLogoScroll(). */
+#stage-inner { display:flex; flex-direction:column; align-items:center; text-align:center; }
+.stage-wordmark {
+  font-family:'Playfair Display',serif; font-weight:800;
+  font-size:clamp(1.6rem,4vw,2.4rem); letter-spacing:.14em;
+  color:var(--obsidian); margin-top:28px;
+}
+.stage-tagline {
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:clamp(.85rem,1.6vw,1.05rem); line-height:1.5;
+  color:var(--obsidian); opacity:.5; margin-top:14px;
+}
+
 /* Hero background ghost — only visible once stage has receded */
 .hero-logo-center {
   position: absolute;
@@ -1082,7 +1096,13 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 
 <!-- LOGO INTRO STAGE — fixed, full screen, scroll-driven -->
 <div id="logo-stage">
-  <img id="stage-logo" src="" alt="AiOSAURUS">
+  <div id="stage-inner">
+    <img id="stage-logo" src="" alt="AiOSAURUS">
+    <div id="stage-text">
+      <div class="stage-wordmark">AiOSAURUS</div>
+      <div class="stage-tagline">The power of tomorrow,<br>for the heart of today.</div>
+    </div>
+  </div>
 </div>
 
 <!-- HERO -->
@@ -1649,6 +1669,7 @@ let ctaDismissed = false;
 // ── SCROLL-DRIVEN LOGO ──
 const logoStage    = document.getElementById('logo-stage');
 const stageImg     = document.getElementById('stage-logo');
+const stageText    = document.getElementById('stage-text');
 const heroContent  = document.querySelector('.hero-content');
 const heroScroll   = document.querySelector('.hero-scroll');
 const scrollArrow  = document.getElementById('scroll-arrow');
@@ -1670,6 +1691,7 @@ function updateLogoScroll(sy) {
     const opacity = 1 - ease(stageP); // 1 → 0, quick
     stageImg.style.transform = 'none';
     stageImg.style.opacity   = Math.max(0, opacity);
+    if (stageText) stageText.style.opacity = Math.max(0, opacity);
 
     // Background clears at same pace as logo
     const bgAlpha = 1 - ease(stageP);
