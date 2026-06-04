@@ -4,9 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AiOSAURUS — Defining the Next Epoch</title>
+<meta name="description" content="AiOSAURUS deploys secure, agentic AI that automates your workflows — grounded in your own verified data. Book a free workflow audit and begin your evolution.">
+<link rel="canonical" href="https://aiosaurus.ca/">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" href="favicon-32x32.png" type="image/png" sizes="32x32">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<!-- Open Graph / social sharing -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AiOSAURUS">
+<meta property="og:title" content="AiOSAURUS — Defining the Next Epoch">
+<meta property="og:description" content="Secure, agentic AI that automates your workflows — grounded in your own verified data. Book a free workflow audit and begin your evolution.">
+<meta property="og:url" content="https://aiosaurus.ca/">
+<meta property="og:image" content="https://aiosaurus.ca/og-banner.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="AiOSAURUS — Intelligence that Endures. Custom AI agents that automate your workflows, grounded in your own data.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AiOSAURUS — Defining the Next Epoch">
+<meta name="twitter:description" content="Secure, agentic AI that automates your workflows — grounded in your own verified data.">
+<meta name="twitter:image" content="https://aiosaurus.ca/og-banner.png">
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-NGX6V15B84"></script>
 <script>
@@ -223,6 +239,20 @@ nav.scrolled {
   object-fit: contain;
   display: block;
   will-change: transform, opacity;
+}
+
+/* SCOPE: #stage-inner + wordmark/tagline — brand lockup on the intro stage.
+   Stacks beneath the logo; fades out with it via updateLogoScroll(). */
+#stage-inner { display:flex; flex-direction:column; align-items:center; text-align:center; }
+.stage-wordmark {
+  font-family:'Playfair Display',serif; font-weight:800;
+  font-size:clamp(1.6rem,4vw,2.4rem); letter-spacing:.14em;
+  color:var(--obsidian); margin-top:28px;
+}
+.stage-tagline {
+  font-family:'Playfair Display',serif; font-style:italic;
+  font-size:clamp(.85rem,1.6vw,1.05rem); line-height:1.5;
+  color:var(--obsidian); opacity:.5; margin-top:14px;
 }
 
 /* Hero background ghost — only visible once stage has receded */
@@ -1066,7 +1096,13 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 
 <!-- LOGO INTRO STAGE — fixed, full screen, scroll-driven -->
 <div id="logo-stage">
-  <img id="stage-logo" src="" alt="AiOSAURUS">
+  <div id="stage-inner">
+    <img id="stage-logo" src="" alt="AiOSAURUS">
+    <div id="stage-text">
+      <div class="stage-wordmark">AiOSAURUS</div>
+      <div class="stage-tagline">The power of tomorrow,<br>for the heart of today.</div>
+    </div>
+  </div>
 </div>
 
 <!-- HERO -->
@@ -1078,7 +1114,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
   <div class="hero-content">
     <div class="eyebrow">Agentic AI Orchestration</div>
     <h1 class="hero-title">Intelligence<br>that <em>Endures.</em></h1>
-    <p class="hero-sub">We build the intelligent, data-secure connective tissue that powers autonomous workflows — grounded in truth, built for the next epoch.</p>
+    <p class="hero-sub">AiOSAURUS builds and deploys custom AI agents that automate your team's workflows — grounded in your own data, not the public internet.</p>
     <div class="hero-actions">
       <a href="#contact" class="btn btn-dark">Begin Your Evolution</a>
       <a href="#epoch" class="btn btn-outline">Trace the Epochs</a>
@@ -1476,7 +1512,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
     <!-- Privacy Policy -->
     <div class="legal-panel active" id="legal-privacy">
       <h2>Privacy Policy</h2>
-      <p class="legal-meta">Last updated: January 2025 &nbsp;·&nbsp; AiOSAURUS Inc.</p>
+      <p class="legal-meta">Last updated: May 2026 &nbsp;·&nbsp; AiOSAURUS Inc.</p>
       <h3>1. Information We Collect</h3>
       <p>We collect information you provide directly to us, such as when you fill out a contact form, request a consultation, or communicate with our team. This may include your name, email address, company name, job title, and details about your business workflows.</p>
       <p>We may also collect limited technical data automatically — including IP address, browser type, and pages visited — solely to ensure the security and performance of our site.</p>
@@ -1505,7 +1541,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
     <!-- Terms of Service -->
     <div class="legal-panel" id="legal-terms">
       <h2>Terms of Service</h2>
-      <p class="legal-meta">Last updated: January 2025 &nbsp;·&nbsp; AiOSAURUS Inc.</p>
+      <p class="legal-meta">Last updated: May 2026 &nbsp;·&nbsp; AiOSAURUS Inc.</p>
       <h3>1. Acceptance of Terms</h3>
       <p>By accessing or using the AiOSAURUS website or engaging our services, you agree to be bound by these Terms of Service. If you do not agree, please discontinue use immediately.</p>
       <div class="legal-divider"></div>
@@ -1528,7 +1564,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
     <!-- Cookie Policy -->
     <div class="legal-panel" id="legal-cookies">
       <h2>Cookie Policy</h2>
-      <p class="legal-meta">Last updated: January 2025 &nbsp;·&nbsp; AiOSAURUS Inc.</p>
+      <p class="legal-meta">Last updated: May 2026 &nbsp;·&nbsp; AiOSAURUS Inc.</p>
       <h3>What Are Cookies</h3>
       <p>Cookies are small text files placed on your device when you visit a website. They help the site function correctly and allow us to understand how visitors interact with our content.</p>
       <div class="legal-divider"></div>
@@ -1552,7 +1588,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
     <!-- Disclaimer -->
     <div class="legal-panel" id="legal-disclaimer">
       <h2>Disclaimer</h2>
-      <p class="legal-meta">Last updated: January 2025 &nbsp;·&nbsp; AiOSAURUS Inc.</p>
+      <p class="legal-meta">Last updated: May 2026 &nbsp;·&nbsp; AiOSAURUS Inc.</p>
       <h3>General Information Only</h3>
       <p>The content on this website is provided for general informational purposes only. It does not constitute professional, legal, financial, or technical advice. Outcomes described are illustrative and will vary based on each client's unique circumstances, data maturity, and operational environment.</p>
       <div class="legal-divider"></div>
@@ -1581,7 +1617,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
     </div>
     <div class="footer-spark">✦</div>
     <p class="footer-tag">The power of tomorrow, for the heart of today.</p>
-    <p class="footer-copy">© 2025 AiOSAURUS. Defining the Next Epoch. All rights reserved. &nbsp;·&nbsp; <a href="#legal">Legal</a></p>
+    <p class="footer-copy">© 2026 AiOSAURUS. Defining the Next Epoch. All rights reserved. &nbsp;·&nbsp; <a href="#legal">Legal</a></p>
   </div>
 </footer>
 
@@ -1633,6 +1669,7 @@ let ctaDismissed = false;
 // ── SCROLL-DRIVEN LOGO ──
 const logoStage    = document.getElementById('logo-stage');
 const stageImg     = document.getElementById('stage-logo');
+const stageText    = document.getElementById('stage-text');
 const heroContent  = document.querySelector('.hero-content');
 const heroScroll   = document.querySelector('.hero-scroll');
 const scrollArrow  = document.getElementById('scroll-arrow');
@@ -1654,6 +1691,7 @@ function updateLogoScroll(sy) {
     const opacity = 1 - ease(stageP); // 1 → 0, quick
     stageImg.style.transform = 'none';
     stageImg.style.opacity   = Math.max(0, opacity);
+    if (stageText) stageText.style.opacity = Math.max(0, opacity);
 
     // Background clears at same pace as logo
     const bgAlpha = 1 - ease(stageP);
