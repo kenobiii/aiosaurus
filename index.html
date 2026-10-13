@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
+<script>document.documentElement.className=document.documentElement.className.replace('no-js','js')</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AiOSAURUS — Defining the Next Epoch</title>
@@ -411,6 +412,7 @@ nav.menu-open { z-index:1200; }
    On scroll: JS drives it from top→center, large→normal, opaque→ghost.
    Once receded (scroll > vh), it becomes position:absolute in hero flow.
 */
+.no-js #logo-stage { display: none; }
 #logo-stage {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -468,7 +470,7 @@ nav.menu-open { z-index:1200; }
   position: relative; z-index: 2;
   max-width: 800px; padding-top: 80px;
 }
-.hero-content > * {
+.js .hero-content > * {
   opacity: 0; transform: translateY(22px);
 }
 .hero-content.revealed > * {
@@ -588,7 +590,7 @@ h1.hero-title {
   font-family: 'Playfair Display', serif; font-weight: 800;
   font-size: clamp(1.9rem,3.8vw,3.2rem); line-height: 1.06; letter-spacing: -.02em;
 }
-.reveal { opacity:0; transform:translateY(22px); transition:opacity .75s, transform .75s; }
+.js .reveal { opacity:0; transform:translateY(22px); transition:opacity .75s, transform .75s; }
 .reveal.in { opacity:1; transform:translateY(0); }
 .d1 { transition-delay:.1s; } .d2 { transition-delay:.22s; } .d3 { transition-delay:.34s; }
 
@@ -1058,7 +1060,7 @@ h1.hero-title {
 #closing-canvas { position:absolute; inset:0; pointer-events:none; z-index:1; will-change:transform; }
 @media(max-width:800px){ #closing-canvas { display:none; } }
 .closing-inner { position:relative; z-index:2; text-align:center; max-width:760px; padding:80px 40px; }
-.closing-logo {
+.js .closing-logo {
   width:clamp(90px,12vw,140px); height:clamp(90px,12vw,140px);
   margin:0 auto 32px;
   opacity:0; transform:scale(.85);
@@ -1066,16 +1068,16 @@ h1.hero-title {
 }
 .closing-logo.in { opacity:1; transform:scale(1); }
 .closing-logo img { width:100%; height:100%; object-fit:contain; filter:brightness(0) invert(1); opacity:.85; animation:breathe 6s ease-in-out infinite; }
-.closing-tag { font-family:'DM Mono',monospace; font-size:.66rem; letter-spacing:.24em; text-transform:uppercase; color:var(--red-text); margin-bottom:18px; opacity:0; transform:translateY(10px); transition:opacity .7s .2s, transform .7s .2s; }
+.js .closing-tag { font-family:'DM Mono',monospace; font-size:.66rem; letter-spacing:.24em; text-transform:uppercase; color:var(--red-text); margin-bottom:18px; opacity:0; transform:translateY(10px); transition:opacity .7s .2s, transform .7s .2s; }
 .closing.in .closing-tag { opacity:1; transform:translateY(0); }
-.closing-title { font-family:'Playfair Display',serif; font-weight:800; font-size:var(--fs-display); line-height:1.08; letter-spacing:-.025em; margin-bottom:20px; opacity:0; transform:translateY(14px); transition:opacity .8s .35s, transform .8s .35s; }
+.js .closing-title { font-family:'Playfair Display',serif; font-weight:800; font-size:var(--fs-display); line-height:1.08; letter-spacing:-.025em; margin-bottom:20px; opacity:0; transform:translateY(14px); transition:opacity .8s .35s, transform .8s .35s; }
 .closing.in .closing-title { opacity:1; transform:translateY(0); }
 .closing-title em { font-style:italic; color:var(--red-text); }
-.closing-sub { font-size:clamp(.88rem,1.3vw,1rem); line-height:1.78; max-width:520px; margin:0 auto 40px; opacity:0; transition:opacity .7s .5s; }
+.js .closing-sub { font-size:clamp(.88rem,1.3vw,1rem); line-height:1.78; max-width:520px; margin:0 auto 40px; opacity:0; transition:opacity .7s .5s; }
 .closing.in .closing-sub { opacity:.48; }
-.closing-btns { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; opacity:0; transform:translateY(8px); transition:opacity .65s .65s, transform .65s .65s; }
+.js .closing-btns { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; opacity:0; transform:translateY(8px); transition:opacity .65s .65s, transform .65s .65s; }
 .closing.in .closing-btns { opacity:1; transform:translateY(0); }
-.closing-spark { font-size:1.4rem; color:var(--red-text); margin-top:48px; opacity:0; transition:opacity .6s .9s; animation:none; }
+.js .closing-spark { font-size:1.4rem; color:var(--red-text); margin-top:48px; opacity:0; transition:opacity .6s .9s; animation:none; }
 .closing.in .closing-spark { opacity:1; animation:pdot 3s ease-in-out infinite; }
 
 /* ── CONTACT ── */
@@ -1311,7 +1313,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 
 <!-- SIDE LOGO -->
 <div id="side-logo">
-  <img id="slogo" src="" alt="">
+  <img id="slogo" src="mainlogo-1.png" width="300" height="300" decoding="async" alt="">
   <div class="side-track"><div class="side-fill" id="sfill"></div></div>
   <div class="side-dot"></div>
 </div>
@@ -1328,14 +1330,14 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 <!-- NAV -->
 <nav id="nav">
   <a href="#home" class="nav-logo">
-    <img id="nlogo" src="" alt="AiOSAURUS">
+    <img id="nlogo" src="mainlogo-1.png" width="300" height="300" decoding="async" alt="AiOSAURUS">
     <span class="nav-wordmark">AiOSAURUS</span>
   </a>
   <ul class="nav-links">
     <li><a href="#mission">The Problem</a></li>
+    <li><a href="#record">The Record</a></li>
     <li><a href="#epoch">The Evolution</a></li>
     <li><a href="#solution">The Laboratory</a></li>
-    <li><a href="#record">The Record</a></li>
     <li><a href="#security">Security</a></li>
     <li><a href="#contact" class="nav-cta">Contact Us</a></li>
   </ul>
@@ -1347,9 +1349,9 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 <!-- MOBILE MENU -->
 <div id="mobile-menu" aria-hidden="true">
   <a href="#mission">The Problem</a>
+  <a href="#record">The Record</a>
   <a href="#epoch">The Evolution</a>
   <a href="#solution">The Laboratory</a>
-  <a href="#record">The Record</a>
   <a href="#security">Security</a>
   <a href="#contact" class="mm-cta">Contact Us</a>
   <a href="mailto:hello@aiosaurus.com" class="mm-mail">hello@aiosaurus.com</a>
@@ -1358,7 +1360,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 <!-- LOGO INTRO STAGE — fixed, full screen, scroll-driven -->
 <div id="logo-stage">
   <div id="stage-inner">
-    <img id="stage-logo" src="" alt="AiOSAURUS">
+    <img id="stage-logo" src="mainlogo-1.png" width="300" height="300" decoding="async" alt="AiOSAURUS">
     <div id="stage-text">
       <div class="stage-wordmark">AiOSAURUS</div>
       <div class="stage-tagline">The power of tomorrow,<br>for the heart of today.</div>
@@ -1370,7 +1372,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 <section class="hero" id="home">
   <canvas id="hero-canvas"></canvas>
   <div class="hero-logo-center">
-    <img id="hlogo" src="" alt="">
+    <img id="hlogo" src="mainlogo-1.png" width="300" height="300" decoding="async" alt="">
   </div>
   <div class="hero-content">
     <div class="eyebrow">Agentic AI Orchestration</div>
@@ -1432,8 +1434,106 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 
 <!-- SKULL SEGUE — parallax divider between mission and epochs -->
 <div id="skull-segue">
-  <img id="skull3d" src="" alt="" aria-hidden="true" />
+  <img id="skull3d" src="skull3d.png" width="260" height="262" decoding="async" alt="" aria-hidden="true" />
 </div>
+
+<!-- THE RECORD -->
+<section class="record" id="record">
+  <div class="record-inner">
+    <div class="record-head">
+      <div class="section-label reveal">The Record</div>
+      <h2 class="stitle reveal d1">Three Digs.<br>Three Deployments.</h2>
+      <p class="record-lede reveal d2">Every system we build runs where your data allows it to run — sealed offline on your own hardware, hybrid, or wired straight into frontier models. That is a decision you make, not a constraint we impose. These three ran at each end of that range. Clients are unnamed; every figure below is measured, not estimated.</p>
+    </div>
+
+    <div class="spectrum reveal d1">
+      <div class="spec-cell">
+        <div class="spec-mode">Offline</div>
+        <p>Air-gapped and self-contained. No internet, no accounts, no data leaving the room. Built for venues and sites where the network is the thing you cannot trust.</p>
+      </div>
+      <div class="spec-cell">
+        <div class="spec-mode">Hybrid</div>
+        <p>Models and data stay on hardware you own; only what you choose ever leaves. The default where the material is sensitive but the workload is heavy.</p>
+      </div>
+      <div class="spec-cell">
+        <div class="spec-mode">Frontier</div>
+        <p>Wired into the best models available, through the platforms your team already uses. Maximum capability where the data permits it.</p>
+      </div>
+    </div>
+
+    <div class="sites">
+      <article class="site reveal">
+        <div class="site-body">
+          <div class="site-meta">
+            <span class="site-tag">Site 001</span>
+            <span class="site-tag">Live events</span>
+            <span class="site-tag is-mode">Offline</span>
+          </div>
+          <h3>A finals night that could not depend on the venue Wi-Fi.</h3>
+          <span class="site-lbl">The friction</span>
+          <p>Scores, standings, team crests and event branding had to reach the audience screen the instant they changed — in front of a live crowd and on-camera talent. The one thing nobody could guarantee was a working connection at the venue.</p>
+          <span class="site-lbl">The excavation</span>
+          <p>An admin console driving an unlimited number of synchronized audience displays across the local network, with the whole tournament — three formats, including double elimination with automatic bracket reset — held in a single file on the operator’s laptop. A companion draw board ships as one self-contained page that needs no install, no server and no connection at all.</p>
+        </div>
+        <div class="recovered">
+          <span class="site-lbl">Recovered</span>
+          <div class="rec-row"><span class="rec-fig">Zero</span><span class="rec-txt">external dependencies at the venue — no internet, no accounts, no cloud</span></div>
+          <div class="rec-row"><span class="rec-fig">Unlimited</span><span class="rec-txt">synchronized audience displays, all driven from one laptop</span></div>
+          <div class="rec-row"><span class="rec-fig">3</span><span class="rec-txt">tournament formats and 3 scoring modes, including a live game clock</span></div>
+          <div class="rec-row"><span class="rec-fig">28</span><span class="rec-txt">automated tests across the bracket engine and state layer</span></div>
+          <div class="rec-row"><span class="rec-fig">32&nbsp;KB</span><span class="rec-txt">for the companion draw board — a single file, double-click to run</span></div>
+        </div>
+      </article>
+      <article class="site reveal d1">
+        <div class="site-body">
+          <div class="site-meta">
+            <span class="site-tag">Site 002</span>
+            <span class="site-tag">Sport performance</span>
+            <span class="site-tag is-mode">Hybrid</span>
+          </div>
+          <h3>Twenty-one hours of match footage and one coach with no time to watch it.</h3>
+          <span class="site-lbl">The friction</span>
+          <p>The value was buried in video nobody could afford to sit through. Crucially the brief was for a clip finder, not a statistics engine: surface the candidates and let a human discard the misses in seconds, rather than publish counts that have to be perfect to be safe.</p>
+          <span class="site-lbl">The excavation</span>
+          <p>A desktop application that ingests match video, tracks play, and returns reviewable moments. It runs on one ordinary GPU under the client’s own roof, and every dependency is Apache-2.0 or MIT — so the client owns outright what we built, with no copyleft license reaching into their product.</p>
+        </div>
+        <div class="recovered">
+          <span class="site-lbl">Recovered</span>
+          <div class="rec-row"><span class="rec-fig">21&nbsp;h</span><span class="rec-txt">of match footage processed end to end</span></div>
+          <div class="rec-row"><span class="rec-fig">3,021</span><span class="rec-txt">candidate clips surfaced for review</span></div>
+          <div class="rec-row"><span class="rec-fig">319,806</span><span class="rec-txt">tracked ball positions across the footage</span></div>
+          <div class="rec-row"><span class="rec-fig">5.1&nbsp;min</span><span class="rec-txt">median to process a 90-minute match — about 18&times; faster than watching it</span></div>
+          <div class="rec-row"><span class="rec-fig">1.1&nbsp;h</span><span class="rec-txt">of total compute for the entire 14-match archive</span></div>
+          <div class="rec-row"><span class="rec-fig">0.2&nbsp;GB</span><span class="rec-txt">of 23.5&nbsp;GB video memory used — commodity hardware, not a cluster</span></div>
+        </div>
+      </article>
+      <article class="site reveal d2">
+        <div class="site-body">
+          <div class="site-meta">
+            <span class="site-tag">Site 003</span>
+            <span class="site-tag">Community operations</span>
+            <span class="site-tag is-mode">Frontier</span>
+          </div>
+          <h3>Coordination that lived, and died, in a group chat.</h3>
+          <span class="site-lbl">The friction</span>
+          <p>Scheduling, availability, results and recognition were all happening in message threads — unsearchable, unreliable, and impossible to carry from one week to the next.</p>
+          <span class="site-lbl">The excavation</span>
+          <p>A conversational bot that lives inside the chat platform the community already uses, so there is no new app to adopt. It answers 43 commands, speaks more than one language, and was rebuilt at full parity on a second platform. Consent is recorded before anything is stored, and any member can export or erase their own record with a single message.</p>
+        </div>
+        <div class="recovered">
+          <span class="site-lbl">Recovered</span>
+          <div class="rec-row"><span class="rec-fig">43</span><span class="rec-txt">commands, from availability and line-ups to standings and player of the match</span></div>
+          <div class="rec-row"><span class="rec-fig">2</span><span class="rec-txt">platforms at full feature parity</span></div>
+          <div class="rec-row"><span class="rec-fig">1</span><span class="rec-txt">message to export your data — and one to erase it</span></div>
+          <div class="rec-row"><span class="rec-fig">0</span><span class="rec-txt">personal data stored before consent is recorded</span></div>
+          <div class="rec-row"><span class="rec-fig">May&nbsp;2026</span><span class="rec-txt">in production, developed continuously since</span></div>
+        </div>
+      </article>
+    </div>
+
+    <p class="record-note reveal">Figures are drawn from the delivered systems themselves — test suites, processing logs and production records — not from estimates. Client names withheld; references available under NDA.</p>
+  </div>
+</section>
 
 <!-- EPOCH SCROLL HINT -->
 <div id="epoch-scroll-hint">
@@ -1445,7 +1545,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 <section class="epoch-wrap" id="epoch">
   <div class="epoch-pin" id="epoch-pin">
     <div class="epoch-ghost" id="epoch-ghost">
-      <img id="eghost" src="" alt="">
+      <img id="eghost" src="mainlogo-1.png" width="300" height="300" decoding="async" alt="">
     </div>
     <div class="epoch-hd">
       <div class="section-label">The Evolution</div>
@@ -1585,104 +1685,6 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
   </div>
 </section>
 
-<!-- THE RECORD -->
-<section class="record" id="record">
-  <div class="record-inner">
-    <div class="record-head">
-      <div class="section-label reveal">The Record</div>
-      <h2 class="stitle reveal d1">Three Digs.<br>Three Deployments.</h2>
-      <p class="record-lede reveal d2">Every system we build runs where your data allows it to run — sealed offline on your own hardware, hybrid, or wired straight into frontier models. That is a decision you make, not a constraint we impose. These three ran at each end of that range. Clients are unnamed; every figure below is measured, not estimated.</p>
-    </div>
-
-    <div class="spectrum reveal d1">
-      <div class="spec-cell">
-        <div class="spec-mode">Offline</div>
-        <p>Air-gapped and self-contained. No internet, no accounts, no data leaving the room. Built for venues and sites where the network is the thing you cannot trust.</p>
-      </div>
-      <div class="spec-cell">
-        <div class="spec-mode">Hybrid</div>
-        <p>Models and data stay on hardware you own; only what you choose ever leaves. The default where the material is sensitive but the workload is heavy.</p>
-      </div>
-      <div class="spec-cell">
-        <div class="spec-mode">Frontier</div>
-        <p>Wired into the best models available, through the platforms your team already uses. Maximum capability where the data permits it.</p>
-      </div>
-    </div>
-
-    <div class="sites">
-      <article class="site reveal">
-        <div class="site-body">
-          <div class="site-meta">
-            <span class="site-tag">Site 001</span>
-            <span class="site-tag">Live events</span>
-            <span class="site-tag is-mode">Offline</span>
-          </div>
-          <h3>A finals night that could not depend on the venue Wi-Fi.</h3>
-          <span class="site-lbl">The friction</span>
-          <p>Scores, standings, team crests and event branding had to reach the audience screen the instant they changed — in front of a live crowd and on-camera talent. The one thing nobody could guarantee was a working connection at the venue.</p>
-          <span class="site-lbl">The excavation</span>
-          <p>An admin console driving an unlimited number of synchronized audience displays across the local network, with the whole tournament — three formats, including double elimination with automatic bracket reset — held in a single file on the operator’s laptop. A companion draw board ships as one self-contained page that needs no install, no server and no connection at all.</p>
-        </div>
-        <div class="recovered">
-          <span class="site-lbl">Recovered</span>
-          <div class="rec-row"><span class="rec-fig">Zero</span><span class="rec-txt">external dependencies at the venue — no internet, no accounts, no cloud</span></div>
-          <div class="rec-row"><span class="rec-fig">Unlimited</span><span class="rec-txt">synchronized audience displays, all driven from one laptop</span></div>
-          <div class="rec-row"><span class="rec-fig">3</span><span class="rec-txt">tournament formats and 3 scoring modes, including a live game clock</span></div>
-          <div class="rec-row"><span class="rec-fig">28</span><span class="rec-txt">automated tests across the bracket engine and state layer</span></div>
-          <div class="rec-row"><span class="rec-fig">32&nbsp;KB</span><span class="rec-txt">for the companion draw board — a single file, double-click to run</span></div>
-        </div>
-      </article>
-      <article class="site reveal d1">
-        <div class="site-body">
-          <div class="site-meta">
-            <span class="site-tag">Site 002</span>
-            <span class="site-tag">Sport performance</span>
-            <span class="site-tag is-mode">Hybrid</span>
-          </div>
-          <h3>Twenty-one hours of match footage and one coach with no time to watch it.</h3>
-          <span class="site-lbl">The friction</span>
-          <p>The value was buried in video nobody could afford to sit through. Crucially the brief was for a clip finder, not a statistics engine: surface the candidates and let a human discard the misses in seconds, rather than publish counts that have to be perfect to be safe.</p>
-          <span class="site-lbl">The excavation</span>
-          <p>A desktop application that ingests match video, tracks play, and returns reviewable moments. It runs on one ordinary GPU under the client’s own roof, and every dependency is Apache-2.0 or MIT — so the client owns outright what we built, with no copyleft license reaching into their product.</p>
-        </div>
-        <div class="recovered">
-          <span class="site-lbl">Recovered</span>
-          <div class="rec-row"><span class="rec-fig">21&nbsp;h</span><span class="rec-txt">of match footage processed end to end</span></div>
-          <div class="rec-row"><span class="rec-fig">3,021</span><span class="rec-txt">candidate clips surfaced for review</span></div>
-          <div class="rec-row"><span class="rec-fig">319,806</span><span class="rec-txt">tracked ball positions across the footage</span></div>
-          <div class="rec-row"><span class="rec-fig">5.1&nbsp;min</span><span class="rec-txt">median to process a 90-minute match — about 18&times; faster than watching it</span></div>
-          <div class="rec-row"><span class="rec-fig">1.1&nbsp;h</span><span class="rec-txt">of total compute for the entire 14-match archive</span></div>
-          <div class="rec-row"><span class="rec-fig">0.2&nbsp;GB</span><span class="rec-txt">of 23.5&nbsp;GB video memory used — commodity hardware, not a cluster</span></div>
-        </div>
-      </article>
-      <article class="site reveal d2">
-        <div class="site-body">
-          <div class="site-meta">
-            <span class="site-tag">Site 003</span>
-            <span class="site-tag">Community operations</span>
-            <span class="site-tag is-mode">Frontier</span>
-          </div>
-          <h3>Coordination that lived, and died, in a group chat.</h3>
-          <span class="site-lbl">The friction</span>
-          <p>Scheduling, availability, results and recognition were all happening in message threads — unsearchable, unreliable, and impossible to carry from one week to the next.</p>
-          <span class="site-lbl">The excavation</span>
-          <p>A conversational bot that lives inside the chat platform the community already uses, so there is no new app to adopt. It answers 43 commands, speaks more than one language, and was rebuilt at full parity on a second platform. Consent is recorded before anything is stored, and any member can export or erase their own record with a single message.</p>
-        </div>
-        <div class="recovered">
-          <span class="site-lbl">Recovered</span>
-          <div class="rec-row"><span class="rec-fig">43</span><span class="rec-txt">commands, from availability and line-ups to standings and player of the match</span></div>
-          <div class="rec-row"><span class="rec-fig">2</span><span class="rec-txt">platforms at full feature parity</span></div>
-          <div class="rec-row"><span class="rec-fig">1</span><span class="rec-txt">message to export your data — and one to erase it</span></div>
-          <div class="rec-row"><span class="rec-fig">0</span><span class="rec-txt">personal data stored before consent is recorded</span></div>
-          <div class="rec-row"><span class="rec-fig">May&nbsp;2026</span><span class="rec-txt">in production, developed continuously since</span></div>
-        </div>
-      </article>
-    </div>
-
-    <p class="record-note reveal">Figures are drawn from the delivered systems themselves — test suites, processing logs and production records — not from estimates. Client names withheld; references available under NDA.</p>
-  </div>
-</section>
-
 <!-- ABOUT -->
 <section class="about" id="about">
   <div class="about-inner">
@@ -1698,7 +1700,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 
 <!-- SECURITY -->
 <section class="security" id="security">
-  <img class="sec-ghost" id="sghostimg" src="" alt="">
+  <img class="sec-ghost" id="sghostimg" src="mainlogo-1.png" width="300" height="300" decoding="async" alt="">
   <div class="sec-inner">
     <div>
       <div class="section-label reveal">Security &amp; Trust</div>
@@ -1850,7 +1852,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
   <canvas id="closing-canvas"></canvas>
   <div class="closing-inner">
     <div class="closing-logo" id="clogo-wrap">
-      <img id="clogo" src="" alt="AiOSAURUS">
+      <img id="clogo" src="mainlogo-1.png" width="300" height="300" decoding="async" alt="AiOSAURUS">
     </div>
     <div class="closing-tag">The Next Epoch Awaits</div>
     <h2 class="closing-title">The power of tomorrow,<br><em>for the heart of today.</em></h2>
@@ -1987,7 +1989,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 <footer>
   <div class="footer-inner">
     <div class="footer-brand">
-      <img id="flogo" src="" alt="AiOSAURUS">
+      <img id="flogo" src="mainlogo-1.png" width="300" height="300" decoding="async" alt="AiOSAURUS">
       <span>AiOSAURUS</span>
     </div>
     <div class="footer-spark">✦</div>
@@ -1998,6 +2000,17 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 </footer>
 
 <script>
+// Failsafe: JS can start and then break before the reveal handlers fire,
+// which would leave the page blank. Force everything visible shortly after
+// load if it still isn't.
+window.addEventListener('load', () => setTimeout(() => {
+  const hero = document.querySelector('.hero-content');
+  if (hero && !hero.classList.contains('revealed')) hero.classList.add('revealed');
+  const closing = document.querySelector('.closing');
+  if (closing && !closing.classList.contains('in')) closing.classList.add('in');
+  document.querySelectorAll('.reveal:not(.in)').forEach(el => el.classList.add('in'));
+}, 2500));
+
 // ── MOBILE MENU ──
 (function(){
   const toggle = document.getElementById('nav-toggle');
@@ -2024,14 +2037,8 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 
 // ── LOGOS ──
 const L2 = 'mainlogo-1.png';
-document.getElementById('stage-logo').src = L2;
-document.getElementById('nlogo').src   = L2;
-document.getElementById('slogo').src   = L2;
-document.getElementById('hlogo').src   = L2;
-document.getElementById('eghost').src  = L2;
-document.getElementById('sghostimg').src = L2;
-document.getElementById('clogo').src   = L2;
-document.getElementById('flogo').src   = L2;
+// Image sources are declared in the HTML so they resolve without JS
+// and the preload scanner can find them.
 // ── SKULL IMAGES ──
 const SKULL3D_SRC = 'skull3d.png';
 const TERMINATOR_SRC = 'terminator.png';
@@ -2435,7 +2442,7 @@ if(['privacy','terms','cookies','disclaimer'].includes(lhash)){
   <div class="d-badge">Live Demo</div>
 
   <!-- demo skull -->
-  <img class="d-skull" id="d-skull-img" src="" alt="" aria-hidden="true" />
+  <img class="d-skull" id="d-skull-img" src="terminator.png" width="260" height="262" decoding="async" alt="" aria-hidden="true" />
 
   <!-- card -->
   <div class="d-card">
