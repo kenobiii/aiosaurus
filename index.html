@@ -1086,6 +1086,9 @@ h1.hero-title {
 .tier-name { font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:700; margin-bottom:8px; }
 .tier-price { font-family:'DM Mono',monospace; font-size:.75rem; letter-spacing:.12em; opacity:.6; margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid rgba(235,231,221,.12); }
 .tier-featured .tier-price { border-bottom-color:rgba(235,231,221,.25); }
+.tier-rate { max-width:720px; margin:30px auto 0; text-align:center; font-size:.82rem;
+  line-height:1.8; opacity:.55; color:var(--bone); }
+.tier-rate strong { font-family:'DM Mono',monospace; font-weight:400; opacity:.9; }
 .tier-desc { font-size:.87rem; line-height:1.7; opacity:.65; margin-bottom:20px; }
 .tier-list { list-style:none; display:flex; flex-direction:column; gap:9px; margin-bottom:32px; flex:1; }
 .tier-list li { font-size:.82rem; opacity:.6; padding-left:16px; position:relative; }
@@ -1736,7 +1739,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
       <div class="tier">
         <div class="tier-tag">Enterprise</div>
         <div class="tier-name">Platform Integration</div>
-        <div class="tier-price">Retainer</div>
+        <div class="tier-price">From $5,000 CAD / month</div>
         <div class="tier-desc">End-to-end orchestration infrastructure. Multi-agent systems, ongoing optimization, and dedicated support across your entire operation.</div>
         <ul class="tier-list">
           <li>Multi-agent orchestration</li>
@@ -1747,6 +1750,10 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
         <a href="#contact-form" class="btn btn-outline tier-cta">Discuss Retainer</a>
       </div>
     </div>
+
+    <p class="tier-rate reveal">Advisory and consulting engagements are billed at
+      <strong>$300 CAD / hour</strong>. Project work is scoped and quoted up front —
+      you will never see an hourly invoice you did not agree to.</p>
 
     <!-- Contact form -->
     <div class="contact-form-wrap" id="contact-form">
