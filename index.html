@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
+<script>document.documentElement.className=document.documentElement.className.replace('no-js','js')</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AiOSAURUS — Defining the Next Epoch</title>
@@ -41,6 +42,22 @@
   --obsidian: #0A0A0A;
   --red: #BB2121;
   --about-skull: url('about-skull.png');
+
+  /* Spatial system — one container, one rhythm, one type scale. */
+  --container: 1100px;
+  --pad-y: 110px;
+  --pad-x: 52px;
+  --measure: 68ch;
+
+  --fs-display: clamp(2rem, 5vw, 4rem);   /* hero + closing            */
+  --fs-section: clamp(1.8rem, 3.2vw, 2.8rem); /* section titles        */
+  --fs-card: 1.4rem;                      /* card + tier + site titles */
+  --fs-sub: 1rem;                         /* timeline + sub headings   */
+
+  /* #BB2121 is 3.16:1 on obsidian and fails AA. Dark contexts override
+     --red-text; the brand red is unchanged on bone and for fills. */
+  --red-text: var(--red);
+  --red-on-dark: #E04545;
   --about-teeth: url('about-teeth.png');
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -134,7 +151,110 @@ nav.scrolled {
   font-size: .7rem !important; letter-spacing: .12em !important;
   font-weight: 500 !important;
 }
-.nav-cta:hover { background: #8a1515 !important; }
+.nav-cta {
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.2) inset,
+    0 -1px 0 rgba(0,0,0,.25) inset,
+    0 1px 2px rgba(120,20,20,.26),
+    0 5px 12px -5px rgba(187,33,33,.4);
+  transition: background .2s, box-shadow .22s, transform .18s cubic-bezier(.16,1,.3,1) !important;
+}
+.nav-cta:hover {
+  background: #8a1515 !important; transform: translateY(-1px);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.24) inset,
+    0 -1px 0 rgba(0,0,0,.28) inset,
+    0 10px 22px -8px rgba(187,33,33,.5);
+}
+.nav-cta:active {
+  transform: translateY(1px); transition-duration: .06s;
+  box-shadow: 0 2px 6px rgba(80,12,12,.5) inset;
+}
+#mobile-menu a.mm-cta {
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.2) inset,
+    0 -1px 0 rgba(0,0,0,.25) inset,
+    0 8px 20px -8px rgba(187,33,33,.45);
+  transition: transform .18s cubic-bezier(.16,1,.3,1), box-shadow .22s;
+}
+#mobile-menu a.mm-cta:active {
+  transform: translateY(1px); box-shadow: 0 2px 6px rgba(80,12,12,.5) inset;
+}
+
+/* ── SKIP LINK ── */
+.skip-link {
+  position:absolute; left:-9999px; top:0; z-index:200;
+  background:var(--obsidian); color:var(--bone);
+  padding:14px 22px; font-size:.75rem; letter-spacing:.14em; text-transform:uppercase;
+  text-decoration:none;
+}
+.skip-link:focus { left:12px; top:12px; }
+
+/* ── VISUALLY HIDDEN (labels for screen readers) ── */
+.vh {
+  position:absolute !important; width:1px; height:1px;
+  padding:0; margin:-1px; overflow:hidden;
+  clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap; border:0;
+}
+
+/* ── FOCUS VISIBILITY ── */
+:focus-visible {
+  outline:2px solid var(--red); outline-offset:3px;
+}
+.friction :focus-visible, .security :focus-visible, .closing :focus-visible,
+.contact :focus-visible, #mobile-menu :focus-visible, #cta-strip :focus-visible {
+  outline-color:var(--bone);
+}
+
+/* ── MOBILE MENU ── */
+#nav-toggle {
+  display:none; flex-direction:column; justify-content:center; align-items:center; gap:5px;
+  width:44px; height:44px; padding:0; margin:0;
+  background:none; border:0; color:var(--obsidian); cursor:pointer; z-index:110;
+}
+#nav-toggle span {
+  display:block; width:22px; height:1.5px; background:currentColor;
+  transition:transform .3s, opacity .3s;
+}
+#nav-toggle[aria-expanded="true"] span:nth-child(1){ transform:translateY(6.5px) rotate(45deg); }
+#nav-toggle[aria-expanded="true"] span:nth-child(2){ opacity:0; }
+#nav-toggle[aria-expanded="true"] span:nth-child(3){ transform:translateY(-6.5px) rotate(-45deg); }
+#mobile-menu {
+  position:fixed; inset:0; z-index:1100; background:var(--bone);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+  opacity:0; visibility:hidden; transition:opacity .35s, visibility .35s;
+}
+#mobile-menu.open { opacity:1; visibility:visible; }
+nav.menu-open { z-index:1200; }
+#mobile-menu a {
+  font-family:'Playfair Display',serif; font-size:1.55rem; font-weight:700;
+  color:var(--obsidian); text-decoration:none; padding:13px 24px;
+}
+#mobile-menu a.mm-cta {
+  margin-top:22px; background:var(--red); color:var(--bone);
+  font-family:'DM Sans',sans-serif; font-size:.75rem; font-weight:500;
+  letter-spacing:.16em; text-transform:uppercase; padding:17px 34px;
+}
+#mobile-menu .mm-mail {
+  margin-top:26px; font-family:'DM Mono',monospace; font-size:.72rem;
+  letter-spacing:.06em; opacity:.5; text-decoration:underline;
+}
+@media(min-width:801px){ #mobile-menu { display:none; } }
+
+/* ── REDUCED MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior:auto; }
+  *, *::before, *::after {
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+    scroll-behavior:auto !important;
+  }
+  .reveal { opacity:1 !important; transform:none !important; }
+  #hero-canvas, #closing-canvas { display:none !important; }
+  .marquee-inner { animation:none !important; }
+  .btn::after { display:none !important; }
+}
 
 /* ── STICKY CTA STRIP ── */
 #cta-strip {
@@ -158,7 +278,22 @@ nav.scrolled {
   text-decoration: none; white-space: nowrap; flex-shrink: 0;
   transition: background .2s, color .2s;
 }
-#cta-strip a:hover { background: var(--obsidian); color: var(--bone); }
+#cta-strip a {
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.6) inset,
+    0 -1px 0 rgba(0,0,0,.14) inset,
+    0 2px 6px rgba(80,10,10,.3);
+  transition: background .2s, color .2s, box-shadow .22s,
+              transform .18s cubic-bezier(.16,1,.3,1);
+}
+#cta-strip a:hover {
+  background: var(--obsidian); color: var(--bone); transform: translateY(-1px);
+  box-shadow: 0 1px 0 rgba(255,255,255,.12) inset, 0 10px 22px -8px rgba(0,0,0,.5);
+}
+#cta-strip a:active {
+  transform: translateY(1px); transition-duration: .06s;
+  box-shadow: 0 2px 6px rgba(0,0,0,.4) inset;
+}
 #cta-strip button {
   background: none; border: none; color: var(--bone); opacity: .5;
   font-size: 1.1rem; padding: 4px 8px; cursor: none; margin-left: 16px;
@@ -177,19 +312,78 @@ nav.scrolled {
   height: 52px; padding: 0 34px;
   font-family: 'DM Sans', sans-serif; font-weight: 400;
   font-size: .78rem; letter-spacing: .15em; text-transform: uppercase;
-  text-decoration: none; transition: background .22s, border-color .22s, color .22s, transform .2s;
+  text-decoration: none;
+  transition: background .22s, border-color .22s, color .22s,
+              transform .18s cubic-bezier(.16,1,.3,1), box-shadow .24s;
   white-space: nowrap; cursor: none;
+  position: relative; overflow: hidden;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.13) inset,
+    0 -1px 0 rgba(0,0,0,.20) inset,
+    0 1px 2px rgba(10,10,10,.13),
+    0 6px 16px -7px rgba(10,10,10,.24);
+}
+/* Light sweeping across the face on hover — filled buttons only. */
+.btn::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(105deg, transparent 36%, rgba(255,255,255,.15) 50%, transparent 64%);
+  transform: translateX(-130%);
+  transition: transform .6s cubic-bezier(.16,1,.3,1);
+}
+.btn:hover::after { transform: translateX(130%); }
+.btn-outline::after, .btn-outline-light::after { display: none; }
+
+.btn:hover {
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.2) inset,
+    0 -1px 0 rgba(0,0,0,.24) inset,
+    0 2px 5px rgba(10,10,10,.16),
+    0 15px 30px -12px rgba(10,10,10,.32);
+}
+/* Struck: drops into the page, cast shadow collapses, inset inverts. */
+.btn:active {
+  transform: translateY(1px);
+  transition-duration: .06s;
+  box-shadow:
+    0 2px 6px rgba(10,10,10,.30) inset,
+    0 1px 0 rgba(255,255,255,.05) inset,
+    0 1px 1px rgba(10,10,10,.10);
 }
 .btn-dark  { background: var(--obsidian); color: var(--bone); border: 1px solid var(--obsidian); }
-.btn-dark:hover  { background: var(--red); border-color: var(--red); transform: translateY(-2px); }
-.btn-outline { background: transparent; color: var(--obsidian); border: 1px solid rgba(10,10,10,.25); }
-.btn-outline:hover { border-color: var(--obsidian); transform: translateY(-2px); }
+.btn-dark:hover  { background: var(--red); border-color: var(--red-text); transform: translateY(-2px); }
+.btn-outline {
+  background: transparent; color: var(--obsidian); border: 1px solid rgba(10,10,10,.25);
+  box-shadow: 0 1px 0 rgba(255,255,255,.5) inset, 0 1px 2px rgba(10,10,10,.07);
+}
+.btn-outline:active { box-shadow: 0 2px 5px rgba(10,10,10,.14) inset; }
+.btn-outline:hover {
+  border-color: var(--obsidian); transform: translateY(-2px);
+  box-shadow: 0 1px 0 rgba(255,255,255,.6) inset, 0 8px 18px -8px rgba(10,10,10,.26);
+}
 .btn-light { background: var(--bone); color: var(--obsidian); border: 1px solid var(--bone); }
-.btn-light:hover { background: var(--red); color: var(--bone); border-color: var(--red); transform: translateY(-2px); }
-.btn-outline-light { background: transparent; color: var(--bone); border: 1px solid rgba(235,231,221,.25); }
+.btn-light:hover { background: var(--red); color: var(--bone); border-color: var(--red-text); transform: translateY(-2px); }
+.btn-outline-light {
+  background: transparent; color: var(--bone); border: 1px solid rgba(235,231,221,.25);
+  box-shadow: 0 1px 0 rgba(235,231,221,.14) inset, 0 2px 6px rgba(0,0,0,.22);
+}
+.btn-outline-light:active { box-shadow: 0 2px 6px rgba(0,0,0,.4) inset; }
 .btn-outline-light:hover { border-color: var(--bone); transform: translateY(-2px); }
 .btn-red { background: var(--red); color: var(--bone); border: 1px solid var(--red); }
-.btn-red:hover { background: #8a1515; border-color: #8a1515; transform: translateY(-2px); }
+.btn-red {
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.22) inset,
+    0 -1px 0 rgba(0,0,0,.26) inset,
+    0 1px 2px rgba(120,20,20,.3),
+    0 8px 20px -8px rgba(187,33,33,.45);
+}
+.btn-red:hover {
+  background: #8a1515; border-color: #8a1515; transform: translateY(-2px);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.26) inset,
+    0 -1px 0 rgba(0,0,0,.3) inset,
+    0 3px 7px rgba(120,20,20,.32),
+    0 18px 34px -12px rgba(187,33,33,.5);
+}
 
 /* ── HERO ── */
 /* SCOPE: .hero, .hero::after (vignette). Polish pass: adds atmospheric depth. */
@@ -218,6 +412,7 @@ nav.scrolled {
    On scroll: JS drives it from top→center, large→normal, opaque→ghost.
    Once receded (scroll > vh), it becomes position:absolute in hero flow.
 */
+.no-js #logo-stage { display: none; }
 #logo-stage {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -275,7 +470,7 @@ nav.scrolled {
   position: relative; z-index: 2;
   max-width: 800px; padding-top: 80px;
 }
-.hero-content > * {
+.js .hero-content > * {
   opacity: 0; transform: translateY(22px);
 }
 .hero-content.revealed > * {
@@ -291,7 +486,7 @@ nav.scrolled {
 .hero-scroll.revealed { opacity: .3; }
 .eyebrow {
   font-family: 'DM Mono', monospace; font-size: .68rem; letter-spacing: .22em;
-  text-transform: uppercase; color: var(--red);
+  text-transform: uppercase; color: var(--red-text);
   display: flex; align-items: center; gap: 12px;
   margin-bottom: 24px;
 }
@@ -303,7 +498,7 @@ h1.hero-title {
 }
 /* SCOPE: .hero-title em — emphasized italic + drawing underline accent. */
 .hero-title em {
-  font-style: italic; color: var(--red);
+  font-style: italic; color: var(--red-text);
   position: relative; display: inline-block;
 }
 .hero-title em::after {
@@ -387,27 +582,29 @@ h1.hero-title {
 /* ── SECTION SHARED ── */
 .section-label {
   font-family: 'DM Mono', monospace; font-size: .65rem; letter-spacing: .22em;
-  text-transform: uppercase; color: var(--red);
+  text-transform: uppercase; color: var(--red-text);
   display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
 }
-.section-label::before { content:''; display:block; width:20px; height:1px; background:var(--red); }
+.section-label::before { content:''; display:block; width:20px; height:1px; background:var(--red-text); }
 .stitle {
   font-family: 'Playfair Display', serif; font-weight: 800;
   font-size: clamp(1.9rem,3.8vw,3.2rem); line-height: 1.06; letter-spacing: -.02em;
 }
-.reveal { opacity:0; transform:translateY(22px); transition:opacity .75s, transform .75s; }
+.js .reveal { opacity:0; transform:translateY(22px); transition:opacity .75s, transform .75s; }
 .reveal.in { opacity:1; transform:translateY(0); }
 .d1 { transition-delay:.1s; } .d2 { transition-delay:.22s; } .d3 { transition-delay:.34s; }
 
 /* ── FRICTION ── */
-.friction { background:var(--obsidian); color:var(--bone); padding:110px 52px; overflow:hidden; }
-.friction-inner { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
+.friction { background:var(--obsidian); color:var(--bone); padding:var(--pad-y) var(--pad-x); overflow:hidden; }
+/* Dark contexts take the lighter red so labels clear AA. */
+.friction, .solution, .security, .closing, .contact-form-wrap, .tier, footer { --red-text: var(--red-on-dark); }
+.friction-inner { max-width:var(--container); margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
 .friction-body { font-size:.95rem; line-height:1.8; opacity:.58; margin-bottom:36px; }
 .friction-quote { font-family:'Playfair Display',serif; font-style:italic; font-size:1.1rem; line-height:1.65; border-left:2px solid var(--red); padding-left:22px; opacity:.85; }
 .friction-grid { display:flex; flex-direction:column; gap:2px; }
 .f-item { background:rgba(235,231,221,.04); border:1px solid rgba(235,231,221,.07); padding:24px 28px; transition:background .3s, border-color .3s; }
 .f-item:hover { background:rgba(235,231,221,.07); border-color:rgba(187,33,33,.3); }
-.f-num { font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.2em; color:var(--red); margin-bottom:8px; }
+.f-num { font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.2em; color:var(--red-text); margin-bottom:8px; }
 .f-item h3 { font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; margin-bottom:7px; }
 .f-item p { font-size:.86rem; line-height:1.7; opacity:.48; }
 
@@ -746,11 +943,11 @@ h1.hero-title {
 }
 .epoch-ghost img { width:100%; height:auto; opacity:.14; }
 .epoch-ghost.show { opacity:1; }
-.epoch-hd { max-width:1100px; margin:0 auto 40px; width:100%; }
-.epoch-hd .stitle { font-size:clamp(1.8rem,3.2vw,2.8rem); }
+.epoch-hd { max-width:var(--container); margin:0 auto 40px; width:100%; }
+.epoch-hd .stitle { font-size:var(--fs-section); }
 
 /* Track: padding-top = half dot height so dot row centers on bar */
-.epoch-track { max-width:1100px; margin:0 auto; width:100%; position:relative; padding-top:10px; }
+.epoch-track { max-width:var(--container); margin:0 auto; width:100%; position:relative; padding-top:10px; }
 
 /* Bar — normal flow, sits at y=10px inside track */
 .tl-bar { position:relative; height:2px; background:rgba(10,10,10,.1); border-radius:2px; }
@@ -769,28 +966,28 @@ h1.hero-title {
   background:var(--bone); border:2px solid rgba(10,10,10,.18);
   transition:background .4s, border-color .4s, box-shadow .4s, transform .35s;
 }
-.tl-dot-item.active { background:var(--red); border-color:var(--red); box-shadow:0 0 0 6px rgba(187,33,33,.16); transform:scale(1.25); }
+.tl-dot-item.active { background:var(--red); border-color:var(--red-text); box-shadow:0 0 0 6px rgba(187,33,33,.16); transform:scale(1.25); }
 .tl-dot-item.done { background:var(--obsidian); border-color:var(--obsidian); }
 
 /* Content grid — sits below bar */
 .tl-nodes { display:grid; grid-template-columns:repeat(5,1fr); padding-top:28px; }
 .tl-node { padding-right:16px; }
-.tl-era { font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.18em; color:var(--red); margin-bottom:8px; opacity:0; transform:translateY(8px); transition:opacity .4s, transform .4s; }
+.tl-era { font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.18em; color:var(--red-text); margin-bottom:8px; opacity:0; transform:translateY(8px); transition:opacity .4s, transform .4s; }
 .tl-node.active .tl-era, .tl-node.done .tl-era { opacity:1; transform:translateY(0); }
-.tl-title { font-family:'Playfair Display',serif; font-weight:700; font-size:.95rem; margin-bottom:8px; line-height:1.2; opacity:0; transform:translateY(10px); transition:opacity .4s .07s, transform .4s .07s; }
+.tl-title { font-family:'Playfair Display',serif; font-weight:700; font-size:var(--fs-sub); margin-bottom:8px; line-height:1.2; opacity:0; transform:translateY(10px); transition:opacity .4s .07s, transform .4s .07s; }
 .tl-node.active .tl-title, .tl-node.done .tl-title { opacity:1; transform:translateY(0); }
-.tl-body { font-size:.8rem; line-height:1.65; max-width:175px; opacity:0; transform:translateY(8px); transition:opacity .4s .14s, transform .4s .14s; }
+.tl-body { font-size:.8rem; line-height:1.65; opacity:0; transform:translateY(8px); transition:opacity .4s .14s, transform .4s .14s; }
 .tl-node.active .tl-body, .tl-node.done .tl-body { opacity:.52; transform:translateY(0); }
 
-.epoch-cta { max-width:1100px; margin:36px auto 0; width:100%; opacity:0; transform:translateY(10px); transition:opacity .55s, transform .55s; }
+.epoch-cta { max-width:var(--container); margin:36px auto 0; width:100%; opacity:0; transform:translateY(10px); transition:opacity .55s, transform .55s; }
 .epoch-cta.show { opacity:1; transform:translateY(0); }
 
 /* Always hidden on desktop */
 #epoch-next-btn, #epoch-next-label { display:none; }
 
 /* ── SOLUTION ── */
-.solution { background:var(--obsidian); color:var(--bone); padding:110px 52px; }
-.solution-inner { max-width:1100px; margin:0 auto; }
+.solution { background:var(--obsidian); color:var(--bone); padding:var(--pad-y) var(--pad-x); }
+.solution-inner { max-width:var(--container); margin:0 auto; }
 .sol-head { display:grid; grid-template-columns:1fr 1fr; gap:80px; margin-bottom:48px; align-items:end; }
 .sol-body { font-size:.95rem; line-height:1.8; opacity:.52; align-self:end; }
 .trinity { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; }
@@ -803,20 +1000,20 @@ h1.hero-title {
   font-family: 'Special Elite', 'Courier New', monospace;
   font-size: 2.6rem;
   line-height: 1;
-  color: var(--red);
+  color: var(--red-text);
   display: block;
   margin-bottom: 6px;
   letter-spacing: .02em;
   transform: rotate(-1.5deg);
   transform-origin: left center;
 }
-.t-num { font-family:'DM Mono',monospace; font-size:.55rem; letter-spacing:.2em; color:var(--red); margin-bottom:24px; display:block; opacity:.75; text-transform:uppercase; }
+.t-num { font-family:'DM Mono',monospace; font-size:.55rem; letter-spacing:.2em; color:var(--red-text); margin-bottom:24px; display:block; text-transform:uppercase; }
 .t-glyph { margin-bottom:20px; display:block; color:var(--bone); }
 .t-card h3 { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:700; margin-bottom:12px; line-height:1.2; }
 .t-card p { font-size:.86rem; line-height:1.72; opacity:.5; }
 
 /* ── ABOUT ── */
-.about { background:var(--bone); padding:110px 52px; position:relative; overflow:visible; }
+.about { background:var(--bone); padding:var(--pad-y) var(--pad-x); position:relative; overflow:visible; }
 .about::before,
 .about::after {
   content: '';
@@ -839,18 +1036,19 @@ h1.hero-title {
   z-index: 0;
 }
 
-.about-inner { max-width:760px; margin:0 auto; position:relative; z-index:1; }
+.about-inner { max-width:var(--container); margin:0 auto; position:relative; z-index:1; }
+.about-text { max-width:720px; }
 @keyframes breathe { 0%,100%{transform:scale(1)} 50%{transform:scale(1.03)} }
 .about-text p { font-size:.93rem; line-height:1.82; opacity:.58; margin-bottom:16px; }
 .about-text p:last-of-type { font-family:'Playfair Display',serif; font-style:italic; font-size:1.05rem; opacity:.85; border-left:2px solid var(--red); padding-left:18px; margin-bottom:0; }
 
 /* ── SECURITY ── */
-.security { background:var(--obsidian); color:var(--bone); padding:100px 52px; position:relative; overflow:hidden; }
-.sec-inner { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
+.security { background:var(--obsidian); color:var(--bone); padding:var(--pad-y) var(--pad-x); position:relative; overflow:hidden; }
+.sec-inner { max-width:var(--container); margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
 .sec-body { font-size:.93rem; line-height:1.8; opacity:.52; margin-top:16px; }
 .sec-list { display:flex; flex-direction:column; }
 .sec-item { display:flex; align-items:center; gap:16px; padding:18px 0; border-bottom:1px solid rgba(235,231,221,.07); font-size:.88rem; }
-.sec-check { width:24px; height:24px; border:1px solid rgba(187,33,33,.5); display:flex; align-items:center; justify-content:center; font-size:.68rem; color:var(--red); font-family:'DM Mono',monospace; flex-shrink:0; }
+.sec-check { width:24px; height:24px; border:1px solid rgba(187,33,33,.5); display:flex; align-items:center; justify-content:center; font-size:.68rem; color:var(--red-text); font-family:'DM Mono',monospace; flex-shrink:0; }
 .sec-ghost { position:absolute; right:-60px; top:50%; transform:translateY(-50%); width:42%; pointer-events:none; opacity:.04; filter:brightness(0) invert(1); }
 
 /* ── CLOSING ── */
@@ -862,7 +1060,7 @@ h1.hero-title {
 #closing-canvas { position:absolute; inset:0; pointer-events:none; z-index:1; will-change:transform; }
 @media(max-width:800px){ #closing-canvas { display:none; } }
 .closing-inner { position:relative; z-index:2; text-align:center; max-width:760px; padding:80px 40px; }
-.closing-logo {
+.js .closing-logo {
   width:clamp(90px,12vw,140px); height:clamp(90px,12vw,140px);
   margin:0 auto 32px;
   opacity:0; transform:scale(.85);
@@ -870,21 +1068,21 @@ h1.hero-title {
 }
 .closing-logo.in { opacity:1; transform:scale(1); }
 .closing-logo img { width:100%; height:100%; object-fit:contain; filter:brightness(0) invert(1); opacity:.85; animation:breathe 6s ease-in-out infinite; }
-.closing-tag { font-family:'DM Mono',monospace; font-size:.66rem; letter-spacing:.24em; text-transform:uppercase; color:var(--red); margin-bottom:18px; opacity:0; transform:translateY(10px); transition:opacity .7s .2s, transform .7s .2s; }
+.js .closing-tag { font-family:'DM Mono',monospace; font-size:.66rem; letter-spacing:.24em; text-transform:uppercase; color:var(--red-text); margin-bottom:18px; opacity:0; transform:translateY(10px); transition:opacity .7s .2s, transform .7s .2s; }
 .closing.in .closing-tag { opacity:1; transform:translateY(0); }
-.closing-title { font-family:'Playfair Display',serif; font-weight:800; font-size:clamp(2rem,5vw,4rem); line-height:1.08; letter-spacing:-.025em; margin-bottom:20px; opacity:0; transform:translateY(14px); transition:opacity .8s .35s, transform .8s .35s; }
+.js .closing-title { font-family:'Playfair Display',serif; font-weight:800; font-size:var(--fs-display); line-height:1.08; letter-spacing:-.025em; margin-bottom:20px; opacity:0; transform:translateY(14px); transition:opacity .8s .35s, transform .8s .35s; }
 .closing.in .closing-title { opacity:1; transform:translateY(0); }
-.closing-title em { font-style:italic; color:var(--red); }
-.closing-sub { font-size:clamp(.88rem,1.3vw,1rem); line-height:1.78; max-width:520px; margin:0 auto 40px; opacity:0; transition:opacity .7s .5s; }
+.closing-title em { font-style:italic; color:var(--red-text); }
+.js .closing-sub { font-size:clamp(.88rem,1.3vw,1rem); line-height:1.78; max-width:520px; margin:0 auto 40px; opacity:0; transition:opacity .7s .5s; }
 .closing.in .closing-sub { opacity:.48; }
-.closing-btns { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; opacity:0; transform:translateY(8px); transition:opacity .65s .65s, transform .65s .65s; }
+.js .closing-btns { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; opacity:0; transform:translateY(8px); transition:opacity .65s .65s, transform .65s .65s; }
 .closing.in .closing-btns { opacity:1; transform:translateY(0); }
-.closing-spark { font-size:1.4rem; color:var(--red); margin-top:48px; opacity:0; transition:opacity .6s .9s; animation:none; }
+.js .closing-spark { font-size:1.4rem; color:var(--red-text); margin-top:48px; opacity:0; transition:opacity .6s .9s; animation:none; }
 .closing.in .closing-spark { opacity:1; animation:pdot 3s ease-in-out infinite; }
 
 /* ── CONTACT ── */
-.contact { background:var(--bone); padding:100px 52px 0; }
-.contact-inner { max-width:1100px; margin:0 auto; }
+.contact { background:var(--bone); padding:var(--pad-y) var(--pad-x) 0; }
+.contact-inner { max-width:var(--container); margin:0 auto; }
 .contact-top { margin-bottom:60px; }
 .contact-title { margin:12px 0 20px; }
 .contact-intro { font-size:1rem; line-height:1.8; opacity:.6; max-width:620px; }
@@ -906,13 +1104,16 @@ h1.hero-title {
   text-transform:uppercase; padding:6px 14px;
 }
 .tier-tag { font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.2em; text-transform:uppercase; opacity:.5; margin-bottom:12px; }
-.tier-name { font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:700; margin-bottom:8px; }
+.tier-name { font-family:'Playfair Display',serif; font-size:var(--fs-card); font-weight:700; margin-bottom:8px; }
 .tier-price { font-family:'DM Mono',monospace; font-size:.75rem; letter-spacing:.12em; opacity:.6; margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid rgba(235,231,221,.12); }
 .tier-featured .tier-price { border-bottom-color:rgba(235,231,221,.25); }
+.tier-rate { max-width:720px; margin:30px auto 0; text-align:center; font-size:.82rem;
+  line-height:1.8; opacity:.6; color:var(--obsidian); }
+.tier-rate strong { font-family:'DM Mono',monospace; font-weight:400; opacity:.9; }
 .tier-desc { font-size:.87rem; line-height:1.7; opacity:.65; margin-bottom:20px; }
 .tier-list { list-style:none; display:flex; flex-direction:column; gap:9px; margin-bottom:32px; flex:1; }
 .tier-list li { font-size:.82rem; opacity:.6; padding-left:16px; position:relative; }
-.tier-list li::before { content:'—'; position:absolute; left:0; color:var(--red); opacity:.8; }
+.tier-list li::before { content:'—'; position:absolute; left:0; color:var(--red-text); opacity:.8; }
 .tier-featured .tier-list li::before { color:rgba(235,231,221,.6); }
 .tier-cta { align-self:flex-start; font-size:.72rem; }
 .tier .btn-outline { color:var(--bone); border-color:rgba(235,231,221,.3); }
@@ -923,14 +1124,15 @@ h1.hero-title {
   background:var(--obsidian); color:var(--bone);
   margin:0 -52px; padding:80px 52px;
 }
-.contact-form-inner { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1fr 1.4fr; gap:80px; align-items:start; }
+.contact-form-inner { max-width:var(--container); margin:0 auto; display:grid; grid-template-columns:1fr 1.4fr; gap:80px; align-items:start; }
 .contact-form-title { font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:800; margin-bottom:14px; }
 .contact-form-sub { font-size:.9rem; line-height:1.75; opacity:.55; margin-bottom:36px; }
 .c-methods-compact { display:flex; flex-direction:column; }
 .c-method-line { display:flex; align-items:flex-start; gap:14px; padding:14px 0; border-bottom:1px solid rgba(235,231,221,.07); }
 .c-method-dot { width:8px; height:8px; border-radius:50%; background:var(--red); flex-shrink:0; margin-top:5px; }
-.c-label { font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.16em; text-transform:uppercase; color:var(--red); margin-bottom:3px; }
+.c-label { font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.16em; text-transform:uppercase; color:var(--red-text); margin-bottom:3px; }
 .c-value { font-size:.86rem; opacity:.6; }
+.c-value a { color:inherit; text-decoration:underline; text-underline-offset:3px; }
 .contact-form { display:flex; flex-direction:column; gap:2px; }
 .form-row { display:grid; grid-template-columns:1fr 1fr; gap:2px; }
 .contact-form input,.contact-form textarea,.contact-form select {
@@ -946,13 +1148,15 @@ h1.hero-title {
 .contact-form select { color:rgba(235,231,221,.7); background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23EBE7DD' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 18px center; padding-right:44px; }
 .contact-form select option { background:#1a1a1a; color:var(--bone); }
 .contact-submit { width:100%; justify-content:center; margin-top:4px; font-size:.82rem; letter-spacing:.16em; }
-.form-note { font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.1em; opacity:.3; padding-top:10px; color:var(--bone); }
+.form-note { font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.1em; opacity:.52; padding-top:10px; color:var(--bone); }
 /* Success state */
 .form-success { display:none; text-align:center; padding:60px 40px; border:1px solid rgba(235,231,221,.12); }
 .form-success.show { display:block; }
-.success-icon { font-size:2rem; color:var(--red); margin-bottom:20px; animation:pdot 2s ease-in-out infinite; }
+.success-icon { font-size:2rem; color:var(--red-text); margin-bottom:20px; animation:pdot 2s ease-in-out infinite; }
 .form-success h4 { font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:700; margin-bottom:12px; }
 .form-success p { font-size:.9rem; line-height:1.7; opacity:.55; }
+.form-success a { color:var(--bone); text-decoration:underline; }
+#form-error { margin-top:18px; }
 
 /* Mobile tiers */
 @media(max-width:800px){
@@ -965,11 +1169,11 @@ h1.hero-title {
 
 /* ── FOOTER ── */
 footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; border-top:1px solid rgba(235,231,221,.05); }
-.footer-inner { max-width:1100px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:18px; }
+.footer-inner { max-width:var(--container); margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:18px; }
 .footer-brand { display:flex; align-items:center; gap:12px; }
 .footer-brand img { height:28px; filter:brightness(0) invert(1); opacity:.55; }
 .footer-brand span { font-family:'Playfair Display',serif; font-size:.9rem; font-weight:700; opacity:.55; letter-spacing:.06em; }
-.footer-spark { font-size:1.6rem; color:var(--red); animation:pdot 3s ease-in-out infinite; }
+.footer-spark { font-size:1.6rem; color:var(--red-text); animation:pdot 3s ease-in-out infinite; }
 .footer-tag { font-family:'Playfair Display',serif; font-style:italic; font-size:.88rem; opacity:.32; }
 .footer-copy { font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.14em; opacity:.18; text-align:center; width:100%; margin-top:18px; padding-top:18px; border-top:1px solid rgba(235,231,221,.05); }
 .footer-copy a { color:inherit; opacity:.5; text-decoration:none; transition:opacity .2s; }
@@ -978,16 +1182,16 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 /* ── LEGAL SECTION ── */
 #legal { background:var(--obsidian); border-top:1px solid rgba(235,231,221,.06); }
 .legal-hero { padding:120px 52px 72px; border-bottom:1px solid rgba(235,231,221,.06); }
-.legal-hero-inner { max-width:1100px; margin:0 auto; }
-.legal-eyebrow { font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.22em; text-transform:uppercase; color:var(--red); margin-bottom:20px; opacity:.9; }
+.legal-hero-inner { max-width:var(--container); margin:0 auto; }
+.legal-eyebrow { font-family:'DM Mono',monospace; font-size:.62rem; letter-spacing:.22em; text-transform:uppercase; color:var(--red-text); margin-bottom:20px; opacity:.9; }
 .legal-hero-title { font-family:'Playfair Display',serif; font-size:clamp(2rem,4vw,3.2rem); font-weight:800; line-height:1.1; margin-bottom:20px; letter-spacing:-.01em; }
 .legal-hero-sub { font-size:.95rem; line-height:1.8; opacity:.45; max-width:520px; }
 .legal-tabs-wrap { position:sticky; top:0; z-index:50; background:rgba(10,10,10,.97); backdrop-filter:blur(18px); border-bottom:1px solid rgba(235,231,221,.06); padding:0 52px; }
-.legal-tabs { display:flex; max-width:1100px; margin:0 auto; }
+.legal-tabs { display:flex; max-width:var(--container); margin:0 auto; }
 .legal-tab { font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.16em; text-transform:uppercase; padding:18px 24px; background:transparent; color:rgba(235,231,221,.35); border:none; border-bottom:2px solid transparent; cursor:none; transition:color .2s,border-color .2s; }
 .legal-tab:hover { color:rgba(235,231,221,.75); }
-.legal-tab.active { color:var(--bone); border-bottom-color:var(--red); }
-.legal-content { max-width:1100px; margin:0 auto; padding:72px 52px 120px; }
+.legal-tab.active { color:var(--bone); border-bottom-color:var(--red-text); }
+.legal-content { max-width:var(--container); margin:0 auto; padding:72px 52px 120px; }
 .legal-panel { display:none; animation:lFade .3s; }
 .legal-panel.active { display:block; }
 @keyframes lFade { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
@@ -998,7 +1202,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 .legal-panel p { font-size:.92rem; line-height:1.9; color:rgba(235,231,221,.55); margin-bottom:14px; max-width:720px; }
 .legal-panel ul { list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:18px; padding-left:0; max-width:720px; }
 .legal-panel ul li { font-size:.9rem; line-height:1.8; color:rgba(235,231,221,.55); padding-left:22px; position:relative; }
-.legal-panel ul li::before { content:'—'; position:absolute; left:0; color:var(--red); opacity:.7; }
+.legal-panel ul li::before { content:'—'; position:absolute; left:0; color:var(--red-text); opacity:.7; }
 .legal-divider { width:40px; height:1px; background:var(--red); opacity:.4; margin:36px 0; }
 .legal-strong { color:rgba(235,231,221,.8); font-weight:500; }
 
@@ -1010,6 +1214,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
   nav { padding:18px 22px; }
   nav.scrolled { padding:12px 22px; }
   .nav-links { display:none; }
+  #nav-toggle { display:flex; }
   .hero, .friction, .solution, .about, .security, .contact, .closing { padding-left:22px; padding-right:22px; }
   .hero-content { padding-top: 140px; }
   /* Skull segue — fixed height, no parallax on mobile */
@@ -1056,16 +1261,59 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
   .legal-content { padding:52px 22px 80px; }
   .footer-inner { flex-direction:column; align-items:flex-start; gap:14px; }
 }
+
+/* ── THE RECORD (case studies) ── */
+.record { background:var(--bone); color:var(--obsidian); padding:var(--pad-y) var(--pad-x); position:relative; overflow:hidden; }
+.record-inner { max-width:var(--container); margin:0 auto; }
+.record-head { max-width:760px; margin-bottom:26px; }
+.record-lede { font-size:.95rem; line-height:1.8; opacity:.6; margin-top:22px; max-width:var(--measure); }
+
+/* deployment spectrum */
+.spectrum { display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
+  background:rgba(10,10,10,.12); border:1px solid rgba(10,10,10,.12); margin:44px 0 56px; }
+.spec-cell { background:var(--bone); padding:22px 24px; }
+.spec-mode { font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--red-text); margin-bottom:8px; }
+.spec-cell p { font-size:.82rem; line-height:1.7; opacity:.62; }
+
+/* dig sites */
+.sites { display:grid; gap:1px; background:rgba(10,10,10,.12); border:1px solid rgba(10,10,10,.12); }
+.site { background:var(--bone); padding:40px 36px; display:grid;
+  grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:44px; align-items:start; }
+.site-meta { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+.site-tag { font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.16em;
+  text-transform:uppercase; padding:5px 10px; border:1px solid rgba(10,10,10,.2); opacity:.65; }
+.site-tag.is-mode { border-color:var(--red-text); color:var(--red-text); opacity:1; }
+.site h3 { font-family:'Playfair Display',serif; font-weight:700; font-size:var(--fs-card);
+  line-height:1.2; margin-bottom:14px; }
+.site-body p { font-size:.88rem; line-height:1.8; opacity:.62; margin-bottom:12px; }
+.site-body .site-lbl { font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.16em;
+  text-transform:uppercase; opacity:.6; display:block; margin-bottom:5px; }
+.recovered { border-left:2px solid var(--red); padding-left:22px; }
+.recovered .site-lbl { margin-bottom:14px; }
+.rec-row { display:flex; gap:14px; align-items:baseline; padding:7px 0;
+  border-bottom:1px solid rgba(10,10,10,.07); }
+.rec-row:last-child { border-bottom:0; }
+.rec-fig { font-family:'DM Mono',monospace; font-size:.95rem; font-weight:400;
+  white-space:nowrap; min-width:92px; }
+.rec-txt { font-size:.8rem; line-height:1.6; opacity:.6; }
+.record-note { font-size:.75rem; line-height:1.7; opacity:.4; margin-top:30px; max-width:760px; }
+@media(max-width:800px){
+  .record { padding:80px 22px; }
+  .spectrum { grid-template-columns:1fr; }
+  .site { grid-template-columns:1fr; gap:28px; padding:32px 24px; }
+}
 </style>
 </head>
 <body>
+<a class="skip-link" href="#mission">Skip to content</a>
 
 <div id="cur"></div>
 <div id="cur-ring"></div>
 
 <!-- SIDE LOGO -->
 <div id="side-logo">
-  <img id="slogo" src="" alt="">
+  <img id="slogo" src="mainlogo-1.png" width="300" height="300" decoding="async" alt="">
   <div class="side-track"><div class="side-fill" id="sfill"></div></div>
   <div class="side-dot"></div>
 </div>
@@ -1082,22 +1330,37 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 <!-- NAV -->
 <nav id="nav">
   <a href="#home" class="nav-logo">
-    <img id="nlogo" src="" alt="AiOSAURUS">
+    <img id="nlogo" src="mainlogo-1.png" width="300" height="300" decoding="async" alt="AiOSAURUS">
     <span class="nav-wordmark">AiOSAURUS</span>
   </a>
   <ul class="nav-links">
-    <li><a href="#mission">The Mission</a></li>
+    <li><a href="#mission">The Problem</a></li>
+    <li><a href="#record">The Record</a></li>
     <li><a href="#epoch">The Evolution</a></li>
     <li><a href="#solution">The Laboratory</a></li>
     <li><a href="#security">Security</a></li>
     <li><a href="#contact" class="nav-cta">Contact Us</a></li>
   </ul>
+  <button id="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- MOBILE MENU -->
+<div id="mobile-menu" aria-hidden="true">
+  <a href="#mission">The Problem</a>
+  <a href="#record">The Record</a>
+  <a href="#epoch">The Evolution</a>
+  <a href="#solution">The Laboratory</a>
+  <a href="#security">Security</a>
+  <a href="#contact" class="mm-cta">Contact Us</a>
+  <a href="mailto:hello@aiosaurus.com" class="mm-mail">hello@aiosaurus.com</a>
+</div>
 
 <!-- LOGO INTRO STAGE — fixed, full screen, scroll-driven -->
 <div id="logo-stage">
   <div id="stage-inner">
-    <img id="stage-logo" src="" alt="AiOSAURUS">
+    <img id="stage-logo" src="mainlogo-1.png" width="300" height="300" decoding="async" alt="AiOSAURUS">
     <div id="stage-text">
       <div class="stage-wordmark">AiOSAURUS</div>
       <div class="stage-tagline">The power of tomorrow,<br>for the heart of today.</div>
@@ -1109,12 +1372,12 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 <section class="hero" id="home">
   <canvas id="hero-canvas"></canvas>
   <div class="hero-logo-center">
-    <img id="hlogo" src="" alt="">
+    <img id="hlogo" src="mainlogo-1.png" width="300" height="300" decoding="async" alt="">
   </div>
   <div class="hero-content">
     <div class="eyebrow">Agentic AI Orchestration</div>
     <h1 class="hero-title">Intelligence<br>that <em>Endures.</em></h1>
-    <p class="hero-sub">AiOSAURUS builds and deploys custom AI agents that automate your team's workflows — grounded in your own data, not the public internet.</p>
+    <p class="hero-sub">AiOSAURUS builds and deploys custom AI agents that automate your team’s workflows — grounded in your own data, not the public internet.</p>
     <div class="hero-actions">
       <a href="#contact" class="btn btn-dark">Begin Your Evolution</a>
       <a href="#epoch" class="btn btn-outline">Trace the Epochs</a>
@@ -1135,8 +1398,8 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 <!-- MARQUEE -->
 <div class="marquee">
   <div class="marquee-inner">
-    <span>Grounded Data</span><span>✦</span><span>Specialized Skills</span><span>✦</span><span>Autonomous Execution</span><span>✦</span><span>Zero Hallucination</span><span>✦</span><span>Operational Harmony</span><span>✦</span><span>Defining the Next Epoch</span><span>✦</span>
-    <span>Grounded Data</span><span>✦</span><span>Specialized Skills</span><span>✦</span><span>Autonomous Execution</span><span>✦</span><span>Zero Hallucination</span><span>✦</span><span>Operational Harmony</span><span>✦</span><span>Defining the Next Epoch</span><span>✦</span>
+    <span>Grounded Data</span><span>✦</span><span>Specialized Skills</span><span>✦</span><span>Autonomous Execution</span><span>✦</span><span>Answers You Can Check</span><span>✦</span><span>Operational Harmony</span><span>✦</span><span>Defining the Next Epoch</span><span>✦</span>
+    <span>Grounded Data</span><span>✦</span><span>Specialized Skills</span><span>✦</span><span>Autonomous Execution</span><span>✦</span><span>Answers You Can Check</span><span>✦</span><span>Operational Harmony</span><span>✦</span><span>Defining the Next Epoch</span><span>✦</span>
   </div>
 </div>
 
@@ -1145,9 +1408,9 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
   <div class="friction-inner">
     <div>
       <div class="section-label reveal">The Problem</div>
-      <h2 class="stitle reveal d1">The Era of Fragile Automation is Over.</h2>
-      <p class="friction-body reveal d2">Traditional automation is a relic. It breaks under pressure and ignores context. Your team shouldn't be the glue holding disconnected tools together. Stop acting like a processor — start acting like an architect.</p>
-      <blockquote class="friction-quote reveal d3">Extinction isn't a choice;<br>it's a failure to adapt.</blockquote>
+      <h2 class="stitle reveal d1">The Era of Fragile Automation Is Over.</h2>
+      <p class="friction-body reveal d2">Traditional automation is a relic. It breaks under pressure and ignores context. Your team shouldn’t be the glue holding disconnected tools together. That is a failure of the tools, not of the people using them.</p>
+      <blockquote class="friction-quote reveal d3">Extinction isn’t a choice;<br>it’s a failure to adapt.</blockquote>
     </div>
     <div class="friction-grid reveal d1">
       <div class="f-item">
@@ -1163,7 +1426,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
       <div class="f-item">
         <div class="f-num">03</div>
         <h3>The Human Bridge</h3>
-        <p>Employees acting as manual connective tissue. Human potential buried under the weight of repetitive orchestration.</p>
+        <p>Skilled people spending their week moving information between systems that were never built to talk to each other.</p>
       </div>
     </div>
   </div>
@@ -1171,8 +1434,106 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 
 <!-- SKULL SEGUE — parallax divider between mission and epochs -->
 <div id="skull-segue">
-  <img id="skull3d" src="" alt="" aria-hidden="true" />
+  <img id="skull3d" src="skull3d.png" width="260" height="262" decoding="async" alt="" aria-hidden="true" />
 </div>
+
+<!-- THE RECORD -->
+<section class="record" id="record">
+  <div class="record-inner">
+    <div class="record-head">
+      <div class="section-label reveal">The Record</div>
+      <h2 class="stitle reveal d1">Three Digs.<br>Three Deployments.</h2>
+      <p class="record-lede reveal d2">Every system we build runs where your data allows it to run — sealed offline on your own hardware, hybrid, or wired straight into frontier models. That is a decision you make, not a constraint we impose. These three ran at each end of that range. Clients are unnamed; every figure below is measured, not estimated.</p>
+    </div>
+
+    <div class="spectrum reveal d1">
+      <div class="spec-cell">
+        <div class="spec-mode">Offline</div>
+        <p>Air-gapped and self-contained. No internet, no accounts, no data leaving the room. Built for venues and sites where the network is the thing you cannot trust.</p>
+      </div>
+      <div class="spec-cell">
+        <div class="spec-mode">Hybrid</div>
+        <p>Models and data stay on hardware you own; only what you choose ever leaves. The default where the material is sensitive but the workload is heavy.</p>
+      </div>
+      <div class="spec-cell">
+        <div class="spec-mode">Frontier</div>
+        <p>Wired into the best models available, through the platforms your team already uses. Maximum capability where the data permits it.</p>
+      </div>
+    </div>
+
+    <div class="sites">
+      <article class="site reveal">
+        <div class="site-body">
+          <div class="site-meta">
+            <span class="site-tag">Site 001</span>
+            <span class="site-tag">Live events</span>
+            <span class="site-tag is-mode">Offline</span>
+          </div>
+          <h3>A finals night that could not depend on the venue Wi-Fi.</h3>
+          <span class="site-lbl">The friction</span>
+          <p>Scores, standings, team crests and event branding had to reach the audience screen the instant they changed — in front of a live crowd and on-camera talent. The one thing nobody could guarantee was a working connection at the venue.</p>
+          <span class="site-lbl">The excavation</span>
+          <p>An admin console driving an unlimited number of synchronized audience displays across the local network, with the whole tournament — three formats, including double elimination with automatic bracket reset — held in a single file on the operator’s laptop. A companion draw board ships as one self-contained page that needs no install, no server and no connection at all.</p>
+        </div>
+        <div class="recovered">
+          <span class="site-lbl">Recovered</span>
+          <div class="rec-row"><span class="rec-fig">Zero</span><span class="rec-txt">external dependencies at the venue — no internet, no accounts, no cloud</span></div>
+          <div class="rec-row"><span class="rec-fig">Unlimited</span><span class="rec-txt">synchronized audience displays, all driven from one laptop</span></div>
+          <div class="rec-row"><span class="rec-fig">3</span><span class="rec-txt">tournament formats and 3 scoring modes, including a live game clock</span></div>
+          <div class="rec-row"><span class="rec-fig">28</span><span class="rec-txt">automated tests across the bracket engine and state layer</span></div>
+          <div class="rec-row"><span class="rec-fig">32&nbsp;KB</span><span class="rec-txt">for the companion draw board — a single file, double-click to run</span></div>
+        </div>
+      </article>
+      <article class="site reveal d1">
+        <div class="site-body">
+          <div class="site-meta">
+            <span class="site-tag">Site 002</span>
+            <span class="site-tag">Sport performance</span>
+            <span class="site-tag is-mode">Hybrid</span>
+          </div>
+          <h3>Twenty-one hours of match footage and one coach with no time to watch it.</h3>
+          <span class="site-lbl">The friction</span>
+          <p>The value was buried in video nobody could afford to sit through. Crucially the brief was for a clip finder, not a statistics engine: surface the candidates and let a human discard the misses in seconds, rather than publish counts that have to be perfect to be safe.</p>
+          <span class="site-lbl">The excavation</span>
+          <p>A desktop application that ingests match video, tracks play, and returns reviewable moments. It runs on one ordinary GPU under the client’s own roof, and every dependency is Apache-2.0 or MIT — so the client owns outright what we built, with no copyleft license reaching into their product.</p>
+        </div>
+        <div class="recovered">
+          <span class="site-lbl">Recovered</span>
+          <div class="rec-row"><span class="rec-fig">21&nbsp;h</span><span class="rec-txt">of match footage processed end to end</span></div>
+          <div class="rec-row"><span class="rec-fig">3,021</span><span class="rec-txt">candidate clips surfaced for review</span></div>
+          <div class="rec-row"><span class="rec-fig">319,806</span><span class="rec-txt">tracked ball positions across the footage</span></div>
+          <div class="rec-row"><span class="rec-fig">5.1&nbsp;min</span><span class="rec-txt">median to process a 90-minute match — about 18&times; faster than watching it</span></div>
+          <div class="rec-row"><span class="rec-fig">1.1&nbsp;h</span><span class="rec-txt">of total compute for the entire 14-match archive</span></div>
+          <div class="rec-row"><span class="rec-fig">0.2&nbsp;GB</span><span class="rec-txt">of 23.5&nbsp;GB video memory used — commodity hardware, not a cluster</span></div>
+        </div>
+      </article>
+      <article class="site reveal d2">
+        <div class="site-body">
+          <div class="site-meta">
+            <span class="site-tag">Site 003</span>
+            <span class="site-tag">Community operations</span>
+            <span class="site-tag is-mode">Frontier</span>
+          </div>
+          <h3>Coordination that lived, and died, in a group chat.</h3>
+          <span class="site-lbl">The friction</span>
+          <p>Scheduling, availability, results and recognition were all happening in message threads — unsearchable, unreliable, and impossible to carry from one week to the next.</p>
+          <span class="site-lbl">The excavation</span>
+          <p>A conversational bot that lives inside the chat platform the community already uses, so there is no new app to adopt. It answers 43 commands, speaks more than one language, and was rebuilt at full parity on a second platform. Consent is recorded before anything is stored, and any member can export or erase their own record with a single message.</p>
+        </div>
+        <div class="recovered">
+          <span class="site-lbl">Recovered</span>
+          <div class="rec-row"><span class="rec-fig">43</span><span class="rec-txt">commands, from availability and line-ups to standings and player of the match</span></div>
+          <div class="rec-row"><span class="rec-fig">2</span><span class="rec-txt">platforms at full feature parity</span></div>
+          <div class="rec-row"><span class="rec-fig">1</span><span class="rec-txt">message to export your data — and one to erase it</span></div>
+          <div class="rec-row"><span class="rec-fig">0</span><span class="rec-txt">personal data stored before consent is recorded</span></div>
+          <div class="rec-row"><span class="rec-fig">May&nbsp;2026</span><span class="rec-txt">in production, developed continuously since</span></div>
+        </div>
+      </article>
+    </div>
+
+    <p class="record-note reveal">Figures are drawn from the delivered systems themselves — test suites, processing logs and production records — not from estimates. Client names withheld; references available under NDA.</p>
+  </div>
+</section>
 
 <!-- EPOCH SCROLL HINT -->
 <div id="epoch-scroll-hint">
@@ -1184,7 +1545,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 <section class="epoch-wrap" id="epoch">
   <div class="epoch-pin" id="epoch-pin">
     <div class="epoch-ghost" id="epoch-ghost">
-      <img id="eghost" src="" alt="">
+      <img id="eghost" src="mainlogo-1.png" width="300" height="300" decoding="async" alt="">
     </div>
     <div class="epoch-hd">
       <div class="section-label">The Evolution</div>
@@ -1203,12 +1564,12 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
         <div class="tl-node" data-i="0">
           <div class="tl-era">Epoch I</div>
           <div class="tl-title">The Fossil Record</div>
-          <div class="tl-body">Your organization's data — the compressed intelligence of every decision ever made — lying dormant, unactivated.</div>
+          <div class="tl-body">Your organization’s data — the compressed intelligence of every decision ever made — lying dormant, unactivated.</div>
         </div>
         <div class="tl-node" data-i="1">
           <div class="tl-era">Epoch II</div>
           <div class="tl-title">Excavation</div>
-          <div class="tl-body">AiOSAURUS unearths the signal from the noise. We map, classify, and protect your proprietary data architecture.</div>
+          <div class="tl-body">We map what you hold, classify what matters, and put a boundary around it before anything is built on top.</div>
         </div>
         <div class="tl-node" data-i="2">
           <div class="tl-era">Epoch III</div>
@@ -1218,7 +1579,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
         <div class="tl-node" data-i="3">
           <div class="tl-era">Epoch IV</div>
           <div class="tl-title">Orchestration</div>
-          <div class="tl-body">The agents coordinate. Workflows execute autonomously, end-to-end. The human bridge dissolves into strategy.</div>
+          <div class="tl-body">The agents coordinate. Workflows run end to end on their own, and the people who were holding them together get their week back.</div>
         </div>
         <div class="tl-node" data-i="4">
           <div class="tl-era">Epoch V</div>
@@ -1240,10 +1601,10 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
   <div class="solution-inner">
     <div class="sol-head">
       <div>
-        <div class="section-label reveal">The Solution</div>
-        <h2 class="stitle reveal d1">Agentic<br>Connective<br>Tissue.</h2>
+        <div class="section-label reveal">The Laboratory</div>
+        <h2 class="stitle reveal d1">Open Weights.<br>Your Perimeter.</h2>
       </div>
-      <p class="sol-body reveal d2">We don't just automate — we orchestrate. Our workflows are grounded in your data. Not synthetic. Not assumed. Protected, understood, and activated at the speed of intelligence.</p>
+      <p class="sol-body reveal d2">Three open-weight models, built to run on hardware you own. They read your material, answer from it, and never need to send it anywhere. One for seeing, one for speaking, one for making — deployed against your data, behind your own perimeter.</p>
     </div>
     <div class="trinity">
       <div class="t-card reveal">
@@ -1264,9 +1625,9 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
           </svg>
         </span>
         <span class="t-callsign">BLUE</span>
-        <span class="t-num">01 / Seated Data</span>
-        <h3>Grounded in Truth</h3>
-        <p>Every agent is anchored in your proprietary, verified data. Your AI is only as strong as its foundation — ours is bedrock.</p>
+        <span class="t-num">01 / Vision</span>
+        <h3>Machines That Watch</h3>
+        <p>Video, images, scanned documents and drawings — read, indexed and searchable. Footage nobody had time to review becomes the moments you were looking for. Runs on one ordinary GPU, on site.</p>
       </div>
       <div class="t-card reveal d1">
         <!-- Agents That Think: neural nodes in a circle — reasoning, deliberation -->
@@ -1295,9 +1656,9 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
           </svg>
         </span>
         <span class="t-callsign">ECHO</span>
-        <span class="t-num">02 / Specialized Skills</span>
-        <h3>Agents That Think</h3>
-        <p>Reasoning, Forecasting, Pattern Recognition. Agents that don't just execute — they deliberate within your operational parameters.</p>
+        <span class="t-num">02 / Communication</span>
+        <h3>Answers From Your Own Shelf</h3>
+        <p>Ask your contracts, your policies, your fourteen years of email, and get an answer with the source attached. Grounded in what you hold, not in what a public model absorbed.</p>
       </div>
       <div class="t-card reveal d2">
         <!-- The End State: converging paths rising to a single point — harmony, ascent -->
@@ -1316,9 +1677,9 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
           </svg>
         </span>
         <span class="t-callsign">DELTA</span>
-        <span class="t-num">03 / Harmony</span>
-        <h3>The End State</h3>
-        <p>Friction handled by code. Strategy handled by humans. Intelligence as invisible infrastructure — always present, never intrusive.</p>
+        <span class="t-num">03 / Creation</span>
+        <h3>Drafting, In Your Voice</h3>
+        <p>Quotes, reports, proposals and correspondence, drafted from your own records and your own house style. Nothing leaves the building to produce them.</p>
       </div>
     </div>
   </div>
@@ -1330,28 +1691,28 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
     <div class="about-text">
       <div class="section-label reveal">The Origin</div>
       <h2 class="stitle reveal d1">From Extinction<br>to the Spark of<br>Intelligence.</h2>
-      <p class="reveal d2">Nature is a brutal teacher. The dinosaur didn't vanish because it was weak — it vanished because it lacked the connective tissue to sense the change before it arrived.</p>
-      <p class="reveal d2">Modern organizations face their own asteroid moment. Data is everywhere, yet intelligence is fragmented. Systems are brittle. Human potential is buried under manual orchestration.</p>
-      <p class="reveal d3">We build the intelligence that survives the shift — anchoring agentic workflows in the fossils of your own data, protecting that pulse with ironclad security, so your company doesn't just endure. It evolves.</p>
+      <p class="reveal d2">Nature is a brutal teacher. The dinosaur didn’t vanish because it was weak — it vanished because it lacked the connective tissue to sense the change before it arrived.</p>
+      <p class="reveal d2">Most organizations are in the same position. The data is already there — in the inbox, the spreadsheet, the fourteen years of order history — but nothing can reach across it, so people do that job by hand.</p>
+      <p class="reveal d3">We build the intelligence that survives the shift — anchoring agentic workflows in the fossils of your own data, protecting that pulse with ironclad security, so your company doesn’t just endure. It evolves.</p>
     </div>
   </div>
 </section>
 
 <!-- SECURITY -->
 <section class="security" id="security">
-  <img class="sec-ghost" id="sghostimg" src="" alt="">
+  <img class="sec-ghost" id="sghostimg" src="mainlogo-1.png" width="300" height="300" decoding="async" alt="">
   <div class="sec-inner">
     <div>
-      <div class="section-label reveal">Security & Trust</div>
-      <h2 class="stitle reveal d1">Privacy is Our<br>Primal Instinct.</h2>
-      <p class="sec-body reveal d2">We operate on a Zero-Knowledge architecture. Your data never leaves your perimeter. We build the agents — you own the intelligence. Data sovereignty is non-negotiable.</p>
+      <div class="section-label reveal">Security &amp; Trust</div>
+      <h2 class="stitle reveal d1">Privacy Is Our<br>Primal Instinct.</h2>
+      <p class="sec-body reveal d2">Your data travels exactly as far as you decide, and no further. We will run entirely on hardware you own when the material demands it; where you choose to reach frontier models, you choose what reaches them. We build the agents — you own the intelligence.</p>
     </div>
     <div class="sec-list reveal d1">
-      <div class="sec-item"><div class="sec-check">✓</div><span>SOC2 Compliant Architecture</span></div>
-      <div class="sec-item"><div class="sec-check">✓</div><span>GDPR / HIPAA Ready</span></div>
-      <div class="sec-item"><div class="sec-check">✓</div><span>End-to-End Encryption</span></div>
-      <div class="sec-item"><div class="sec-check">✓</div><span>Zero-Knowledge Data Architecture</span></div>
-      <div class="sec-item"><div class="sec-check">✓</div><span>On-Premise Deployment Available</span></div>
+      <div class="sec-item"><div class="sec-check">✓</div><span>Fully offline deployment, with no external calls</span></div>
+      <div class="sec-item"><div class="sec-check">✓</div><span>Runs on hardware you own and control</span></div>
+      <div class="sec-item"><div class="sec-check">✓</div><span>Encrypted in transit and at rest</span></div>
+      <div class="sec-item"><div class="sec-check">✓</div><span>Every data path named in the engagement</span></div>
+      <div class="sec-item"><div class="sec-check">✓</div><span>Permissive licensing — the build is yours to keep</span></div>
     </div>
   </div>
 </section>
@@ -1363,7 +1724,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
     <!-- Top: full-width headline -->
     <div class="contact-top reveal">
       <div class="section-label">Retain Our Services</div>
-      <h2 class="stitle contact-title">Ready to orchestrate<br>your next epoch?</h2>
+      <h2 class="stitle contact-title">Ready to Orchestrate<br>Your Next Epoch?</h2>
       <p class="contact-intro">Most engagements begin with a free 30-minute discovery call. We map your workflow gaps, identify quick wins, and scope a custom AI orchestration strategy — no obligation, no boilerplate decks.</p>
     </div>
 
@@ -1373,7 +1734,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
         <div class="tier-tag">Starter</div>
         <div class="tier-name">Workflow Audit</div>
         <div class="tier-price">Free</div>
-        <div class="tier-desc">30-min discovery session. We identify your three most fragmented workflows and deliver a written diagnosis with clear next steps.</div>
+        <div class="tier-desc">30-minute discovery session. We identify your three most fragmented workflows and deliver a written diagnosis with clear next steps.</div>
         <ul class="tier-list">
           <li>Workflow friction mapping</li>
           <li>Written diagnosis report</li>
@@ -1391,7 +1752,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
         <ul class="tier-list">
           <li>Data architecture review</li>
           <li>Custom agent design</li>
-          <li>Full deployment & testing</li>
+          <li>Full deployment and testing</li>
           <li>30-day post-launch support</li>
         </ul>
         <a href="#contact-form" class="btn btn-light tier-cta">Start a Project</a>
@@ -1399,7 +1760,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
       <div class="tier">
         <div class="tier-tag">Enterprise</div>
         <div class="tier-name">Platform Integration</div>
-        <div class="tier-price">Retainer</div>
+        <div class="tier-price">From $5,000 CAD / month</div>
         <div class="tier-desc">End-to-end orchestration infrastructure. Multi-agent systems, ongoing optimization, and dedicated support across your entire operation.</div>
         <ul class="tier-list">
           <li>Multi-agent orchestration</li>
@@ -1411,12 +1772,16 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
       </div>
     </div>
 
+    <p class="tier-rate reveal">Advisory and consulting engagements are billed at
+      <strong>$300 CAD / hour</strong>. Project work is scoped and quoted up front —
+      you will never see an hourly invoice you did not agree to.</p>
+
     <!-- Contact form -->
     <div class="contact-form-wrap" id="contact-form">
       <div class="contact-form-inner">
         <div class="contact-form-left reveal">
           <h3 class="contact-form-title">Begin the Excavation</h3>
-          <p class="contact-form-sub">Fill in what you know. We'll handle the rest. A real human responds within one business day.</p>
+          <p class="contact-form-sub">Fill in what you know. We’ll handle the rest. A real human responds within one business day.</p>
           <div class="c-methods-compact">
             <div class="c-method-line">
               <span class="c-method-dot"></span>
@@ -1432,36 +1797,48 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
                 <div class="c-value">Remote-first. Global.</div>
               </div>
             </div>
+            <div class="c-method-line">
+              <span class="c-method-dot"></span>
+              <div>
+                <div class="c-label">Direct</div>
+                <div class="c-value"><a href="mailto:hello@aiosaurus.com">hello@aiosaurus.com</a></div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="reveal d1">
           <form class="contact-form" id="main-form" onsubmit="handleContact(event)">
             <div class="form-row">
-              <input type="text" name="name" placeholder="Your Name" required>
-              <input type="text" name="organization" placeholder="Organization">
+              <label class="vh" for="cf-name">Your name</label>
+              <input id="cf-name" type="text" name="name" placeholder="Your Name" autocomplete="name" required>
+              <label class="vh" for="cf-org">Organization</label>
+              <input id="cf-org" type="text" name="organization" placeholder="Organization" autocomplete="organization">
             </div>
-            <input type="email" name="email" placeholder="Email Address" required>
-            <select name="service">
+            <label class="vh" for="cf-email">Email address</label>
+            <input id="cf-email" type="email" name="email" placeholder="Email Address" autocomplete="email" required>
+            <label class="vh" for="cf-service">Service interest</label>
+            <select id="cf-service" name="service">
               <option value="" disabled selected>Service Interest</option>
-              <option>Free Workflow Audit (30-min call)</option>
+              <option>Free Workflow Audit (30-minute call)</option>
               <option>Agent Design &amp; Deployment</option>
               <option>Data Architecture Review</option>
               <option>Full Platform Integration / Retainer</option>
-              <option>Not sure — let's talk</option>
+              <option>Not sure — let’s talk</option>
             </select>
-            <textarea name="message" placeholder="Briefly describe your most painful workflow — what breaks, what costs time, what your team wishes was automated."></textarea>
+            <label class="vh" for="cf-message">Describe your workflow</label>
+            <textarea id="cf-message" name="message" placeholder="Briefly describe your most painful workflow — what breaks, what costs time, what your team wishes was automated."></textarea>
             <button type="submit" class="btn btn-red contact-submit" id="submit-btn">Commence Excavation →</button>
             <p class="form-note">No pitch decks. No automated replies. Just a real conversation about your next epoch.</p>
           </form>
           <div class="form-success" id="form-success">
             <div class="success-icon">✦</div>
             <h4>Excavation commenced.</h4>
-            <p>We've received your message. Expect a human response within one business day. In the meantime — the next epoch is already in motion.</p>
+            <p>We’ve received your message. Expect a human response within one business day. In the meantime — the next epoch is already in motion.</p>
           </div>
-          <div class="form-success" id="form-error">
+          <div class="form-success" id="form-error" role="alert">
             <div class="success-icon" style="color:var(--red)">✕</div>
             <h4>Something went wrong.</h4>
-            <p>We couldn't send your message. Please try again or use the contact form above.</p>
+            <p>We couldn’t send your message — your text is still in the form, so you can hit send again. If it keeps failing, email us directly at <a href="mailto:hello@aiosaurus.com">hello@aiosaurus.com</a>.</p>
           </div>
         </div>
       </div>
@@ -1475,11 +1852,11 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
   <canvas id="closing-canvas"></canvas>
   <div class="closing-inner">
     <div class="closing-logo" id="clogo-wrap">
-      <img id="clogo" src="" alt="AiOSAURUS">
+      <img id="clogo" src="mainlogo-1.png" width="300" height="300" decoding="async" alt="AiOSAURUS">
     </div>
     <div class="closing-tag">The Next Epoch Awaits</div>
     <h2 class="closing-title">The power of tomorrow,<br><em>for the heart of today.</em></h2>
-    <p class="closing-sub">Your asteroid moment is approaching. The organizations that survive won't be the strongest — they'll be the most connected.</p>
+    <p class="closing-sub">Your asteroid moment is approaching. The organizations that survive won’t be the strongest — they’ll be the most connected.</p>
     <div class="closing-btns">
       <a href="#contact" class="btn btn-light">Begin Your Evolution</a>
       <a href="#home" class="btn btn-outline-light" id="back-top2">↑ Return to the Beginning</a>
@@ -1526,16 +1903,16 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
       </ul>
       <div class="legal-divider"></div>
       <h3>3. Data Sovereignty</h3>
-      <p>AiOSAURUS operates on a Zero-Knowledge architecture. Client proprietary data processed through our agentic workflows never leaves the client's designated perimeter. We do not store, train on, or monetize your operational data.</p>
+      <p>Each engagement defines, in writing, which systems client data may reach. In fully offline and hybrid deployments, client data does not leave infrastructure the client controls. Where an engagement includes third-party model providers, those providers are named in the agreement and the data they receive is limited to what the client has approved. In every case, we do not store, train on, or monetize your operational data.</p>
       <div class="legal-divider"></div>
       <h3>4. Sharing of Information</h3>
       <p>We do not sell, rent, or trade your personal information to third parties. We may share information with trusted service providers who assist in operating our website and conducting our business, under strict confidentiality agreements.</p>
       <div class="legal-divider"></div>
       <h3>5. Your Rights</h3>
-      <p>Depending on your jurisdiction, you may have the right to access, correct, or delete your personal data. To exercise these rights, please <a href="#contact" class="legal-strong">contact us</a>.</p>
+      <p>Depending on your jurisdiction, you may have the right to access, correct, or delete your personal data. To exercise these rights, please <a href="mailto:hello@aiosaurus.com" class="legal-strong">hello@aiosaurus.com</a>.</p>
       <div class="legal-divider"></div>
       <h3>6. Contact</h3>
-      <p>For any privacy-related questions, please <a href="#contact" class="legal-strong">contact us</a>.</p>
+      <p>For any privacy-related questions, please <a href="mailto:hello@aiosaurus.com" class="legal-strong">hello@aiosaurus.com</a>.</p>
     </div>
 
     <!-- Terms of Service -->
@@ -1579,10 +1956,10 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
       <p>We do not use cookies for advertising, retargeting, or selling your data to third parties. We do not deploy third-party advertising cookies of any kind.</p>
       <div class="legal-divider"></div>
       <h3>Managing Cookies</h3>
-      <p>You can control cookies through your browser settings. Disabling certain cookies may affect site functionality. For more information, refer to your browser's help documentation.</p>
+      <p>You can control cookies through your browser settings. Disabling certain cookies may affect site functionality. For more information, refer to your browser’s help documentation.</p>
       <div class="legal-divider"></div>
       <h3>Contact</h3>
-      <p>Questions about our cookie practices? Please <a href="#contact" class="legal-strong">contact us</a>.</p>
+      <p>Questions about our cookie practices? Please <a href="mailto:hello@aiosaurus.com" class="legal-strong">hello@aiosaurus.com</a>.</p>
     </div>
 
     <!-- Disclaimer -->
@@ -1590,7 +1967,7 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
       <h2>Disclaimer</h2>
       <p class="legal-meta">Last updated: May 2026 &nbsp;·&nbsp; AiOSAURUS Inc.</p>
       <h3>General Information Only</h3>
-      <p>The content on this website is provided for general informational purposes only. It does not constitute professional, legal, financial, or technical advice. Outcomes described are illustrative and will vary based on each client's unique circumstances, data maturity, and operational environment.</p>
+      <p>The content on this website is provided for general informational purposes only. It does not constitute professional, legal, financial, or technical advice. Outcomes described are illustrative and will vary based on each client’s unique circumstances, data maturity, and operational environment.</p>
       <div class="legal-divider"></div>
       <h3>No Guarantee of Results</h3>
       <p>While we strive to deliver exceptional outcomes for every client engagement, AiOSAURUS does not guarantee specific results. The effectiveness of agentic AI workflows depends on a range of factors including data quality, organizational readiness, and implementation depth.</p>
@@ -1612,26 +1989,56 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 <footer>
   <div class="footer-inner">
     <div class="footer-brand">
-      <img id="flogo" src="" alt="AiOSAURUS">
+      <img id="flogo" src="mainlogo-1.png" width="300" height="300" decoding="async" alt="AiOSAURUS">
       <span>AiOSAURUS</span>
     </div>
     <div class="footer-spark">✦</div>
     <p class="footer-tag">The power of tomorrow, for the heart of today.</p>
+    <p class="footer-tag"><a href="mailto:hello@aiosaurus.com" style="color:inherit">hello@aiosaurus.com</a></p>
     <p class="footer-copy">© 2026 AiOSAURUS. Defining the Next Epoch. All rights reserved. &nbsp;·&nbsp; <a href="#legal">Legal</a></p>
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
+// Failsafe: JS can start and then break before the reveal handlers fire,
+// which would leave the page blank. Force everything visible shortly after
+// load if it still isn't.
+window.addEventListener('load', () => setTimeout(() => {
+  const hero = document.querySelector('.hero-content');
+  if (hero && !hero.classList.contains('revealed')) hero.classList.add('revealed');
+  const closing = document.querySelector('.closing');
+  if (closing && !closing.classList.contains('in')) closing.classList.add('in');
+  document.querySelectorAll('.reveal:not(.in)').forEach(el => el.classList.add('in'));
+}, 2500));
+
+// ── MOBILE MENU ──
+(function(){
+  const toggle = document.getElementById('nav-toggle');
+  const menu   = document.getElementById('mobile-menu');
+  if(!toggle || !menu) return;
+  function setMenu(open){
+    menu.classList.toggle('open', open);
+    document.getElementById('nav').classList.toggle('menu-open', open);
+    menu.setAttribute('aria-hidden', open ? 'false' : 'true');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+  toggle.addEventListener('click', () => setMenu(!menu.classList.contains('open')));
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Escape' && menu.classList.contains('open')) { setMenu(false); toggle.focus(); }
+  });
+  // Never leave the overlay stranded when rotating back to a desktop width
+  window.addEventListener('resize', () => {
+    if(window.innerWidth > 800 && menu.classList.contains('open')) setMenu(false);
+  });
+})();
+
 // ── LOGOS ──
 const L2 = 'mainlogo-1.png';
-document.getElementById('stage-logo').src = L2;
-document.getElementById('nlogo').src   = L2;
-document.getElementById('slogo').src   = L2;
-document.getElementById('hlogo').src   = L2;
-document.getElementById('eghost').src  = L2;
-document.getElementById('sghostimg').src = L2;
-document.getElementById('clogo').src   = L2;
-document.getElementById('flogo').src   = L2;
+// Image sources are declared in the HTML so they resolve without JS
+// and the preload scanner can find them.
 // ── SKULL IMAGES ──
 const SKULL3D_SRC = 'skull3d.png';
 const TERMINATOR_SRC = 'terminator.png';
@@ -1957,6 +2364,13 @@ function fadeForm(form, panel){
   form.style.opacity = '0';
   setTimeout(() => { form.style.display = 'none'; panel.classList.add('show'); }, 400);
 }
+// Error path keeps the form (and everything typed into it) on screen so the
+// visitor can simply press send again; the panel also offers a mailto fallback.
+function showFormError(btn, panel){
+  resetBtn(btn);
+  panel.classList.add('show');
+  panel.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
 function resetBtn(btn){
   btn.textContent = 'Commence Excavation →';
   btn.disabled = false;
@@ -1969,6 +2383,7 @@ async function handleContact(e){
   const success = document.getElementById('form-success');
   const error = document.getElementById('form-error');
 
+  error.classList.remove('show');
   btn.textContent = 'Sending…';
   btn.disabled = true;
   btn.style.opacity = '.6';
@@ -1982,10 +2397,10 @@ async function handleContact(e){
     if (res.ok) {
       fadeForm(form, success);
     } else {
-      resetBtn(btn); fadeForm(form, error);
+      showFormError(btn, error);
     }
   } catch (err) {
-    resetBtn(btn); fadeForm(form, error);
+    showFormError(btn, error);
   }
 }
 
@@ -2027,7 +2442,7 @@ if(['privacy','terms','cookies','disclaimer'].includes(lhash)){
   <div class="d-badge">Live Demo</div>
 
   <!-- demo skull -->
-  <img class="d-skull" id="d-skull-img" src="" alt="" aria-hidden="true" />
+  <img class="d-skull" id="d-skull-img" src="terminator.png" width="260" height="262" decoding="async" alt="" aria-hidden="true" />
 
   <!-- card -->
   <div class="d-card">
@@ -2096,7 +2511,7 @@ if(['privacy','terms','cookies','disclaimer'].includes(lhash)){
   <div id="return-popup">
     <div class="return-popup-spark">✦</div>
     <div class="return-popup-title">Demo Complete</div>
-    <p class="return-popup-sub">You've seen the architecture in action.<br>Ready to build this for your organization?</p>
+    <p class="return-popup-sub">You’ve seen the architecture in action.<br>Ready to build this for your organization?</p>
     <button class="return-popup-btn" onclick="closeDemo()">← Return to Main Page</button>
     <button class="return-popup-dismiss" onclick="dismissReturnPopup()">Stay &amp; Reset Demo</button>
   </div>
