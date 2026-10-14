@@ -49,6 +49,15 @@
   --pad-x: 52px;
   --measure: 68ch;
 
+  /* Card surfaces. Three card systems were invented separately with three
+     paddings and three hairline colours; they sit on different backgrounds so
+     they cannot match exactly, but they share these. */
+  --card-pad-y: 40px;
+  --card-pad-x: 34px;
+  --hairline-light: rgba(10,10,10,.12);
+  --hairline-dark: rgba(235,231,221,.09);
+  --surface-dark: rgba(235,231,221,.045);
+
   --fs-display: clamp(2rem, 5vw, 4rem);   /* hero + closing            */
   --fs-section: clamp(1.8rem, 3.2vw, 2.8rem); /* section titles        */
   --fs-card: 1.4rem;                      /* card + tier + site titles */
@@ -929,7 +938,7 @@ h1.hero-title {
 .return-popup-dismiss:hover { color: rgba(10,10,10,.7); }
 
 /* ── EPOCH TIMELINE ── */
-.epoch-wrap { position:relative; height:350vh; background:var(--bone); }
+.epoch-wrap { position:relative; height:240vh; background:var(--bone); }
 .epoch-pin {
   position:sticky; top:0; height:100vh; overflow:hidden;
   display:flex; flex-direction:column; justify-content:center;
@@ -950,7 +959,9 @@ h1.hero-title {
 .epoch-track { max-width:var(--container); margin:0 auto; width:100%; position:relative; padding-top:10px; }
 
 /* Bar — normal flow, sits at y=10px inside track */
-.tl-bar { position:relative; height:2px; background:rgba(10,10,10,.1); border-radius:2px; }
+/* Track stops at the last dot's centre: dots sit at i*20% + 10px. */
+.tl-bar { position:relative; height:2px; background:rgba(10,10,10,.1);
+  border-radius:2px; margin-left:10px; width:80%; }
 .tl-fill {
   position:absolute; top:0; left:0; height:100%;
   background:var(--red); width:0%; transition:width .06s linear; border-radius:2px;
@@ -958,7 +969,7 @@ h1.hero-title {
 
 /* Dot row — absolute, top:0 = y=0 in track; 20px dots center at y=10 = on bar */
 .tl-dots-row {
-  display:flex; justify-content:space-between;
+  display:grid; grid-template-columns:repeat(5,1fr); justify-items:start;
   position:absolute; top:0; left:0; right:0; z-index:2; pointer-events:none;
 }
 .tl-dot-item {
@@ -991,7 +1002,7 @@ h1.hero-title {
 .sol-head { display:grid; grid-template-columns:1fr 1fr; gap:80px; margin-bottom:48px; align-items:end; }
 .sol-body { font-size:.95rem; line-height:1.8; opacity:.52; align-self:end; }
 .trinity { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; }
-.t-card { background:rgba(235,231,221,.04); border:1px solid rgba(235,231,221,.07); padding:44px 32px; position:relative; overflow:hidden; transition:transform .3s, background .3s; }
+.t-card { background:var(--surface-dark); border:1px solid var(--hairline-dark); padding:var(--card-pad-y) var(--card-pad-x); position:relative; overflow:hidden; transition:transform .3s, background .3s; }
 .t-card:hover { transform:translateY(-6px); background:rgba(235,231,221,.07); }
 .t-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--red); transform:scaleX(0); transform-origin:left; transition:transform .4s; }
 .t-card:hover::before { transform:scaleX(1); }
@@ -1024,12 +1035,12 @@ h1.hero-title {
 }
 /* skullbase — fixed anchor, right edge */
 .about::before {
-  width: 85%;
-  height: 52vw;
+  width: 56%;
+  height: 46vw;
   top: 55%;
-  left: 20%;
+  left: 46%;
   transform: scaleX(-1) translateY(-50%);
-  opacity: 0.14;
+  opacity: 0.10;
   background-image: var(--about-skull);
   background-position: right center;
   background-size: contain;
@@ -1049,7 +1060,9 @@ h1.hero-title {
 .sec-list { display:flex; flex-direction:column; }
 .sec-item { display:flex; align-items:center; gap:16px; padding:18px 0; border-bottom:1px solid rgba(235,231,221,.07); font-size:.88rem; }
 .sec-check { width:24px; height:24px; border:1px solid rgba(187,33,33,.5); display:flex; align-items:center; justify-content:center; font-size:.68rem; color:var(--red-text); font-family:'DM Mono',monospace; flex-shrink:0; }
-.sec-ghost { position:absolute; right:-60px; top:50%; transform:translateY(-50%); width:42%; pointer-events:none; opacity:.04; filter:brightness(0) invert(1); }
+/* Hidden: a second large right-side watermark directly after The Origin's
+   read as a repeat, and at 4% opacity it carried almost nothing. */
+.sec-ghost { display:none; position:absolute; right:-60px; top:50%; transform:translateY(-50%); width:42%; pointer-events:none; opacity:.04; filter:brightness(0) invert(1); }
 
 /* ── CLOSING ── */
 .closing {
@@ -1091,7 +1104,7 @@ h1.hero-title {
 .service-tiers { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; margin-bottom:80px; }
 .tier {
   background:var(--obsidian); color:var(--bone);
-  padding:40px 32px; position:relative; overflow:hidden;
+  padding:var(--card-pad-y) var(--card-pad-x); position:relative; overflow:hidden;
   display:flex; flex-direction:column;
   transition:transform .3s;
 }
@@ -1270,15 +1283,15 @@ footer { background:var(--obsidian); color:var(--bone); padding:48px 52px 32px; 
 
 /* deployment spectrum */
 .spectrum { display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
-  background:rgba(10,10,10,.12); border:1px solid rgba(10,10,10,.12); margin:44px 0 56px; }
+  background:var(--hairline-light); border:1px solid var(--hairline-light); margin:44px 0 56px; }
 .spec-cell { background:var(--bone); padding:22px 24px; }
 .spec-mode { font-family:'DM Mono',monospace; font-size:.6rem; letter-spacing:.18em;
   text-transform:uppercase; color:var(--red-text); margin-bottom:8px; }
 .spec-cell p { font-size:.82rem; line-height:1.7; opacity:.62; }
 
 /* dig sites */
-.sites { display:grid; gap:1px; background:rgba(10,10,10,.12); border:1px solid rgba(10,10,10,.12); }
-.site { background:var(--bone); padding:40px 36px; display:grid;
+.sites { display:grid; gap:1px; background:var(--hairline-light); border:1px solid var(--hairline-light); }
+.site { background:var(--bone); padding:var(--card-pad-y) var(--card-pad-x); display:grid;
   grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:44px; align-items:start; }
 .site-meta { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
 .site-tag { font-family:'DM Mono',monospace; font-size:.58rem; letter-spacing:.16em;
